@@ -1,0 +1,3606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BALANCED | CLOCKED MATH</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --yellow:#FED500;
+  --black:#090909;
+  --muted:rgba(0,0,0,.55);
+  --line:rgba(0,0,0,.22);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
+  background:var(--yellow);
+  color:var(--black);
+  font-family:Inter,Helvetica,Arial,sans-serif;
+}
+
+body{
+  min-height:100vh;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  color:inherit;
+}
+
+button:focus-visible,
+input:focus-visible{
+  outline:3px solid var(--black);
+  outline-offset:3px;
+}
+
+.app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  padding:20px 28px 18px;
+}
+
+/* -----------------------------
+   HEADER
+----------------------------- */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+}
+
+.brand{
+  font-weight:900;
+  line-height:.88;
+  letter-spacing:-.065em;
+  font-size:clamp(28px,4vw,48px);
+}
+
+.brand-sub{
+  display:block;
+  margin-top:7px;
+  font-size:.37em;
+  letter-spacing:.02em;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.icon-btn{
+  border:0;
+  background:transparent;
+  width:42px;
+  height:42px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.icon-btn:hover{
+  background:var(--black);
+  color:var(--yellow);
+}
+
+/* -----------------------------
+   EQUATION ENTRY
+----------------------------- */
+
+.builder{
+  width:min(780px,100%);
+  margin:24px auto 0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:7px;
+}
+
+.builder input{
+  width:100%;
+  min-height:50px;
+  border:3px solid var(--black);
+  background:transparent;
+  padding:9px 13px;
+  font-size:18px;
+  font-weight:800;
+}
+
+.highlight-btn{
+  min-height:50px;
+  border:3px solid var(--black);
+  background:var(--black);
+  color:var(--yellow);
+  padding:8px 16px;
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+
+.highlight-btn:hover{
+  background:transparent;
+  color:var(--black);
+}
+
+/* -----------------------------
+   VIEW OPTIONS
+----------------------------- */
+
+.view-controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:11px;
+}
+
+.text-control{
+  border:0;
+  background:transparent;
+  min-height:34px;
+  padding:6px 9px;
+  font-size:11px;
+  font-weight:900;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+
+.text-control:hover,
+.text-control.active{
+  background:var(--black);
+  color:var(--yellow);
+}
+
+/* -----------------------------
+   LESSON HEADER
+----------------------------- */
+
+.lesson{
+  width:min(1240px,100%);
+  margin:22px auto 0;
+  flex:1;
+}
+
+.goal{
+  text-align:center;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.16em;
+}
+
+.equation{
+  text-align:center;
+  margin-top:7px;
+  font-size:clamp(38px,6.5vw,72px);
+  font-weight:900;
+  letter-spacing:-.065em;
+  line-height:1.05;
+}
+
+.hidden-value-note{
+  text-align:center;
+  min-height:18px;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+}
+
+.balance-status{
+  width:max-content;
+  margin:9px auto 0;
+  padding:5px 8px;
+  background:var(--black);
+  color:var(--yellow);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.13em;
+}
+
+/* -----------------------------
+   MAIN LAYOUT
+----------------------------- */
+
+.main-layout{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:22px;
+  align-items:start;
+}
+
+.main-layout.with-working{
+  grid-template-columns:minmax(0,1.45fr) minmax(310px,.65fr);
+}
+
+/* -----------------------------
+   SCALE
+----------------------------- */
+
+.scale-stage{
+  position:relative;
+  height:310px;
+  margin-top:4px;
+}
+
+.beam{
+  position:absolute;
+  left:7%;
+  right:7%;
+  top:58px;
+  height:10px;
+  background:var(--black);
+  transform-origin:center;
+  transition:transform .4s ease;
+  z-index:3;
+}
+
+/* simplified fulcrum */
+.pivot{
+  position:absolute;
+  left:50%;
+  top:66px;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:34px solid transparent;
+  border-right:34px solid transparent;
+  border-bottom:128px solid rgba(0,0,0,.58);
+}
+
+.rope{
+  position:absolute;
+  top:63px;
+  width:3px;
+  height:76px;
+  background:var(--black);
+  transition:transform .4s ease;
+  z-index:2;
+}
+
+.rope.left{
+  left:19%;
+}
+
+.rope.right{
+  right:19%;
+}
+
+.pan{
+  position:absolute;
+  top:135px;
+  width:39%;
+  min-height:108px;
+  border:4px solid var(--black);
+  border-top-width:8px;
+  background:var(--yellow);
+  padding:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  transition:transform .4s ease;
+  z-index:4;
+}
+
+.pan.left{
+  left:0;
+}
+
+.pan.right{
+  right:0;
+}
+
+/* -----------------------------
+   SCALE PIECES
+----------------------------- */
+
+.piece{
+  min-width:48px;
+  min-height:50px;
+  border:3px solid var(--black);
+  background:var(--yellow);
+  padding:6px 9px;
+  display:grid;
+  place-items:center;
+  font-size:19px;
+  font-weight:900;
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+}
+
+.piece.variable{
+  min-width:62px;
+  min-height:66px;
+  font-size:24px;
+}
+
+.piece.temp{
+  border-style:dashed;
+  animation:drop-in .3s ease both;
+}
+
+.piece.cancel-out{
+  animation:cancel-out .55s ease forwards;
+}
+
+.piece.split{
+  animation:split-in .36s ease both;
+}
+
+.group-label{
+  width:100%;
+  text-align:center;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.09em;
+}
+
+@keyframes drop-in{
+  from{
+    opacity:0;
+    transform:translateY(-18px) scale(.8);
+  }
+  to{
+    opacity:1;
+    transform:none;
+  }
+}
+
+@keyframes cancel-out{
+  0%{
+    opacity:1;
+    transform:scale(1);
+  }
+  45%{
+    transform:scale(1.12);
+  }
+  100%{
+    opacity:0;
+    transform:scale(.55);
+  }
+}
+
+@keyframes split-in{
+  from{
+    opacity:0;
+    transform:scale(.65);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+/* -----------------------------
+   FRACTIONS
+----------------------------- */
+
+.frac{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  vertical-align:middle;
+  line-height:1;
+  min-width:1.1em;
+  margin:0 .08em;
+}
+
+.frac-top,
+.frac-bottom{
+  padding:0 .12em;
+}
+
+.frac-bar{
+  width:100%;
+  border-top:2px solid currentColor;
+  margin:.07em 0 .1em;
+}
+
+/* -----------------------------
+   SIDE OPERATIONS
+----------------------------- */
+
+.operations{
+  width:min(900px,100%);
+  margin:2px auto 0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+
+.side-control{
+  min-width:0;
+}
+
+.side-title{
+  margin-bottom:5px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.13em;
+}
+
+.operation-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:6px;
+}
+
+.operation-row input{
+  width:100%;
+  min-width:0;
+  min-height:47px;
+  border:3px solid var(--black);
+  background:transparent;
+  padding:7px 11px;
+  text-align:center;
+  font-size:20px;
+  font-weight:900;
+}
+
+.apply-btn{
+  border:0;
+  background:var(--black);
+  color:var(--yellow);
+  min-height:47px;
+  padding:8px 14px;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.apply-btn:hover{
+  background:transparent;
+  color:var(--black);
+  outline:3px solid var(--black);
+  outline-offset:-3px;
+}
+
+.operation-help{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+
+/* -----------------------------
+   WORKING PANEL
+----------------------------- */
+
+.working-panel{
+  display:none;
+  border-left:3px solid var(--black);
+  padding-left:18px;
+  min-width:0;
+}
+
+.main-layout.with-working .working-panel{
+  display:block;
+}
+
+.working-title{
+  margin-bottom:14px;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+
+.paper-stack{
+  display:grid;
+  gap:6px;
+}
+
+.paper-block{
+  padding:2px 0 10px;
+  border-bottom:1px solid var(--line);
+}
+
+.paper-row,
+.paper-operation{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:6px;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
+  font-weight:800;
+}
+
+.paper-row{
+  align-items:end;
+  font-size:clamp(18px,2.6vw,27px);
+  line-height:1.05;
+}
+
+.paper-operation{
+  margin-top:0;
+  font-size:16px;
+  line-height:1;
+}
+
+.paper-left{
+  text-align:right;
+}
+
+.paper-right{
+  text-align:left;
+}
+
+.paper-equals{
+  text-align:center;
+}
+
+.paper-operation .paper-equals{
+  visibility:hidden;
+}
+
+.paper-rule{
+  height:2px;
+  background:var(--black);
+  margin:2px 0 5px;
+}
+
+/* exact cancellation marks */
+
+.strike{
+  position:relative;
+  display:inline-block;
+}
+
+.strike::after{
+  content:"";
+  position:absolute;
+  left:-2px;
+  right:-2px;
+  top:50%;
+  height:3px;
+  background:var(--black);
+  transform:rotate(-12deg);
+  transform-origin:center;
+  animation:strike-in .25s ease both;
+}
+
+@keyframes strike-in{
+  from{
+    transform:scaleX(0) rotate(-12deg);
+  }
+  to{
+    transform:scaleX(1) rotate(-12deg);
+  }
+}
+
+.coefficient,
+.variable-symbol,
+.denominator{
+  display:inline-block;
+}
+
+/* -----------------------------
+   FEEDBACK + LOWER ACTIONS
+----------------------------- */
+
+.feedback{
+  width:min(920px,100%);
+  min-height:24px;
+  margin:18px auto 0;
+  text-align:center;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.05em;
+}
+
+.lower-actions{
+  display:flex;
+  justify-content:center;
+  gap:3px;
+  margin-top:5px;
+}
+
+.small-action{
+  border:0;
+  background:transparent;
+  padding:7px 8px;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.small-action:hover:not(:disabled){
+  background:var(--black);
+  color:var(--yellow);
+}
+
+.small-action:disabled{
+  opacity:.3;
+  cursor:default;
+}
+
+/* -----------------------------
+   FOOTER
+----------------------------- */
+
+.footer{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:24px;
+  text-align:right;
+  font-weight:900;
+  line-height:.92;
+  font-size:10px;
+}
+
+.footer-main{
+  display:block;
+  font-size:18px;
+  letter-spacing:-.06em;
+}
+
+.footer-sub{
+  display:block;
+  margin-top:4px;
+  letter-spacing:.02em;
+}
+
+/* -----------------------------
+   HELP
+----------------------------- */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.7);
+  display:grid;
+  place-items:center;
+  padding:18px;
+}
+
+.overlay.hidden{
+  display:none;
+}
+
+.modal{
+  width:min(560px,100%);
+  max-height:calc(100vh - 36px);
+  overflow:auto;
+  background:var(--yellow);
+  border:5px solid var(--black);
+  padding:20px;
+}
+
+.modal-top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+}
+
+.modal h2{
+  margin:0;
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:-.06em;
+}
+
+.close-btn{
+  width:42px;
+  height:42px;
+  padding:0;
+  border:0;
+  background:var(--black);
+  color:var(--yellow);
+  font-size:21px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.help-copy{
+  margin-top:17px;
+  font-size:13px;
+  font-weight:650;
+  line-height:1.55;
+}
+
+.help-copy strong{
+  font-weight:900;
+}
+
+/* -----------------------------
+   RESPONSIVE
+----------------------------- */
+
+@media(max-width:820px){
+
+  .main-layout.with-working{
+    grid-template-columns:1fr;
+  }
+
+  .working-panel{
+    border-left:0;
+    border-top:3px solid var(--black);
+    padding-left:0;
+    padding-top:15px;
+  }
+}
+
+@media(max-width:650px){
+
+  .app{
+    padding:15px 14px;
+  }
+
+  .builder{
+    margin-top:20px;
+  }
+
+  .operations{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+
+  .scale-stage{
+    height:325px;
+  }
+
+  .pan{
+    width:42%;
+  }
+
+  .rope.left{
+    left:21%;
+  }
+
+  .rope.right{
+    right:21%;
+  }
+
+  .piece{
+    min-width:43px;
+    min-height:45px;
+    font-size:16px;
+  }
+
+  .piece.variable{
+    min-width:54px;
+    min-height:60px;
+    font-size:21px;
+  }
+}
+
+@media(max-width:460px){
+
+  .brand{
+    font-size:30px;
+  }
+
+  .builder{
+    grid-template-columns:1fr;
+  }
+
+  .highlight-btn{
+    width:100%;
+  }
+
+  .scale-stage{
+    height:310px;
+  }
+
+  .beam{
+    left:3%;
+    right:3%;
+  }
+
+  .pan{
+    width:44%;
+  }
+
+  .rope.left{
+    left:22%;
+  }
+
+  .rope.right{
+    right:22%;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    transition:none !important;
+    animation:none !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header class="topbar">
+
+    <div class="brand">
+      BALANCED
+      <span class="brand-sub">CLOCKED MATH</span>
+    </div>
+
+    <div class="header-actions">
+
+      <button
+        class="icon-btn"
+        id="fullscreenBtn"
+        type="button"
+        aria-label="Fullscreen"
+        title="Fullscreen"
+      >
+        ⛶
+      </button>
+
+      <button
+        class="icon-btn"
+        id="helpBtn"
+        type="button"
+        aria-label="Help"
+        title="Help"
+      >
+        ?
+      </button>
+
+    </div>
+
+  </header>
+
+  <form class="builder" id="equationForm">
+
+    <input
+      id="equationInput"
+      value="5m - 5 = 20"
+      aria-label="Equation"
+      autocomplete="off"
+      spellcheck="false"
+    >
+
+    <button
+      type="submit"
+      class="highlight-btn"
+    >
+      BUILD
+    </button>
+
+  </form>
+
+  <div class="view-controls">
+
+    <button
+      class="text-control active"
+      id="variableViewBtn"
+      type="button"
+    >
+      SHOW VARIABLE
+    </button>
+
+    <button
+      class="text-control"
+      id="valueViewBtn"
+      type="button"
+    >
+      SHOW VALUE
+    </button>
+
+    <button
+      class="text-control"
+      id="workingBtn"
+      type="button"
+    >
+      SHOW WORKING
+    </button>
+
+  </div>
+
+  <main class="lesson">
+
+    <div class="goal" id="goal">
+      GET m BY ITSELF
+    </div>
+
+    <div
+      class="equation"
+      id="equationDisplay"
+    ></div>
+
+    <div
+      class="hidden-value-note"
+      id="hiddenValueNote"
+    ></div>
+
+    <div
+      class="balance-status"
+      id="balanceStatus"
+    >
+      BALANCED
+    </div>
+
+    <div
+      class="main-layout"
+      id="mainLayout"
+    >
+
+      <section>
+
+        <div
+          class="scale-stage"
+          aria-label="Algebra balance scale"
+        >
+
+          <div
+            class="beam"
+            id="beam"
+          ></div>
+
+          <div class="pivot"></div>
+
+          <div
+            class="rope left"
+            id="leftRope"
+          ></div>
+
+          <div
+            class="rope right"
+            id="rightRope"
+          ></div>
+
+          <div
+            class="pan left"
+            id="leftPan"
+          ></div>
+
+          <div
+            class="pan right"
+            id="rightPan"
+          ></div>
+
+        </div>
+
+        <div class="operations">
+
+          <div class="side-control">
+
+            <div class="side-title">
+              LEFT SIDE
+            </div>
+
+            <div class="operation-row">
+
+              <input
+                id="leftOperation"
+                aria-label="Left side operation"
+                placeholder="+5  -5  /5  *5"
+                autocomplete="off"
+                spellcheck="false"
+              >
+
+              <button
+                class="apply-btn"
+                id="leftApply"
+                type="button"
+              >
+                APPLY
+              </button>
+
+            </div>
+
+            <div class="operation-help">
+              USE +, −, / OR *
+            </div>
+
+          </div>
+
+          <div class="side-control">
+
+            <div class="side-title">
+              RIGHT SIDE
+            </div>
+
+            <div class="operation-row">
+
+              <input
+                id="rightOperation"
+                aria-label="Right side operation"
+                placeholder="+5  -5  /5  *5"
+                autocomplete="off"
+                spellcheck="false"
+              >
+
+              <button
+                class="apply-btn"
+                id="rightApply"
+                type="button"
+              >
+                APPLY
+              </button>
+
+            </div>
+
+            <div class="operation-help">
+              USE +, −, / OR *
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <aside class="working-panel">
+
+        <div class="working-title">
+          WORKING
+        </div>
+
+        <div
+          class="paper-stack"
+          id="paperStack"
+        ></div>
+
+      </aside>
+
+    </div>
+
+    <div
+      class="feedback"
+      id="feedback"
+      aria-live="polite"
+    >
+      MAKE A MOVE.
+    </div>
+
+    <div class="lower-actions">
+
+      <button
+        class="small-action"
+        id="undoBtn"
+        type="button"
+        disabled
+      >
+        UNDO
+      </button>
+
+      <button
+        class="small-action"
+        id="resetBtn"
+        type="button"
+      >
+        RESET
+      </button>
+
+    </div>
+
+  </main>
+
+  <footer class="footer">
+
+    <div>
+
+      <span class="footer-main">
+        BALANCED
+      </span>
+
+      <span class="footer-sub">
+        BY CLOCKED
+      </span>
+
+    </div>
+
+  </footer>
+
+</div>
+
+<div
+  class="overlay hidden"
+  id="helpOverlay"
+>
+
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="helpTitle"
+  >
+
+    <div class="modal-top">
+
+      <h2 id="helpTitle">
+        BALANCED
+      </h2>
+
+      <button
+        class="close-btn"
+        id="closeHelp"
+        type="button"
+        aria-label="Close help"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div class="help-copy">
+
+      <p>
+        <strong>GOAL:</strong>
+        GET THE VARIABLE BY ITSELF.
+      </p>
+
+      <p>
+        Both sides begin equal, so the scale begins balanced.
+        Change one side and the scale will tilt.
+      </p>
+
+      <p>
+        Make the same mathematical change to the other side
+        to restore the balance.
+      </p>
+
+      <p>
+        Enter operations using
+        <strong>+5</strong>,
+        <strong>-5</strong>,
+        <strong>/5</strong>,
+        or
+        <strong>*5</strong>.
+      </p>
+
+      <p>
+        <strong>SHOW VALUE</strong>
+        reveals the hidden value represented by the variable.
+        A coefficient such as 5m will display as five separate
+        boxes so students can still see that there are five
+        equal groups.
+      </p>
+
+      <p>
+        <strong>SHOW WORKING</strong>
+        opens conventional algebra working beside the balance.
+        Cancellation marks appear on the exact part being undone.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+(() => {
+
+  const $ = selector =>
+    document.querySelector(selector);
+
+  const equationForm =
+    $("#equationForm");
+
+  const equationInput =
+    $("#equationInput");
+
+  const equationDisplay =
+    $("#equationDisplay");
+
+  const goal =
+    $("#goal");
+
+  const hiddenValueNote =
+    $("#hiddenValueNote");
+
+  const balanceStatus =
+    $("#balanceStatus");
+
+  const beam =
+    $("#beam");
+
+  const leftRope =
+    $("#leftRope");
+
+  const rightRope =
+    $("#rightRope");
+
+  const leftPan =
+    $("#leftPan");
+
+  const rightPan =
+    $("#rightPan");
+
+  const leftOperation =
+    $("#leftOperation");
+
+  const rightOperation =
+    $("#rightOperation");
+
+  const leftApply =
+    $("#leftApply");
+
+  const rightApply =
+    $("#rightApply");
+
+  const variableViewBtn =
+    $("#variableViewBtn");
+
+  const valueViewBtn =
+    $("#valueViewBtn");
+
+  const workingBtn =
+    $("#workingBtn");
+
+  const mainLayout =
+    $("#mainLayout");
+
+  const paperStack =
+    $("#paperStack");
+
+  const feedback =
+    $("#feedback");
+
+  const undoBtn =
+    $("#undoBtn");
+
+  const resetBtn =
+    $("#resetBtn");
+
+  const fullscreenBtn =
+    $("#fullscreenBtn");
+
+  const helpBtn =
+    $("#helpBtn");
+
+  const helpOverlay =
+    $("#helpOverlay");
+
+  const closeHelp =
+    $("#closeHelp");
+
+  let variable = "m";
+
+  let solution = 5;
+
+  let state = null;
+
+  let initialState = null;
+
+  let showValue = false;
+
+  let showWorking = false;
+
+  let snapshots = [];
+
+  let workingSteps = [];
+
+  let animating = false;
+
+  let helpOpener = null;
+
+  /* -------------------------
+     HELPERS
+  ------------------------- */
+
+  function clean(number){
+
+    if(
+      Math.abs(
+        number -
+        Math.round(number)
+      ) < 1e-9
+    ){
+      return String(
+        Math.round(number)
+      );
+    }
+
+    return String(
+      Number(
+        number.toFixed(3)
+      )
+    );
+  }
+
+  function decimalToFraction(value){
+
+    const sign =
+      value < 0 ? -1 : 1;
+
+    const absolute =
+      Math.abs(value);
+
+    if(
+      Math.abs(
+        absolute -
+        Math.round(absolute)
+      ) < 1e-9
+    ){
+      return {
+        numerator:
+          sign *
+          Math.round(absolute),
+
+        denominator:1
+      };
+    }
+
+    for(
+      let denominator = 2;
+      denominator <= 50;
+      denominator++
+    ){
+
+      const numerator =
+        absolute *
+        denominator;
+
+      if(
+        Math.abs(
+          numerator -
+          Math.round(numerator)
+        ) < 1e-9
+      ){
+        return {
+          numerator:
+            sign *
+            Math.round(numerator),
+
+          denominator
+        };
+      }
+    }
+
+    return null;
+  }
+
+  function fractionHTML(
+    numerator,
+    denominator,
+    strikeDenominator = false
+  ){
+
+    return `
+      <span class="frac">
+        <span class="frac-top">
+          ${numerator}
+        </span>
+
+        <span class="frac-bar"></span>
+
+        <span class="frac-bottom denominator ${
+          strikeDenominator
+            ? "strike"
+            : ""
+        }">
+          ${denominator}
+        </span>
+      </span>
+    `;
+  }
+
+  /* -------------------------
+     PARSING
+  ------------------------- */
+
+  function parseVariableTerm(term){
+
+    const cleaned =
+      term.replace(/−/g,"-");
+
+    const match =
+      cleaned.match(
+        /^([+-]?\d*(?:\.\d+)?)([A-Za-z])(?:\/(\d+(?:\.\d+)?))?$/
+      );
+
+    if(!match){
+      return null;
+    }
+
+    const rawCoefficient =
+      match[1];
+
+    const variableName =
+      match[2];
+
+    const denominator =
+      match[3]
+        ? Number(match[3])
+        : 1;
+
+    let coefficient;
+
+    if(
+      rawCoefficient === "" ||
+      rawCoefficient === "+"
+    ){
+      coefficient = 1;
+    }
+    else if(
+      rawCoefficient === "-"
+    ){
+      coefficient = -1;
+    }
+    else{
+      coefficient =
+        Number(rawCoefficient);
+    }
+
+    if(
+      !Number.isFinite(coefficient) ||
+      !Number.isFinite(denominator) ||
+      denominator === 0
+    ){
+      return null;
+    }
+
+    return {
+      coefficient:
+        coefficient /
+        denominator,
+
+      variable:
+        variableName
+    };
+  }
+
+  function parseSide(raw){
+
+    let side =
+      raw
+        .replace(/\s+/g,"")
+        .replace(/−/g,"-");
+
+    if(!side){
+      return null;
+    }
+
+    side =
+      side.replace(
+        /-/g,
+        "+-"
+      );
+
+    if(side.startsWith("+")){
+      side =
+        side.slice(1);
+    }
+
+    let coefficient = 0;
+
+    let constant = 0;
+
+    let foundVariable = null;
+
+    const terms =
+      side
+        .split("+")
+        .filter(Boolean);
+
+    for(
+      const term of terms
+    ){
+
+      if(
+        /[A-Za-z]/.test(term)
+      ){
+
+        const parsed =
+          parseVariableTerm(term);
+
+        if(!parsed){
+          return null;
+        }
+
+        if(
+          foundVariable &&
+          foundVariable
+            .toLowerCase() !==
+          parsed.variable
+            .toLowerCase()
+        ){
+          return null;
+        }
+
+        foundVariable =
+          parsed.variable;
+
+        coefficient +=
+          parsed.coefficient;
+      }
+      else if(
+        /^[-+]?\d+(?:\.\d+)?$/
+          .test(term)
+      ){
+        constant +=
+          Number(term);
+      }
+      else{
+        return null;
+      }
+    }
+
+    return {
+      coefficient,
+      constant,
+      variable:
+        foundVariable
+    };
+  }
+
+  function parseEquation(raw){
+
+    const parts =
+      raw.split("=");
+
+    if(parts.length !== 2){
+      return null;
+    }
+
+    const left =
+      parseSide(parts[0]);
+
+    const right =
+      parseSide(parts[1]);
+
+    if(
+      !left ||
+      !right
+    ){
+      return null;
+    }
+
+    const variables = [
+      left.variable,
+      right.variable
+    ].filter(Boolean);
+
+    if(
+      variables.length === 0
+    ){
+      return null;
+    }
+
+    const detectedVariable =
+      variables[0];
+
+    if(
+      variables.some(
+        item =>
+          item.toLowerCase() !==
+          detectedVariable
+            .toLowerCase()
+      )
+    ){
+      return null;
+    }
+
+    if(
+      Math.abs(
+        left.coefficient -
+        right.coefficient
+      ) < 1e-10
+    ){
+      return null;
+    }
+
+    const solvedValue =
+      (
+        right.constant -
+        left.constant
+      ) /
+      (
+        left.coefficient -
+        right.coefficient
+      );
+
+    if(
+      !Number.isFinite(
+        solvedValue
+      )
+    ){
+      return null;
+    }
+
+    return {
+      leftCoefficient:
+        left.coefficient,
+
+      leftConstant:
+        left.constant,
+
+      rightCoefficient:
+        right.coefficient,
+
+      rightConstant:
+        right.constant,
+
+      variable:
+        detectedVariable,
+
+      solution:
+        solvedValue
+    };
+  }
+
+  /* -------------------------
+     ALGEBRA DISPLAY
+  ------------------------- */
+
+  function coefficientHTML(
+    coefficient,
+    useValue = false
+  ){
+
+    if(useValue){
+
+      return clean(
+        coefficient *
+        solution
+      );
+    }
+
+    if(
+      Math.abs(
+        coefficient - 1
+      ) < 1e-9
+    ){
+      return variable;
+    }
+
+    if(
+      Math.abs(
+        coefficient + 1
+      ) < 1e-9
+    ){
+      return "−" + variable;
+    }
+
+    if(
+      Math.abs(
+        coefficient -
+        Math.round(coefficient)
+      ) < 1e-9
+    ){
+      return (
+        clean(coefficient)
+          .replace("-","−") +
+        variable
+      );
+    }
+
+    const fraction =
+      decimalToFraction(
+        coefficient
+      );
+
+    if(
+      fraction &&
+      fraction.denominator !== 1
+    ){
+
+      const negative =
+        fraction.numerator < 0
+          ? "−"
+          : "";
+
+      const numerator =
+        Math.abs(
+          fraction.numerator
+        );
+
+      const top =
+        numerator === 1
+          ? variable
+          : numerator + variable;
+
+      return (
+        negative +
+        fractionHTML(
+          top,
+          fraction.denominator
+        )
+      );
+    }
+
+    return (
+      clean(coefficient)
+        .replace("-","−") +
+      variable
+    );
+  }
+
+  function sideHTML(
+    coefficient,
+    constant
+  ){
+
+    let output = "";
+
+    if(
+      Math.abs(
+        coefficient
+      ) > 1e-10
+    ){
+
+      output +=
+        coefficientHTML(
+          coefficient,
+          showValue
+        );
+    }
+
+    if(
+      Math.abs(
+        constant
+      ) > 1e-10
+    ){
+
+      const sign =
+        constant > 0
+          ? " + "
+          : " − ";
+
+      const amount =
+        clean(
+          Math.abs(constant)
+        );
+
+      output +=
+        output
+          ? sign + amount
+          : (
+            constant < 0
+              ? "−"
+              : ""
+          ) + amount;
+    }
+
+    return output || "0";
+  }
+
+  function plainCoefficient(
+    coefficient
+  ){
+
+    if(
+      Math.abs(
+        coefficient - 1
+      ) < 1e-9
+    ){
+      return variable;
+    }
+
+    if(
+      Math.abs(
+        coefficient + 1
+      ) < 1e-9
+    ){
+      return "−" + variable;
+    }
+
+    if(
+      Math.abs(
+        coefficient -
+        Math.round(coefficient)
+      ) < 1e-9
+    ){
+      return (
+        clean(coefficient)
+          .replace("-","−") +
+        variable
+      );
+    }
+
+    const fraction =
+      decimalToFraction(
+        coefficient
+      );
+
+    if(
+      fraction &&
+      fraction.denominator !== 1
+    ){
+
+      const negative =
+        fraction.numerator < 0
+          ? "−"
+          : "";
+
+      const numerator =
+        Math.abs(
+          fraction.numerator
+        );
+
+      return (
+        negative +
+        (
+          numerator === 1
+            ? variable
+            : numerator + variable
+        ) +
+        "/" +
+        fraction.denominator
+      );
+    }
+
+    return (
+      clean(coefficient) +
+      variable
+    );
+  }
+
+  function plainSide(
+    coefficient,
+    constant
+  ){
+
+    let output = "";
+
+    if(
+      Math.abs(
+        coefficient
+      ) > 1e-10
+    ){
+      output +=
+        plainCoefficient(
+          coefficient
+        );
+    }
+
+    if(
+      Math.abs(
+        constant
+      ) > 1e-10
+    ){
+
+      const sign =
+        constant > 0
+          ? " + "
+          : " − ";
+
+      output +=
+        output
+          ? (
+            sign +
+            clean(
+              Math.abs(constant)
+            )
+          )
+          : (
+            constant < 0
+              ? "−"
+              : ""
+          ) +
+          clean(
+            Math.abs(constant)
+          );
+    }
+
+    return output || "0";
+  }
+
+  /* -------------------------
+     BALANCE VALUES
+  ------------------------- */
+
+  function leftValue(){
+
+    return (
+      state.leftCoefficient *
+      solution +
+      state.leftConstant
+    );
+  }
+
+  function rightValue(){
+
+    return (
+      state.rightCoefficient *
+      solution +
+      state.rightConstant
+    );
+  }
+
+  function isBalanced(){
+
+    return (
+      Math.abs(
+        leftValue() -
+        rightValue()
+      ) < 1e-8
+    );
+  }
+
+  /* -------------------------
+     SCALE PIECES
+  ------------------------- */
+
+  function createPiece(
+    parent,
+    html,
+    className = ""
+  ){
+
+    const element =
+      document.createElement("div");
+
+    element.className =
+      "piece " +
+      className;
+
+    element.innerHTML =
+      html;
+
+    parent.appendChild(
+      element
+    );
+
+    return element;
+  }
+
+  function renderVariablePieces(
+    parent,
+    coefficient
+  ){
+
+    if(
+      Math.abs(
+        coefficient
+      ) < 1e-10
+    ){
+      return;
+    }
+
+    const count =
+      Math.abs(coefficient);
+
+    /*
+      SHOW VALUE keeps the grouping.
+
+      5m where m = 5
+      becomes five separate 5 tiles.
+    */
+    if(
+      showValue &&
+      Number.isInteger(count) &&
+      count <= 10
+    ){
+
+      for(
+        let index = 0;
+        index < count;
+        index++
+      ){
+
+        createPiece(
+          parent,
+          (
+            coefficient < 0
+              ? "−"
+              : ""
+          ) +
+          clean(solution),
+          "variable"
+        );
+      }
+
+      return;
+    }
+
+    createPiece(
+      parent,
+      coefficientHTML(
+        coefficient,
+        showValue
+      ),
+      "variable"
+    );
+  }
+
+  function renderPan(
+    parent,
+    coefficient,
+    constant
+  ){
+
+    parent.innerHTML = "";
+
+    renderVariablePieces(
+      parent,
+      coefficient
+    );
+
+    if(
+      Math.abs(
+        constant
+      ) > 1e-10
+    ){
+
+      createPiece(
+        parent,
+        (
+          constant > 0
+            ? "+"
+            : "−"
+        ) +
+        clean(
+          Math.abs(constant)
+        )
+      );
+    }
+
+    if(
+      Math.abs(
+        coefficient
+      ) < 1e-10 &&
+      Math.abs(
+        constant
+      ) < 1e-10
+    ){
+      createPiece(
+        parent,
+        "0"
+      );
+    }
+  }
+
+  function renderScale(){
+
+    const difference =
+      leftValue() -
+      rightValue();
+
+    const angle =
+      Math.max(
+        -11,
+        Math.min(
+          11,
+          difference * 1.2
+        )
+      );
+
+    beam.style.transform =
+      `rotate(${angle}deg)`;
+
+    leftPan.style.transform =
+      `translateY(${angle * 2.2}px)`;
+
+    rightPan.style.transform =
+      `translateY(${-angle * 2.2}px)`;
+
+    leftRope.style.transform =
+      `translateY(${angle * 1.8}px)`;
+
+    rightRope.style.transform =
+      `translateY(${-angle * 1.8}px)`;
+
+    balanceStatus.textContent =
+      isBalanced()
+        ? "BALANCED"
+        : "NOT BALANCED";
+  }
+
+  /* -------------------------
+     WORKING
+  ------------------------- */
+
+  function strikeHTML(text){
+
+    return (
+      `<span class="strike">${text}</span>`
+    );
+  }
+
+  function coefficientWorkingHTML(
+    coefficient,
+    side,
+    step
+  ){
+
+    if(
+      Math.abs(
+        coefficient
+      ) < 1e-10
+    ){
+      return "";
+    }
+
+    /*
+      WHOLE NUMBER COEFFICIENT:
+      strike only the number.
+
+      5m / 5 becomes:
+      crossed-out 5 + untouched m.
+    */
+    if(
+      Math.abs(
+        coefficient -
+        Math.round(coefficient)
+      ) < 1e-9 &&
+      Math.abs(coefficient) !== 1
+    ){
+
+      const negative =
+        coefficient < 0
+          ? "−"
+          : "";
+
+      const coefficientNumber =
+        clean(
+          Math.abs(coefficient)
+        );
+
+      const shouldStrike =
+        step.cancelCoefficientSide ===
+        side;
+
+      return (
+        negative +
+        `<span class="coefficient ${
+          shouldStrike
+            ? "strike"
+            : ""
+        }">${coefficientNumber}</span>` +
+        `<span class="variable-symbol">${variable}</span>`
+      );
+    }
+
+    const fraction =
+      decimalToFraction(
+        coefficient
+      );
+
+    if(
+      fraction &&
+      fraction.denominator !== 1
+    ){
+
+      const negative =
+        fraction.numerator < 0
+          ? "−"
+          : "";
+
+      const numerator =
+        Math.abs(
+          fraction.numerator
+        );
+
+      const top =
+        numerator === 1
+          ? variable
+          : numerator + variable;
+
+      return (
+        negative +
+        fractionHTML(
+          top,
+          fraction.denominator,
+          step.cancelDenominatorSide ===
+            side
+        )
+      );
+    }
+
+    return plainCoefficient(
+      coefficient
+    );
+  }
+
+  function workingSideHTML(
+    coefficient,
+    constant,
+    side,
+    step
+  ){
+
+    const pieces = [];
+
+    if(
+      Math.abs(
+        coefficient
+      ) > 1e-10
+    ){
+
+      pieces.push(
+        coefficientWorkingHTML(
+          coefficient,
+          side,
+          step
+        )
+      );
+    }
+
+    if(
+      Math.abs(
+        constant
+      ) > 1e-10
+    ){
+
+      let constantHTML =
+        (
+          constant > 0
+            ? "+ "
+            : "− "
+        ) +
+        clean(
+          Math.abs(constant)
+        );
+
+      if(
+        step.cancelConstantSide ===
+        side
+      ){
+        constantHTML =
+          strikeHTML(
+            constantHTML
+          );
+      }
+
+      pieces.push(
+        constantHTML
+      );
+    }
+
+    return (
+      pieces.join(" ") ||
+      "0"
+    );
+  }
+
+  function renderWorking(){
+
+    paperStack.innerHTML = "";
+
+    const opening =
+      document.createElement("div");
+
+    opening.className =
+      "paper-block";
+
+    opening.innerHTML = `
+      <div class="paper-row">
+
+        <div class="paper-left">
+          ${plainSide(
+            initialState.leftCoefficient,
+            initialState.leftConstant
+          )}
+        </div>
+
+        <div class="paper-equals">
+          =
+        </div>
+
+        <div class="paper-right">
+          ${plainSide(
+            initialState.rightCoefficient,
+            initialState.rightConstant
+          )}
+        </div>
+
+      </div>
+    `;
+
+    paperStack.appendChild(
+      opening
+    );
+
+    workingSteps.forEach(
+      step => {
+
+        const block =
+          document.createElement(
+            "div"
+          );
+
+        block.className =
+          "paper-block";
+
+        let leftOperationHTML =
+          step.leftOperation || "";
+
+        let rightOperationHTML =
+          step.rightOperation || "";
+
+        if(
+          step.cancelOperationSide ===
+            "left" &&
+          leftOperationHTML
+        ){
+          leftOperationHTML =
+            strikeHTML(
+              leftOperationHTML
+            );
+        }
+
+        if(
+          step.cancelOperationSide ===
+            "right" &&
+          rightOperationHTML
+        ){
+          rightOperationHTML =
+            strikeHTML(
+              rightOperationHTML
+            );
+        }
+
+        block.innerHTML = `
+          <div class="paper-row">
+
+            <div class="paper-left">
+
+              ${workingSideHTML(
+                step.before.leftCoefficient,
+                step.before.leftConstant,
+                "left",
+                step
+              )}
+
+            </div>
+
+            <div class="paper-equals">
+              =
+            </div>
+
+            <div class="paper-right">
+
+              ${workingSideHTML(
+                step.before.rightCoefficient,
+                step.before.rightConstant,
+                "right",
+                step
+              )}
+
+            </div>
+
+          </div>
+
+          <div class="paper-operation">
+
+            <div class="paper-left">
+              ${leftOperationHTML}
+            </div>
+
+            <div class="paper-equals">
+              =
+            </div>
+
+            <div class="paper-right">
+              ${rightOperationHTML}
+            </div>
+
+          </div>
+
+          <div class="paper-rule"></div>
+
+          <div class="paper-row">
+
+            <div class="paper-left">
+
+              ${plainSide(
+                step.after.leftCoefficient,
+                step.after.leftConstant
+              )}
+
+            </div>
+
+            <div class="paper-equals">
+              =
+            </div>
+
+            <div class="paper-right">
+
+              ${plainSide(
+                step.after.rightCoefficient,
+                step.after.rightConstant
+              )}
+
+            </div>
+
+          </div>
+        `;
+
+        paperStack.appendChild(
+          block
+        );
+      }
+    );
+  }
+
+  /* -------------------------
+     RENDER
+  ------------------------- */
+
+  function render(){
+
+    equationDisplay.innerHTML =
+      (
+        sideHTML(
+          state.leftCoefficient,
+          state.leftConstant
+        ) +
+        " = " +
+        sideHTML(
+          state.rightCoefficient,
+          state.rightConstant
+        )
+      );
+
+    goal.textContent =
+      (
+        "GET " +
+        variable +
+        " BY ITSELF"
+      );
+
+    hiddenValueNote.textContent =
+      showValue
+        ? (
+          variable +
+          " = " +
+          clean(solution) +
+          " IS BEING USED TO SHOW THE HIDDEN VALUE."
+        )
+        : "";
+
+    variableViewBtn
+      .classList
+      .toggle(
+        "active",
+        !showValue
+      );
+
+    valueViewBtn
+      .classList
+      .toggle(
+        "active",
+        showValue
+      );
+
+    workingBtn
+      .classList
+      .toggle(
+        "active",
+        showWorking
+      );
+
+    mainLayout
+      .classList
+      .toggle(
+        "with-working",
+        showWorking
+      );
+
+    renderPan(
+      leftPan,
+      state.leftCoefficient,
+      state.leftConstant
+    );
+
+    renderPan(
+      rightPan,
+      state.rightCoefficient,
+      state.rightConstant
+    );
+
+    renderScale();
+
+    renderWorking();
+
+    undoBtn.disabled =
+      snapshots.length === 0;
+  }
+
+  /* -------------------------
+     SNAPSHOT / UNDO
+  ------------------------- */
+
+  function snapshot(){
+
+    snapshots.push({
+
+      state:{
+        ...state
+      },
+
+      workingSteps:
+        JSON.parse(
+          JSON.stringify(
+            workingSteps
+          )
+        )
+    });
+
+    undoBtn.disabled = false;
+  }
+
+  /* -------------------------
+     OPERATION TEXT
+  ------------------------- */
+
+  function operationText(
+    symbol,
+    number
+  ){
+
+    if(symbol === "/"){
+      return "÷ " + clean(number);
+    }
+
+    if(symbol === "*"){
+      return "× " + clean(number);
+    }
+
+    return (
+      (
+        symbol === "+"
+          ? "+ "
+          : "− "
+      ) +
+      clean(number)
+    );
+  }
+
+  /* -------------------------
+     ANIMATIONS
+  ------------------------- */
+
+  function animateAddition(
+    side,
+    change,
+    done
+  ){
+
+    const pan =
+      side === "left"
+        ? leftPan
+        : rightPan;
+
+    const oldConstant =
+      side === "left"
+        ? state.leftConstant
+        : state.rightConstant;
+
+    const newTile =
+      createPiece(
+        pan,
+        (
+          change > 0
+            ? "+"
+            : "−"
+        ) +
+        clean(
+          Math.abs(change)
+        ),
+        "temp"
+      );
+
+    const cancels =
+      (
+        Math.abs(
+          oldConstant +
+          change
+        ) < 1e-9
+      ) &&
+      (
+        Math.abs(
+          oldConstant
+        ) > 1e-9
+      );
+
+    if(!cancels){
+
+      window.setTimeout(
+        done,
+        450
+      );
+
+      return;
+    }
+
+    window.setTimeout(() => {
+
+      const numberTiles =
+        [
+          ...pan.querySelectorAll(
+            ".piece:not(.variable)"
+          )
+        ];
+
+      const oldTile =
+        numberTiles.find(
+          tile =>
+            tile !== newTile
+        );
+
+      if(oldTile){
+        oldTile.classList.add(
+          "cancel-out"
+        );
+      }
+
+      newTile.classList.add(
+        "cancel-out"
+      );
+
+      window.setTimeout(
+        done,
+        560
+      );
+
+    },420);
+  }
+
+  function animateDivision(
+    side,
+    number,
+    done
+  ){
+
+    const pan =
+      side === "left"
+        ? leftPan
+        : rightPan;
+
+    const coefficient =
+      side === "left"
+        ? state.leftCoefficient
+        : state.rightCoefficient;
+
+    const constant =
+      side === "left"
+        ? state.leftConstant
+        : state.rightConstant;
+
+    pan.innerHTML = "";
+
+    const label =
+      document.createElement(
+        "div"
+      );
+
+    label.className =
+      "group-label";
+
+    label.textContent =
+      (
+        "DIVIDE INTO " +
+        clean(number) +
+        " EQUAL GROUPS"
+      );
+
+    pan.appendChild(
+      label
+    );
+
+    if(
+      showValue &&
+      Math.abs(constant) < 1e-9 &&
+      Number.isInteger(number) &&
+      number <= 10 &&
+      Number.isInteger(
+        Math.abs(coefficient)
+      ) &&
+      Math.abs(coefficient) ===
+        number
+    ){
+
+      for(
+        let index = 0;
+        index < number;
+        index++
+      ){
+
+        createPiece(
+          pan,
+          (
+            coefficient < 0
+              ? "−"
+              : ""
+          ) +
+          clean(solution),
+          "variable split"
+        );
+      }
+    }
+    else{
+
+      createPiece(
+        pan,
+        coefficientHTML(
+          coefficient / number,
+          showValue
+        ),
+        "variable split"
+      );
+    }
+
+    window.setTimeout(
+      done,
+      800
+    );
+  }
+
+  function animateMultiplication(
+    side,
+    number,
+    done
+  ){
+
+    const pan =
+      side === "left"
+        ? leftPan
+        : rightPan;
+
+    const coefficient =
+      side === "left"
+        ? state.leftCoefficient
+        : state.rightCoefficient;
+
+    const constant =
+      side === "left"
+        ? state.leftConstant
+        : state.rightConstant;
+
+    pan.innerHTML = "";
+
+    const label =
+      document.createElement(
+        "div"
+      );
+
+    label.className =
+      "group-label";
+
+    label.textContent =
+      (
+        "MAKE " +
+        clean(number) +
+        " EQUAL COPIES"
+      );
+
+    pan.appendChild(
+      label
+    );
+
+    if(
+      Number.isInteger(number) &&
+      number <= 10
+    ){
+
+      for(
+        let index = 0;
+        index < number;
+        index++
+      ){
+
+        createPiece(
+          pan,
+          sideHTML(
+            coefficient,
+            constant
+          ),
+          "split"
+        );
+      }
+    }
+    else{
+
+      createPiece(
+        pan,
+        sideHTML(
+          coefficient * number,
+          constant * number
+        ),
+        "split"
+      );
+    }
+
+    window.setTimeout(
+      done,
+      820
+    );
+  }
+
+  /* -------------------------
+     APPLY OPERATION
+  ------------------------- */
+
+  function applyOperation(
+    side,
+    raw
+  ){
+
+    if(animating){
+      return;
+    }
+
+    const normalized =
+      raw
+        .trim()
+        .replace(/−/g,"-")
+        .replace(/÷/g,"/")
+        .replace(/×/g,"*");
+
+    const match =
+      normalized.match(
+        /^([+\-/*])\s*(\d+(?:\.\d+)?)$/
+      );
+
+    if(!match){
+
+      feedback.textContent =
+        "USE +, −, / OR *. EXAMPLE: +5, -5, /5, *5.";
+
+      return;
+    }
+
+    const symbol =
+      match[1];
+
+    const number =
+      Number(match[2]);
+
+    if(
+      !Number.isFinite(number) ||
+      number <= 0
+    ){
+      feedback.textContent =
+        "ENTER A NUMBER GREATER THAN ZERO.";
+
+      return;
+    }
+
+    snapshot();
+
+    animating = true;
+
+    const before = {
+      ...state
+    };
+
+    const coefficientKey =
+      side === "left"
+        ? "leftCoefficient"
+        : "rightCoefficient";
+
+    const constantKey =
+      side === "left"
+        ? "leftConstant"
+        : "rightConstant";
+
+    const displayedOperation =
+      operationText(
+        symbol,
+        number
+      );
+
+    function commit(){
+
+      let cancelConstant = false;
+
+      let cancelCoefficient = false;
+
+      let cancelDenominator = false;
+
+      if(
+        symbol === "+" ||
+        symbol === "-"
+      ){
+
+        const change =
+          symbol === "+"
+            ? number
+            : -number;
+
+        const oldConstant =
+          state[constantKey];
+
+        state[constantKey] +=
+          change;
+
+        cancelConstant =
+          (
+            Math.abs(
+              oldConstant +
+              change
+            ) < 1e-9
+          ) &&
+          (
+            Math.abs(
+              oldConstant
+            ) > 1e-9
+          );
+      }
+
+      else if(
+        symbol === "/"
+      ){
+
+        const oldCoefficient =
+          state[
+            coefficientKey
+          ];
+
+        state[
+          coefficientKey
+        ] /= number;
+
+        state[
+          constantKey
+        ] /= number;
+
+        /*
+          Divide 5m by 5:
+          strike coefficient 5 only.
+        */
+
+        cancelCoefficient =
+          (
+            Math.abs(
+              Math.abs(
+                oldCoefficient
+              ) -
+              number
+            ) < 1e-9
+          ) ||
+          (
+            Math.abs(
+              Math.abs(
+                oldCoefficient /
+                number
+              ) -
+              1
+            ) < 1e-9
+          );
+      }
+
+      else if(
+        symbol === "*"
+      ){
+
+        const oldCoefficient =
+          state[
+            coefficientKey
+          ];
+
+        const fraction =
+          decimalToFraction(
+            oldCoefficient
+          );
+
+        state[
+          coefficientKey
+        ] *= number;
+
+        state[
+          constantKey
+        ] *= number;
+
+        /*
+          m/5 × 5:
+          strike denominator 5.
+        */
+
+        cancelDenominator =
+          (
+            fraction &&
+            fraction.denominator ===
+              number
+          );
+      }
+
+      let merged = false;
+
+      if(
+        workingSteps.length > 0
+      ){
+
+        const previous =
+          workingSteps[
+            workingSteps.length - 1
+          ];
+
+        /*
+          If the same operation is
+          immediately applied to the
+          other side, combine them
+          into one written step.
+        */
+
+        if(
+          previous.pending &&
+          previous.symbol === symbol &&
+          Math.abs(
+            previous.number -
+            number
+          ) < 1e-9 &&
+          previous.firstSide !== side
+        ){
+
+          previous.pending = false;
+
+          if(side === "left"){
+            previous.leftOperation =
+              displayedOperation;
+          }
+          else{
+            previous.rightOperation =
+              displayedOperation;
+          }
+
+          previous.after = {
+            ...state
+          };
+
+          if(cancelConstant){
+
+            previous.cancelConstantSide =
+              side;
+
+            previous.cancelOperationSide =
+              side;
+          }
+
+          if(cancelCoefficient){
+
+            previous.cancelCoefficientSide =
+              side;
+
+            previous.cancelOperationSide =
+              side;
+          }
+
+          if(cancelDenominator){
+
+            previous.cancelDenominatorSide =
+              side;
+
+            previous.cancelOperationSide =
+              side;
+          }
+
+          merged = true;
+        }
+      }
+
+      if(!merged){
+
+        workingSteps.push({
+
+          before,
+
+          after:{
+            ...state
+          },
+
+          leftOperation:
+            side === "left"
+              ? displayedOperation
+              : "",
+
+          rightOperation:
+            side === "right"
+              ? displayedOperation
+              : "",
+
+          pending:true,
+
+          symbol,
+
+          number,
+
+          firstSide:side,
+
+          cancelConstantSide:
+            cancelConstant
+              ? side
+              : null,
+
+          cancelCoefficientSide:
+            cancelCoefficient
+              ? side
+              : null,
+
+          cancelDenominatorSide:
+            cancelDenominator
+              ? side
+              : null,
+
+          cancelOperationSide:
+            (
+              cancelConstant ||
+              cancelCoefficient ||
+              cancelDenominator
+            )
+              ? side
+              : null
+        });
+      }
+
+      animating = false;
+
+      feedback.textContent =
+        isBalanced()
+          ? "BALANCED AGAIN — THE SCALE AND WORKING MATCH."
+          : "NOT BALANCED — THE OTHER SIDE STILL NEEDS THE SAME CHANGE.";
+
+      render();
+    }
+
+    if(
+      symbol === "+" ||
+      symbol === "-"
+    ){
+
+      animateAddition(
+        side,
+        symbol === "+"
+          ? number
+          : -number,
+        commit
+      );
+    }
+
+    else if(
+      symbol === "/"
+    ){
+
+      animateDivision(
+        side,
+        number,
+        commit
+      );
+    }
+
+    else{
+
+      animateMultiplication(
+        side,
+        number,
+        commit
+      );
+    }
+  }
+
+  /* -------------------------
+     BUILD
+  ------------------------- */
+
+  function buildEquation(){
+
+    const parsed =
+      parseEquation(
+        equationInput.value
+      );
+
+    if(!parsed){
+
+      feedback.textContent =
+        "USE ONE VARIABLE LETTER. TRY 5m - 5 = 20 OR a/4 + 3 = 7.";
+
+      return;
+    }
+
+    variable =
+      parsed.variable;
+
+    solution =
+      parsed.solution;
+
+    state = {
+
+      leftCoefficient:
+        parsed.leftCoefficient,
+
+      leftConstant:
+        parsed.leftConstant,
+
+      rightCoefficient:
+        parsed.rightCoefficient,
+
+      rightConstant:
+        parsed.rightConstant
+    };
+
+    initialState = {
+      ...state
+    };
+
+    snapshots = [];
+
+    workingSteps = [];
+
+    showValue = false;
+
+    animating = false;
+
+    leftOperation.value = "";
+
+    rightOperation.value = "";
+
+    feedback.textContent =
+      "MAKE A MOVE.";
+
+    render();
+  }
+
+  /* -------------------------
+     UNDO / RESET
+  ------------------------- */
+
+  function undo(){
+
+    if(
+      animating ||
+      snapshots.length === 0
+    ){
+      return;
+    }
+
+    const previous =
+      snapshots.pop();
+
+    state = {
+      ...previous.state
+    };
+
+    workingSteps =
+      JSON.parse(
+        JSON.stringify(
+          previous.workingSteps
+        )
+      );
+
+    feedback.textContent =
+      "LAST MOVE UNDONE.";
+
+    render();
+  }
+
+  function reset(){
+
+    if(animating){
+      return;
+    }
+
+    state = {
+      ...initialState
+    };
+
+    snapshots = [];
+
+    workingSteps = [];
+
+    showValue = false;
+
+    leftOperation.value = "";
+
+    rightOperation.value = "";
+
+    feedback.textContent =
+      "RESET.";
+
+    render();
+  }
+
+  /* -------------------------
+     HELP
+  ------------------------- */
+
+  function openHelp(){
+
+    helpOpener =
+      document.activeElement;
+
+    helpOverlay
+      .classList
+      .remove("hidden");
+
+    closeHelp.focus();
+  }
+
+  function closeHelpPanel(){
+
+    helpOverlay
+      .classList
+      .add("hidden");
+
+    if(
+      helpOpener &&
+      typeof helpOpener.focus ===
+        "function"
+    ){
+      helpOpener.focus();
+    }
+  }
+
+  function trapDialogFocus(event){
+
+    if(
+      helpOverlay
+        .classList
+        .contains("hidden")
+    ){
+      return;
+    }
+
+    if(event.key === "Escape"){
+
+      event.preventDefault();
+
+      closeHelpPanel();
+
+      return;
+    }
+
+    if(event.key !== "Tab"){
+      return;
+    }
+
+    const focusable = [
+      ...helpOverlay
+        .querySelectorAll(
+          "button,input,[href],[tabindex]:not([tabindex='-1'])"
+        )
+    ].filter(
+      element =>
+        !element.disabled
+    );
+
+    if(
+      focusable.length === 0
+    ){
+      return;
+    }
+
+    const first =
+      focusable[0];
+
+    const last =
+      focusable[
+        focusable.length - 1
+      ];
+
+    if(
+      event.shiftKey &&
+      document.activeElement ===
+        first
+    ){
+
+      event.preventDefault();
+
+      last.focus();
+    }
+
+    else if(
+      !event.shiftKey &&
+      document.activeElement ===
+        last
+    ){
+
+      event.preventDefault();
+
+      first.focus();
+    }
+  }
+
+  /* -------------------------
+     EVENTS
+  ------------------------- */
+
+  equationForm
+    .addEventListener(
+      "submit",
+      event => {
+
+        event.preventDefault();
+
+        buildEquation();
+      }
+    );
+
+  leftApply
+    .addEventListener(
+      "click",
+      () => {
+
+        applyOperation(
+          "left",
+          leftOperation.value
+        );
+
+        leftOperation.select();
+      }
+    );
+
+  rightApply
+    .addEventListener(
+      "click",
+      () => {
+
+        applyOperation(
+          "right",
+          rightOperation.value
+        );
+
+        rightOperation.select();
+      }
+    );
+
+  leftOperation
+    .addEventListener(
+      "keydown",
+      event => {
+
+        if(event.key === "Enter"){
+
+          event.preventDefault();
+
+          leftApply.click();
+        }
+      }
+    );
+
+  rightOperation
+    .addEventListener(
+      "keydown",
+      event => {
+
+        if(event.key === "Enter"){
+
+          event.preventDefault();
+
+          rightApply.click();
+        }
+      }
+    );
+
+  variableViewBtn
+    .addEventListener(
+      "click",
+      () => {
+
+        showValue = false;
+
+        render();
+      }
+    );
+
+  valueViewBtn
+    .addEventListener(
+      "click",
+      () => {
+
+        showValue = true;
+
+        render();
+      }
+    );
+
+  workingBtn
+    .addEventListener(
+      "click",
+      () => {
+
+        showWorking =
+          !showWorking;
+
+        render();
+      }
+    );
+
+  undoBtn
+    .addEventListener(
+      "click",
+      undo
+    );
+
+  resetBtn
+    .addEventListener(
+      "click",
+      reset
+    );
+
+  helpBtn
+    .addEventListener(
+      "click",
+      openHelp
+    );
+
+  closeHelp
+    .addEventListener(
+      "click",
+      closeHelpPanel
+    );
+
+  helpOverlay
+    .addEventListener(
+      "mousedown",
+      event => {
+
+        if(
+          event.target ===
+          helpOverlay
+        ){
+          closeHelpPanel();
+        }
+      }
+    );
+
+  document
+    .addEventListener(
+      "keydown",
+      trapDialogFocus
+    );
+
+  fullscreenBtn
+    .addEventListener(
+      "click",
+      async () => {
+
+        try{
+
+          if(
+            !document.fullscreenElement
+          ){
+
+            await document
+              .documentElement
+              .requestFullscreen();
+          }
+
+          else{
+
+            await document
+              .exitFullscreen();
+          }
+        }
+
+        catch(error){
+
+          feedback.textContent =
+            "FULLSCREEN IS NOT AVAILABLE IN THIS BROWSER.";
+        }
+      }
+    );
+
+  buildEquation();
+
+})();
+</script>
+
+</body>
+</html>

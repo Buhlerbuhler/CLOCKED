@@ -11,7 +11,7 @@
 
   <style>
     :root {
-      --bg: #00AEE1;
+      --bg: #7ae0ff;
       --text: #000000;
       --muted: rgba(0,0,0,.6);
       --line: rgba(0,0,0,.35);
@@ -245,8 +245,7 @@
       padding: 1.5rem 1rem 0;
     }
 
-    .balanced-top button,
-    .balanced-top input {
+    .balanced-top button {
       border: none;
       background: var(--text);
       color: var(--bg);
@@ -257,10 +256,46 @@
       border-radius: 4px;
     }
 
-    .balanced-top input {
-      width: min(340px, 52vw);
+    .equation-builder {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: .45rem;
+      margin: 1rem auto 1.05rem;
+      width: min(560px, 92%);
+    }
+
+    .equation-builder input {
+      width: min(420px, 100%);
+      min-height: 42px;
+      border: 2px solid var(--text);
+      background: transparent;
+      color: var(--text);
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      padding: .55rem .7rem;
+      border-radius: 5px;
       text-align: center;
       text-transform: none;
+      outline: none;
+    }
+
+    .equation-builder input:focus,
+    .operation-row input:focus {
+      box-shadow: 0 0 0 2px var(--text);
+    }
+
+    .equation-builder button {
+      border: none;
+      background: var(--text);
+      color: var(--bg);
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      padding: .42rem .58rem;
+      border-radius: 4px;
+      min-height: 42px;
     }
 
     .balanced-wrap {
@@ -425,7 +460,21 @@
       gap: .35rem;
     }
 
-    .operation-row input,
+    .operation-row input {
+      border: 2px solid var(--text);
+      background: transparent;
+      color: var(--text);
+      font-size: .9rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      padding: .52rem .65rem;
+      border-radius: 5px;
+      min-height: 42px;
+      text-align: center;
+      text-transform: none;
+      outline: none;
+    }
+
     .operation-row button {
       border: none;
       background: var(--text);
@@ -433,10 +482,10 @@
       font-size: .72rem;
       font-weight: 800;
       letter-spacing: .03em;
-      padding: .35rem .45rem;
+      padding: .35rem .5rem;
       border-radius: 4px;
+      min-height: 42px;
     }
-    .operation-row input { text-align: center; text-transform: none; }
 
     .working-panel {
       display: none;
@@ -537,8 +586,9 @@
       #help-button { font-size:.84rem; }
       .theme-panel { top:2.35rem; right:.6rem; max-width:calc(100vw - 1.2rem); }
       .balanced-top { min-height:2rem; padding:2.7rem .65rem 0; gap:.28rem; }
-      .balanced-top button,.balanced-top input { font-size:.66rem; padding:.18rem .32rem; }
-      .balanced-top input { width:min(280px,64vw); }
+      .balanced-top button { font-size:.66rem; padding:.18rem .32rem; }
+      .equation-builder { margin:.85rem auto .8rem; width:min(470px,94%); }
+      .equation-builder input { font-size:16px; min-height:44px; }
       .balanced-wrap { padding:.5rem .6rem; align-items:flex-start; }
       .balanced-layout.working-on { grid-template-columns:1fr; }
       .working-panel { border-left:0; border-top:1px solid var(--line); padding-left:0; padding-top:.85rem; max-height:32vh; }
@@ -594,7 +644,7 @@
 
   <div id="theme-panel" class="theme-panel hidden">
     <label for="theme-color">BACKGROUND</label>
-    <input id="theme-color" type="color" value="#00AEE1" />
+    <input id="theme-color" type="color" value="#7ae0ff" />
     <button id="theme-reset">DEFAULT</button>
   </div>
 
@@ -625,8 +675,6 @@
 
   <section id="balanced-tool" class="tool-view">
     <div class="balanced-top">
-      <input id="equation-input" value="5m - 5 = 20" aria-label="Equation" autocomplete="off" spellcheck="false" />
-      <button id="build-button" type="button">BUILD</button>
       <button id="variable-button" type="button">VARIABLE</button>
       <button id="value-button" type="button">VALUE</button>
       <button id="working-button" type="button">WORKING</button>
@@ -635,6 +683,10 @@
     <main class="balanced-wrap">
       <div id="balanced-layout" class="balanced-layout">
         <div class="scale-side">
+          <div class="equation-builder">
+            <input id="equation-input" value="5m - 5 = 20" aria-label="Equation" autocomplete="off" spellcheck="false" />
+            <button id="build-button" type="button">BUILD</button>
+          </div>
           <div id="equation-goal" class="equation-goal">GET M BY ITSELF</div>
           <div id="equation-display">5M − 5 = 20</div>
           <div id="balance-status">BALANCED</div>
@@ -733,9 +785,10 @@
     helpOverlay.addEventListener("click",e=>{ if(e.target===helpOverlay) closeHelp(); });
     themeButton.addEventListener("click",()=>{ closeHelp(); themePanel.classList.toggle("hidden"); });
     themeColor.addEventListener("input",()=>applyTheme(themeColor.value));
-    themeReset.addEventListener("click",()=>applyTheme("#00AEE1"));
+    themeReset.addEventListener("click",()=>applyTheme("#7ae0ff"));
     document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeHelp(); themePanel.classList.add("hidden"); } });
-    applyTheme(localStorage.getItem(STORAGE.theme) || "#00AEE1");
+    const savedTheme = localStorage.getItem(STORAGE.theme);
+    applyTheme(!savedTheme || savedTheme.toLowerCase() === "#00aee1" ? "#7ae0ff" : savedTheme);
 
     const equationInput = document.getElementById("equation-input");
     const buildButton = document.getElementById("build-button");

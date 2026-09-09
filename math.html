@@ -663,10 +663,6 @@
         <div class="help-copy">Use <strong>+5</strong>, <strong>-5</strong>, <strong>/5</strong>, or <strong>*5</strong>. Any single letter can be used as the variable.</div>
       </section>
       <section class="overlay-section">
-        <h3>VALUE</h3>
-        <div class="help-copy">VALUE reveals what the variable is worth. Whole-number coefficients stay grouped visually, so 5m becomes five equal value tiles rather than one combined total.</div>
-      </section>
-      <section class="overlay-section">
         <h3>WORKING</h3>
         <div class="help-copy">WORKING opens notebook-style algebra beside the scale. Cancelled constants, coefficients, denominators, and inverse operations are crossed out directly on the current line.</div>
       </section>
@@ -675,8 +671,6 @@
 
   <section id="balanced-tool" class="tool-view">
     <div class="balanced-top">
-      <button id="variable-button" type="button">VARIABLE</button>
-      <button id="value-button" type="button">VALUE</button>
       <button id="working-button" type="button">WORKING</button>
     </div>
 
@@ -792,8 +786,6 @@
 
     const equationInput = document.getElementById("equation-input");
     const buildButton = document.getElementById("build-button");
-    const variableButton = document.getElementById("variable-button");
-    const valueButton = document.getElementById("value-button");
     const workingButton = document.getElementById("working-button");
     const layout = document.getElementById("balanced-layout");
     const equationGoal = document.getElementById("equation-goal");
@@ -944,10 +936,6 @@
     function render(){
       equationDisplay.innerHTML=sideHTML(state.leftCoefficient,state.leftConstant)+" = "+sideHTML(state.rightCoefficient,state.rightConstant);
       equationGoal.textContent="GET "+variable+" BY ITSELF";
-      variableButton.style.background=showValue?"var(--text)":"var(--bg)";
-      variableButton.style.color=showValue?"var(--bg)":"var(--text)";
-      valueButton.style.background=showValue?"var(--bg)":"var(--text)";
-      valueButton.style.color=showValue?"var(--text)":"var(--bg)";
       workingButton.style.background=showWorking?"var(--bg)":"var(--text)";
       workingButton.style.color=showWorking?"var(--text)":"var(--bg)";
       layout.classList.toggle("working-on",showWorking);
@@ -988,6 +976,8 @@
       const m=normalized.match(/^([+\-/*])\s*(\d+(?:\.\d+)?)$/);
       if(!m){feedback.textContent="USE +, −, / OR *.";return;}
       const symbol=m[1],number=Number(m[2]); if(!Number.isFinite(number)||number<=0)return;
+      if(side==="left") leftOperation.value="";
+      else rightOperation.value="";
       snapshot(); animating=true;
       const before={...state},ck=side==="left"?"leftCoefficient":"rightCoefficient",kk=side==="left"?"leftConstant":"rightConstant",op=operationText(symbol,number);
       function commit(){
@@ -1019,11 +1009,9 @@
 
     buildButton.addEventListener("click",buildEquation);
     equationInput.addEventListener("keydown",e=>{ if(e.key==="Enter"){e.preventDefault();buildEquation();} });
-    variableButton.addEventListener("click",()=>{showValue=false;render();});
-    valueButton.addEventListener("click",()=>{showValue=true;render();});
     workingButton.addEventListener("click",()=>{showWorking=!showWorking;render();});
-    leftApply.addEventListener("click",()=>{applyOperation("left",leftOperation.value);leftOperation.select();});
-    rightApply.addEventListener("click",()=>{applyOperation("right",rightOperation.value);rightOperation.select();});
+    leftApply.addEventListener("click",()=>{applyOperation("left",leftOperation.value);});
+    rightApply.addEventListener("click",()=>{applyOperation("right",rightOperation.value);});
     leftOperation.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();leftApply.click();}});
     rightOperation.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();rightApply.click();}});
     undoButton.addEventListener("click",undo);

@@ -506,9 +506,8 @@
       color: var(--muted);
     }
 
-    .paper-stack { display: grid; gap: .8rem; }
-    .paper-step { padding-bottom: .65rem; border-bottom: 1px solid var(--soft-line); }
-    .paper-step:last-child { border-bottom: none; }
+    .paper-stack { display: grid; gap: .55rem; }
+    .paper-step { padding-bottom: .15rem; }
 
     .paper-equation,
     .paper-ops,
@@ -791,6 +790,7 @@
     const equationGoal = document.getElementById("equation-goal");
     const equationDisplay = document.getElementById("equation-display");
     const balanceStatus = document.getElementById("balance-status");
+    const scaleStage = document.querySelector(".scale-stage");
     const beam = document.getElementById("beam");
     const leftRope = document.getElementById("left-rope");
     const rightRope = document.getElementById("right-rope");
@@ -890,13 +890,41 @@
       if(Math.abs(c)<1e-10&&Math.abs(k)<1e-10) piece(parent,"0");
     }
     function renderScale(){
-      const diff=leftValue()-rightValue(),angle=Math.max(-11,Math.min(11,diff*1.2));
-      beam.style.transform=`rotate(${angle}deg)`;
-      leftPan.style.transform=`translateY(${angle*2.2}px)`;
-      rightPan.style.transform=`translateY(${-angle*2.2}px)`;
-      leftRope.style.transform=`translateY(${angle*1.8}px)`;
-      rightRope.style.transform=`translateY(${-angle*1.8}px)`;
-      balanceStatus.textContent=balanced()?"BALANCED":"NOT BALANCED";
+      const diff = leftValue() - rightValue();
+      const angle = Math.max(-11, Math.min(11, diff * 1.2));
+      const radians = angle * Math.PI / 180;
+
+      beam.style.transform = `rotate(${angle}deg)`;
+
+      /*
+        Keep each hanging line attached to the rotating beam.
+        The old version moved the pans/ropes by a rough amount based only
+        on the angle, so the beam could rotate away from the rope tops.
+        Here we calculate the actual rotated position of each attachment
+        point around the beam's centre. The rope and its pan then move by
+        that same x/y offset, so the rope remains vertical and connected.
+      */
+      const stageWidth = scaleStage.clientWidth;
+      const centreX = stageWidth / 2;
+
+      function attachmentOffset(rope){
+        const ropeX = rope.offsetLeft + rope.offsetWidth / 2;
+        const dx = ropeX - centreX;
+        return {
+          x: dx * (Math.cos(radians) - 1),
+          y: dx * Math.sin(radians)
+        };
+      }
+
+      const leftOffset = attachmentOffset(leftRope);
+      const rightOffset = attachmentOffset(rightRope);
+
+      leftRope.style.transform = `translate(${leftOffset.x}px, ${leftOffset.y}px)`;
+      rightRope.style.transform = `translate(${rightOffset.x}px, ${rightOffset.y}px)`;
+      leftPan.style.transform = `translate(${leftOffset.x}px, ${leftOffset.y}px)`;
+      rightPan.style.transform = `translate(${rightOffset.x}px, ${rightOffset.y}px)`;
+
+      balanceStatus.textContent = balanced() ? "BALANCED" : "NOT BALANCED";
     }
 
     function strikeHTML(text){ return `<span class="strike">${text}</span>`; }
@@ -918,19 +946,47 @@
     }
     function renderWorking(){
       paperStack.innerHTML="";
+
       if(!paperSteps.length){
-        const first=document.createElement("div"); first.className="paper-step";
+        const first=document.createElement("div");
+        first.className="paper-step";
         first.innerHTML=`<div class="paper-equation"><div class="paper-left">${plainSide(initialState.leftCoefficient,initialState.leftConstant)}</div><div class="paper-equals">=</div><div class="paper-right">${plainSide(initialState.rightCoefficient,initialState.rightConstant)}</div></div>`;
-        paperStack.appendChild(first); return;
+        paperStack.appendChild(first);
+        return;
       }
+
+      // Each equation is written once. The next operation is applied directly
+      // to the previous result line instead of repeating that equation.
       paperSteps.forEach(step=>{
-        const block=document.createElement("div"); block.className="paper-step";
-        let l=step.leftOperation||"",r=step.rightOperation||"";
-        if(step.cancelOperationSide==="left"&&l)l=strikeHTML(l);
-        if(step.cancelOperationSide==="right"&&r)r=strikeHTML(r);
-        block.innerHTML=`<div class="paper-equation"><div class="paper-left">${workingSideHTML(step.before.leftCoefficient,step.before.leftConstant,"left",step)}</div><div class="paper-equals">=</div><div class="paper-right">${workingSideHTML(step.before.rightCoefficient,step.before.rightConstant,"right",step)}</div></div><div class="paper-ops"><div class="paper-left">${l}</div><div class="paper-equals">=</div><div class="paper-right">${r}</div></div><div class="paper-result"><div class="paper-left">${plainSide(step.after.leftCoefficient,step.after.leftConstant)}</div><div class="paper-equals">=</div><div class="paper-right">${plainSide(step.after.rightCoefficient,step.after.rightConstant)}</div></div>`;
+        const block=document.createElement("div");
+        block.className="paper-step";
+
+        let l=step.leftOperation||"";
+        let r=step.rightOperation||"";
+        if(step.cancelOperationSide==="left"&&l) l=strikeHTML(l);
+        if(step.cancelOperationSide==="right"&&r) r=strikeHTML(r);
+
+        block.innerHTML=`
+          <div class="paper-equation">
+            <div class="paper-left">${workingSideHTML(step.before.leftCoefficient,step.before.leftConstant,"left",step)}</div>
+            <div class="paper-equals">=</div>
+            <div class="paper-right">${workingSideHTML(step.before.rightCoefficient,step.before.rightConstant,"right",step)}</div>
+          </div>
+          <div class="paper-ops">
+            <div class="paper-left">${l}</div>
+            <div class="paper-equals">=</div>
+            <div class="paper-right">${r}</div>
+          </div>`;
+
         paperStack.appendChild(block);
       });
+
+      // Only the final simplified equation is added as a fresh line.
+      const last=paperSteps[paperSteps.length-1];
+      const result=document.createElement("div");
+      result.className="paper-step";
+      result.innerHTML=`<div class="paper-result"><div class="paper-left">${plainSide(last.after.leftCoefficient,last.after.leftConstant)}</div><div class="paper-equals">=</div><div class="paper-right">${plainSide(last.after.rightCoefficient,last.after.rightConstant)}</div></div>`;
+      paperStack.appendChild(result);
     }
 
     function render(){
@@ -1016,6 +1072,10 @@
     rightOperation.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();rightApply.click();}});
     undoButton.addEventListener("click",undo);
     resetButton.addEventListener("click",reset);
+
+    window.addEventListener("resize", () => {
+      if (state) renderScale();
+    });
 
     buildEquation();
   </script>

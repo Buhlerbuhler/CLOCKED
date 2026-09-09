@@ -126,211 +126,73 @@
       opacity: .45;
     }
 
-
-    /* SITE MENU */
-
-    function openSiteMenu(opener = document.activeElement) {
-      closeHelp();
-      closeEditor();
-
-      menuReturnFocus = opener;
-      siteMenu.classList.remove("hidden");
-      siteMenu.setAttribute("aria-hidden", "false");
-      menuButton.setAttribute("aria-expanded", "true");
-
-      setTimeout(() => siteMenuClose.focus(), 0);
-    }
-
-    function closeSiteMenu(returnFocus = true) {
-      if (siteMenu.classList.contains("hidden")) return;
-
-      siteMenu.classList.add("hidden");
-      siteMenu.setAttribute("aria-hidden", "true");
-      menuButton.setAttribute("aria-expanded", "false");
-
-      if (returnFocus && menuReturnFocus && typeof menuReturnFocus.focus === "function") {
-        menuReturnFocus.focus();
-      }
-    }
-
-    menuButton.addEventListener("click", event => {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (siteMenu.classList.contains("hidden")) {
-        openSiteMenu(menuButton);
-      } else {
-        closeSiteMenu();
-      }
-    });
-
-    siteMenuClose.addEventListener("click", event => {
-      event.preventDefault();
-      closeSiteMenu();
-    });
-
-    siteMenu.addEventListener("click", event => {
-      if (event.target === siteMenu) closeSiteMenu();
-    });
-
-    /* THEME */
-
-    .theme-panel {
-      display: none !important;
-      position: fixed;
-      top: 2.9rem;
-      right: 1rem;
-      z-index: 6000;
-      display: flex;
-      align-items: center;
-      gap: .45rem;
-      padding: .4rem;
-      background: var(--text);
-      color: var(--bg);
-      border-radius: 5px;
-    }
-
-    .theme-panel label {
-      font-size: .68rem;
-      font-weight: 800;
-    }
-
-    #theme-color {
-      width: 26px;
-      height: 20px;
-      padding: 0;
-      border: none;
-      background: transparent;
-    }
-
-    #theme-reset {
-      border: none;
-      padding: .15rem .3rem;
-      background: var(--bg);
-      color: var(--text);
-      border-radius: 3px;
-      font-size: .66rem;
-      font-weight: 800;
-    }
-
-
     /* SITE MENU */
 
     .menu-button {
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       line-height: 1;
-      letter-spacing: 0;
-      padding: .18rem .34rem;
+      padding: .14rem .34rem;
+      min-width: 2rem;
     }
 
     .site-menu {
       position: fixed;
-      inset: 0;
-      z-index: 9000;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(5px);
-    }
-
-    .site-menu.hidden {
-      display: none !important;
-    }
-
-    .site-menu-inner {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: min(360px, 88vw);
-      height: 100%;
-      padding: 1rem;
-      background: var(--bg);
-      color: var(--text);
-      border-left: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      overflow-y: auto;
-    }
-
-    .site-menu-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .site-menu-title {
-      font-size: .82rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-    }
-
-    .site-menu-close {
-      border: none;
-      background: transparent;
-      color: var(--text);
-      font-size: .72rem;
-      font-weight: 800;
-      padding: .25rem;
+      top: 3rem;
+      right: 1rem;
+      z-index: 7000;
+      width: min(280px, calc(100vw - 2rem));
+      padding: .55rem;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 7px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
     }
 
     .site-menu-links {
       display: flex;
       flex-direction: column;
-      gap: .28rem;
+      gap: .12rem;
     }
 
     .site-menu-link {
       display: block;
-      width: 100%;
-      padding: .55rem .6rem;
-      border-radius: 4px;
-      color: var(--text);
+      padding: .48rem .55rem;
+      color: var(--bg);
       text-decoration: none;
-      font-size: .78rem;
+      border-radius: 4px;
+      font-size: .72rem;
       font-weight: 800;
-      letter-spacing: .04em;
+      letter-spacing: .035em;
     }
 
     .site-menu-link:hover,
-    .site-menu-link:focus-visible {
-      background: var(--text);
-      color: var(--bg);
-      outline: none;
-      opacity: 1;
-    }
-
+    .site-menu-link:focus-visible,
     .site-menu-link.active {
-      background: var(--text);
-      color: var(--bg);
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
     }
 
-    .site-menu-section {
-      margin-top: auto;
-      padding-top: 1rem;
-      border-top: 1px solid var(--soft-line);
+    .site-menu-divider {
+      height: 1px;
+      margin: .45rem .2rem;
+      background: color-mix(in srgb, var(--bg) 30%, transparent);
     }
 
-    .site-menu-section-title {
-      margin-bottom: .65rem;
-      font-size: .68rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-      color: var(--muted);
-    }
-
-    .site-menu-theme-row {
+    .site-menu-theme {
       display: flex;
       align-items: center;
-      gap: .55rem;
-      flex-wrap: wrap;
+      gap: .45rem;
+      padding: .15rem .2rem;
     }
 
-    .site-menu-theme-row label {
+    .site-menu-theme label {
+      margin-right: auto;
       font-size: .68rem;
       font-weight: 800;
     }
 
-    #menu-theme-color {
+    #theme-color {
       width: 30px;
       height: 24px;
       padding: 0;
@@ -338,12 +200,12 @@
       background: transparent;
     }
 
-    #menu-theme-reset {
+    #theme-reset {
       border: none;
-      background: var(--text);
-      color: var(--bg);
-      border-radius: 4px;
-      padding: .25rem .42rem;
+      padding: .22rem .34rem;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 3px;
       font-size: .66rem;
       font-weight: 800;
     }
@@ -875,20 +737,28 @@
     }
 
     @media (max-width: 700px) {
-      .site-menu-inner {
-        width: min(340px, 92vw);
-        padding: .8rem;
+      .menu-button {
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
+      }
+
+      .site-menu {
+        top: 3.6rem;
+        right: .65rem;
+        width: min(300px, calc(100vw - 1.3rem));
       }
 
       .site-menu-link,
-      .site-menu-close,
-      #menu-theme-reset,
-      .menu-button {
+      #theme-reset {
         min-height: 42px;
         display: flex;
         align-items: center;
       }
 
+      .site-menu-theme {
+        min-height: 44px;
+      }
 
       body {
         overflow: hidden;
@@ -1197,46 +1067,38 @@
   </nav>
 
   <div class="utility-nav">
+    <span id="name-skip-indicator" aria-hidden="true">🦅</span>
     <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
-    <button id="menu-button" class="utility-button menu-button"
-      aria-label="Open site menu" aria-expanded="false"
-      aria-controls="site-menu" title="Menu">
-      <span aria-hidden="true">☰</span>
-    </button>
+    <button
+      id="menu-button"
+      class="utility-button menu-button"
+      aria-label="Open site menu"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      title="Menu"
+    >☰</button>
   </div>
 
-  <div id="theme-panel" class="theme-panel hidden">
-    <label for="theme-color">BACKGROUND</label>
-    <input id="theme-color" type="color" value="#fed500" />
-    <button id="theme-reset">DEFAULT</button>
-  </div>
+  <div id="status-toast" class="status-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
   <div id="site-menu" class="site-menu hidden" aria-hidden="true">
-    <div class="site-menu-inner">
-      <div class="site-menu-header">
-        <div class="site-menu-title">CLOCKED</div>
-        <button id="site-menu-close" class="site-menu-close" aria-label="Close site menu">CLOSE</button>
-      </div>
+    <nav class="site-menu-links" aria-label="CLOCKED sections">
+      <a class="site-menu-link active" href="/">CLASS TOOLS</a>
+      <a class="site-menu-link" href="/math/">MATH TOOLS</a>
+      <a class="site-menu-link" href="/geography/">GEOGRAPHY TOOLS</a>
+      <a class="site-menu-link" href="/ela/">ELA TOOLS</a>
+      <a class="site-menu-link" href="/social/">SOCIAL STUDIES</a>
+      <a class="site-menu-link" href="/health/">HEALTH</a>
+    </nav>
 
-      <nav class="site-menu-links" aria-label="CLOCKED sections">
-        <a href="/" class="site-menu-link active">CLASS TOOLS</a>
-        <a href="/math/" class="site-menu-link">MATH TOOLS</a>
-        <a href="/geography/" class="site-menu-link">GEOGRAPHY TOOLS</a>
-        <a href="/ela/" class="site-menu-link">ELA TOOLS</a>
-        <a href="/social/" class="site-menu-link">SOCIAL STUDIES</a>
-        <a href="/health/" class="site-menu-link">HEALTH</a>
-      </nav>
+    <div class="site-menu-divider"></div>
 
-      <div class="site-menu-section">
-        <div class="site-menu-section-title">THEME</div>
-        <div class="site-menu-theme-row">
-          <label for="menu-theme-color">BACKGROUND</label>
-          <input id="menu-theme-color" type="color" value="#fed500" />
-          <button id="menu-theme-reset">DEFAULT</button>
-        </div>
-      </div>
+    <div class="site-menu-theme">
+      <label for="theme-color">THEME</label>
+      <input id="theme-color" type="color" value="#fed500" aria-label="Theme background color" />
+      <button id="theme-reset">DEFAULT</button>
     </div>
   </div>
-
 
   <!-- HELP -->
 
@@ -1632,17 +1494,10 @@
     const timerEditorContent = document.getElementById("timer-editor-content");
     const classEditorContent = document.getElementById("class-editor-content");
 
-    const themeButton = document.getElementById("theme-button");
-    const themePanel = document.getElementById("theme-panel");
-    const themeColor = document.getElementById("theme-color");
-    const themeReset = document.getElementById("theme-reset");
-
     const menuButton = document.getElementById("menu-button");
     const siteMenu = document.getElementById("site-menu");
-    const siteMenuClose = document.getElementById("site-menu-close");
-    const menuThemeColor = document.getElementById("menu-theme-color");
-    const menuThemeReset = document.getElementById("menu-theme-reset");
-    let menuReturnFocus = null;
+    const themeColor = document.getElementById("theme-color");
+    const themeReset = document.getElementById("theme-reset");
     const statusToast = document.getElementById("status-toast");
 
     let dialogReturnFocus = null;
@@ -1805,14 +1660,40 @@
       );
 
       themeColor.value = color;
-      if (menuThemeColor) menuThemeColor.value = color;
       localStorage.setItem(STORAGE.theme, color);
     }
 
-    themeButton.addEventListener("click", () => {
+    menuButton.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+
       closeHelp();
       closeEditor();
-      themePanel.classList.toggle("hidden");
+
+      const opening = siteMenu.classList.contains("hidden");
+      siteMenu.classList.toggle("hidden");
+
+      siteMenu.setAttribute(
+        "aria-hidden",
+        opening ? "false" : "true"
+      );
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        opening ? "true" : "false"
+      );
+    });
+
+    document.addEventListener("click", event => {
+      if (
+        !siteMenu.classList.contains("hidden") &&
+        !siteMenu.contains(event.target) &&
+        event.target !== menuButton
+      ) {
+        siteMenu.classList.add("hidden");
+        siteMenu.setAttribute("aria-hidden", "true");
+        menuButton.setAttribute("aria-expanded", "false");
+      }
     });
 
     themeColor.addEventListener("input", () => {
@@ -1820,14 +1701,6 @@
     });
 
     themeReset.addEventListener("click", () => {
-      applyTheme("#fed500");
-    });
-
-    menuThemeColor.addEventListener("input", () => {
-      applyTheme(menuThemeColor.value);
-    });
-
-    menuThemeReset.addEventListener("click", () => {
       applyTheme("#fed500");
     });
 
@@ -3105,16 +2978,16 @@
       "keydown",
       event => {
         if (event.key === "Escape") {
-          if (!siteMenu.classList.contains("hidden")) {
-            closeSiteMenu();
-          } else {
-            closeAllOverlays();
-          }
+          closeAllOverlays();
           return;
         }
 
         if (activeDialogOverlay) {
           trapDialogTab(event);
+          return;
+        }
+
+        if (!siteMenu.classList.contains("hidden")) {
           return;
         }
 
@@ -3195,30 +3068,6 @@
         }
       }
     );
-
-
-    siteMenu.addEventListener("keydown", event => {
-      if (event.key !== "Tab") return;
-
-      const focusables = [
-        ...siteMenu.querySelectorAll(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-      ].filter(el => !el.hidden && el.offsetParent !== null);
-
-      if (!focusables.length) return;
-
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    });
 
     /* INITIALIZE */
 

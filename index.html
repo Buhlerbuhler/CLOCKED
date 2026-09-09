@@ -126,9 +126,49 @@
       opacity: .45;
     }
 
+
+    /* SITE MENU */
+
+    function openSiteMenu(opener = document.activeElement) {
+      closeHelp();
+      closeEditor();
+
+      menuReturnFocus = opener;
+      siteMenu.classList.remove("hidden");
+      siteMenu.setAttribute("aria-hidden", "false");
+      menuButton.setAttribute("aria-expanded", "true");
+
+      setTimeout(() => siteMenuClose.focus(), 0);
+    }
+
+    function closeSiteMenu(returnFocus = true) {
+      if (siteMenu.classList.contains("hidden")) return;
+
+      siteMenu.classList.add("hidden");
+      siteMenu.setAttribute("aria-hidden", "true");
+      menuButton.setAttribute("aria-expanded", "false");
+
+      if (returnFocus && menuReturnFocus && typeof menuReturnFocus.focus === "function") {
+        menuReturnFocus.focus();
+      }
+    }
+
+    menuButton.addEventListener("click", () => {
+      siteMenu.classList.contains("hidden")
+        ? openSiteMenu(menuButton)
+        : closeSiteMenu();
+    });
+
+    siteMenuClose.addEventListener("click", () => closeSiteMenu());
+
+    siteMenu.addEventListener("click", event => {
+      if (event.target === siteMenu) closeSiteMenu();
+    });
+
     /* THEME */
 
     .theme-panel {
+      display: none !important;
       position: fixed;
       top: 2.9rem;
       right: 1rem;
@@ -161,6 +201,136 @@
       background: var(--bg);
       color: var(--text);
       border-radius: 3px;
+      font-size: .66rem;
+      font-weight: 800;
+    }
+
+
+    /* SITE MENU */
+
+    .menu-button {
+      font-size: 1rem;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .site-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(5px);
+    }
+
+    .site-menu-inner {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: min(360px, 88vw);
+      height: 100%;
+      padding: 1rem;
+      background: var(--bg);
+      color: var(--text);
+      border-left: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .site-menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .site-menu-title {
+      font-size: .82rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .site-menu-close {
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-size: .72rem;
+      font-weight: 800;
+      padding: .25rem;
+    }
+
+    .site-menu-links {
+      display: flex;
+      flex-direction: column;
+      gap: .28rem;
+    }
+
+    .site-menu-link {
+      display: block;
+      width: 100%;
+      padding: .55rem .6rem;
+      border-radius: 4px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .site-menu-link:hover,
+    .site-menu-link:focus-visible {
+      background: var(--text);
+      color: var(--bg);
+      outline: none;
+      opacity: 1;
+    }
+
+    .site-menu-link.active {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .site-menu-section {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--soft-line);
+    }
+
+    .site-menu-section-title {
+      margin-bottom: .65rem;
+      font-size: .68rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+
+    .site-menu-theme-row {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      flex-wrap: wrap;
+    }
+
+    .site-menu-theme-row label {
+      font-size: .68rem;
+      font-weight: 800;
+    }
+
+    #menu-theme-color {
+      width: 30px;
+      height: 24px;
+      padding: 0;
+      border: none;
+      background: transparent;
+    }
+
+    #menu-theme-reset {
+      border: none;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 4px;
+      padding: .25rem .42rem;
       font-size: .66rem;
       font-weight: 800;
     }
@@ -318,6 +488,78 @@
       font-weight: 800;
     }
 
+
+    /* TOUCH / ACCESSIBILITY ENHANCEMENTS */
+
+    .compact-action {
+      border: none;
+      background: var(--text);
+      color: var(--bg);
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      padding: .2rem .38rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .compact-action.hidden-control {
+      display: none;
+    }
+
+    .status-toast {
+      position: fixed;
+      top: 3.1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9000;
+      background: var(--text);
+      color: var(--bg);
+      padding: .28rem .5rem;
+      border-radius: 4px;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .12s ease;
+      white-space: nowrap;
+    }
+
+    .status-toast.show {
+      opacity: 1;
+    }
+
+    .empty-edit-button {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      font-weight: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .empty-edit-button:hover {
+      opacity: .8;
+    }
+
+    .touch-empty-text {
+      display: none;
+    }
+
+    .dialog-open .tool-nav,
+    .dialog-open .utility-nav,
+    .dialog-open .theme-panel,
+    .dialog-open .tool-view,
+    .dialog-open .brand-mark {
+      pointer-events: none;
+    }
+
     /* TOOL VIEWS */
 
     .tool-view {
@@ -447,6 +689,10 @@
       align-items: center;
       gap: .45rem;
       flex-wrap: wrap;
+    }
+
+    .names-controls {
+      row-gap: .3rem;
     }
 
     .class-controls label,
@@ -616,6 +862,21 @@
     }
 
     @media (max-width: 700px) {
+      .site-menu-inner {
+        width: min(340px, 92vw);
+        padding: .8rem;
+      }
+
+      .site-menu-link,
+      .site-menu-close,
+      #menu-theme-reset,
+      .menu-button {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+      }
+
+
       body {
         overflow: hidden;
       }
@@ -860,6 +1121,52 @@
       }
     }
 
+
+    @media (pointer: coarse), (max-width: 700px) {
+      .tool-tab,
+      .utility-button,
+      .timer-top button,
+      .class-controls select,
+      .group-controls select,
+      .group-controls button,
+      .compact-action,
+      #timer-mode-toggle,
+      .timer-bottom button,
+      #name-reset,
+      #group-reset,
+      .editor-save,
+      .overlay-close,
+      #theme-reset {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .class-controls select,
+      .group-controls select,
+      .editor-select,
+      .editor-input,
+      .editor-textarea,
+      #theme-color {
+        min-height: 42px;
+      }
+
+      .status-toast {
+        top: 3.25rem;
+      }
+    }
+
+    @media (pointer: coarse) and (max-width: 700px) {
+      .touch-empty-text {
+        display: inline;
+      }
+
+      .desktop-empty-text {
+        display: none;
+      }
+    }
+
   </style>
 </head>
 
@@ -877,9 +1184,12 @@
   </nav>
 
   <div class="utility-nav">
-    <span id="name-skip-indicator" aria-hidden="true">🦅</span>
     <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
-    <button id="theme-button" class="utility-button">THEME</button>
+    <button id="menu-button" class="utility-button menu-button"
+      aria-label="Open site menu" aria-expanded="false"
+      aria-controls="site-menu" title="Menu">
+      <span aria-hidden="true">☰</span>
+    </button>
   </div>
 
   <div id="theme-panel" class="theme-panel hidden">
@@ -887,14 +1197,41 @@
     <input id="theme-color" type="color" value="#fed500" />
     <button id="theme-reset">DEFAULT</button>
   </div>
+  <div id="site-menu" class="site-menu hidden" aria-hidden="true">
+    <div class="site-menu-inner">
+      <div class="site-menu-header">
+        <div class="site-menu-title">CLOCKED</div>
+        <button id="site-menu-close" class="site-menu-close" aria-label="Close site menu">CLOSE</button>
+      </div>
+
+      <nav class="site-menu-links" aria-label="CLOCKED sections">
+        <a href="/" class="site-menu-link active">CLASS TOOLS</a>
+        <a href="/math/" class="site-menu-link">MATH TOOLS</a>
+        <a href="/geography/" class="site-menu-link">GEOGRAPHY TOOLS</a>
+        <a href="/ela/" class="site-menu-link">ELA TOOLS</a>
+        <a href="/social/" class="site-menu-link">SOCIAL STUDIES</a>
+        <a href="/health/" class="site-menu-link">HEALTH</a>
+      </nav>
+
+      <div class="site-menu-section">
+        <div class="site-menu-section-title">THEME</div>
+        <div class="site-menu-theme-row">
+          <label for="menu-theme-color">BACKGROUND</label>
+          <input id="menu-theme-color" type="color" value="#fed500" />
+          <button id="menu-theme-reset">DEFAULT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- HELP -->
 
   <div id="help-overlay" class="overlay hidden">
-    <div class="overlay-card">
+    <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
 
       <div class="overlay-header">
-        <h2>HELP</h2>
+        <h2 id="help-title">HELP</h2>
         <button id="help-close" class="overlay-close">CLOSE</button>
       </div>
 
@@ -942,7 +1279,7 @@
   <!-- EDIT OVERLAY -->
 
   <div id="edit-overlay" class="overlay hidden">
-    <div class="overlay-card">
+    <div class="overlay-card" role="dialog" aria-modal="true" aria-labelledby="edit-overlay-title">
 
       <div class="overlay-header">
         <h2 id="edit-overlay-title">EDIT</h2>
@@ -961,7 +1298,7 @@
           </div>
 
           <div id="countdown-options-wrap" class="hidden">
-            <label class="editor-label" for="countdown-label-input">BUTTON LABEL</label>
+            <label class="editor-label" for="countdown-label-input">COUNTDOWN BUTTON LABEL</label>
             <input
               id="countdown-label-input"
               class="editor-input"
@@ -970,7 +1307,7 @@
               placeholder="COUNTDOWN"
             />
 
-            <label class="editor-label" for="countdown-time-input" style="margin-top:1rem;">ENDS AT</label>
+            <label class="editor-label" for="countdown-time-input" style="margin-top:1rem;">COUNTDOWN ENDING TIME</label>
             <input
               id="countdown-time-input"
               class="editor-input"
@@ -1005,7 +1342,7 @@
           <textarea id="class-roster-input" class="editor-textarea"></textarea>
 
           <div id="skip-list-editor-wrap">
-            <label class="editor-label" for="class-skip-input" style="margin-top:1rem;">SKIP LIST (OPTIONAL)</label>
+            <label class="editor-label" for="class-skip-input" style="margin-top:1rem;">SKIP LIST</label>
             <textarea id="class-skip-input" class="editor-textarea"></textarea>
           </div>
         </div>
@@ -1043,11 +1380,19 @@
     <div class="class-controls names-controls">
       <label for="name-class-select">CLASS</label>
       <select id="name-class-select"></select>
+      <button id="name-edit-button" class="compact-action hidden-control" type="button">EDIT</button>
+      <button id="name-skip-toggle" class="compact-action" type="button" aria-pressed="false">SKIP: OFF</button>
+      <button id="name-repeats-toggle" class="compact-action" type="button" aria-pressed="false">REPEATS: OFF</button>
     </div>
 
     <main id="name-main">
       <div>
-        <div id="name-display">PRESS E TO EDIT NAMES</div>
+        <div id="name-display" class="small-placeholder">
+          <button id="name-empty-edit" class="empty-edit-button" type="button">
+            <span class="desktop-empty-text">CLICK OR PRESS E TO EDIT NAMES</span>
+            <span class="touch-empty-text">TAP TO ADD NAMES</span>
+          </button>
+        </div>
         <div id="name-repeats-indicator" aria-hidden="true">♾</div>
       </div>
     </main>
@@ -1067,9 +1412,10 @@
       <div class="group-controls">
         <label for="group-class-select">CLASS</label>
         <select id="group-class-select"></select>
+        <button id="group-edit-button" class="compact-action hidden-control" type="button">EDIT</button>
 
-        <label for="group-size">GROUP SIZE</label>
-        <select id="group-size">
+        <label for="group-size">STUDENTS / GROUP</label>
+        <select id="group-size" aria-label="Students per group">
           <option value="2">2</option>
           <option value="3">3</option>
           <option value="4" selected>4</option>
@@ -1084,7 +1430,7 @@
 
       <div id="groups-wrap">
         <div id="groups-container">
-          <div class="group-placeholder">PRESS E TO EDIT NAMES</div>
+          <div class="group-placeholder"><button class="empty-edit-button group-empty-edit" type="button"><span class="desktop-empty-text">CLICK OR PRESS E TO EDIT NAMES</span><span class="touch-empty-text">TAP TO ADD NAMES</span></button></div>
         </div>
       </div>
 
@@ -1278,39 +1624,127 @@
     const themeColor = document.getElementById("theme-color");
     const themeReset = document.getElementById("theme-reset");
 
+    const menuButton = document.getElementById("menu-button");
+    const siteMenu = document.getElementById("site-menu");
+    const siteMenuClose = document.getElementById("site-menu-close");
+    const menuThemeColor = document.getElementById("menu-theme-color");
+    const menuThemeReset = document.getElementById("menu-theme-reset");
+    let menuReturnFocus = null;
+    const statusToast = document.getElementById("status-toast");
+
+    let dialogReturnFocus = null;
+    let activeDialogOverlay = null;
+    let statusTimer = null;
+
     /* OVERLAYS */
 
+    function getFocusable(dialog) {
+      return Array.from(
+        dialog.querySelectorAll(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter(el => !el.closest('.hidden') && el.offsetParent !== null);
+    }
+
+    function setDialogOpen(overlay, opener, focusTarget = null) {
+      dialogReturnFocus = opener || document.activeElement;
+      activeDialogOverlay = overlay;
+      document.body.classList.add('dialog-open');
+      overlay.classList.remove('hidden');
+
+      Array.from(document.body.children).forEach(child => {
+        if (child !== overlay && !child.classList.contains('status-toast')) {
+          child.inert = true;
+        }
+      });
+
+      overlay.inert = false;
+
+      requestAnimationFrame(() => {
+        const dialog = overlay.querySelector('[role="dialog"]');
+        const target = focusTarget || getFocusable(dialog)[0];
+        target?.focus();
+      });
+    }
+
+    function restoreDialogBackground(overlay) {
+      Array.from(document.body.children).forEach(child => {
+        if (child !== overlay) child.inert = false;
+      });
+
+      document.body.classList.remove('dialog-open');
+      activeDialogOverlay = null;
+
+      const returnTarget = dialogReturnFocus;
+      dialogReturnFocus = null;
+
+      requestAnimationFrame(() => {
+        if (returnTarget && document.contains(returnTarget)) {
+          returnTarget.focus();
+        }
+      });
+    }
+
     function closeHelp() {
-      helpOverlay.classList.add("hidden");
+      if (helpOverlay.classList.contains('hidden')) return;
+      helpOverlay.classList.add('hidden');
+      restoreDialogBackground(helpOverlay);
     }
 
     function closeEditor() {
-      editOverlay.classList.add("hidden");
-      timerEditorContent.classList.add("hidden");
-      classEditorContent.classList.add("hidden");
+      if (editOverlay.classList.contains('hidden')) return;
+      editOverlay.classList.add('hidden');
+      timerEditorContent.classList.add('hidden');
+      classEditorContent.classList.add('hidden');
+      restoreDialogBackground(editOverlay);
     }
 
     function closeAllOverlays() {
-      closeHelp();
-      closeEditor();
-      themePanel.classList.add("hidden");
+      if (!helpOverlay.classList.contains('hidden')) {
+        closeHelp();
+      } else if (!editOverlay.classList.contains('hidden')) {
+        closeEditor();
+      }
+      themePanel.classList.add('hidden');
     }
 
-    helpButton.addEventListener("click", () => {
+    function trapDialogTab(event) {
+      if (event.key !== 'Tab' || !activeDialogOverlay) return;
+
+      const dialog = activeDialogOverlay.querySelector('[role="dialog"]');
+      const focusable = getFocusable(dialog);
+      if (!focusable.length) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    helpButton.addEventListener('click', () => {
       closeEditor();
-      themePanel.classList.add("hidden");
-      helpOverlay.classList.remove("hidden");
+      themePanel.classList.add('hidden');
+      setDialogOpen(helpOverlay, helpButton, helpClose);
     });
 
-    helpClose.addEventListener("click", closeHelp);
+    helpClose.addEventListener('click', closeHelp);
 
-    helpOverlay.addEventListener("click", event => {
+    helpOverlay.addEventListener('click', event => {
       if (event.target === helpOverlay) closeHelp();
     });
 
-    editOverlayClose.addEventListener("click", closeEditor);
+    editOverlayClose.addEventListener('click', closeEditor);
 
-    editOverlay.addEventListener("click", event => {
+    editOverlay.addEventListener('click', event => {
       if (event.target === editOverlay) closeEditor();
     });
 
@@ -1358,6 +1792,7 @@
       );
 
       themeColor.value = color;
+      if (menuThemeColor) menuThemeColor.value = color;
       localStorage.setItem(STORAGE.theme, color);
     }
 
@@ -1372,6 +1807,14 @@
     });
 
     themeReset.addEventListener("click", () => {
+      applyTheme("#fed500");
+    });
+
+    menuThemeColor.addEventListener("input", () => {
+      applyTheme(menuThemeColor.value);
+    });
+
+    menuThemeReset.addEventListener("click", () => {
       applyTheme("#fed500");
     });
 
@@ -1404,6 +1847,8 @@
           view.id === `${tool}-tool`
         );
       });
+
+      updateNamesOptionUI();
     }
 
     toolTabs.forEach(tab => {
@@ -1782,6 +2227,8 @@
         label.textContent = `BUTTON ${index + 1} LABEL`;
 
         const labelInput = document.createElement("input");
+        labelInput.id = `timer-preset-label-${index + 1}`;
+        label.htmlFor = labelInput.id;
         labelInput.className =
           "editor-input preset-label-input";
         labelInput.type = "text";
@@ -1791,9 +2238,11 @@
         const minutesLabel = document.createElement("label");
 
         minutesLabel.className = "editor-label";
-        minutesLabel.textContent = "MINUTES";
+        minutesLabel.textContent = `BUTTON ${index + 1} MINUTES`;
 
         const minutesInput = document.createElement("input");
+        minutesInput.id = `timer-preset-minutes-${index + 1}`;
+        minutesLabel.htmlFor = minutesInput.id;
         minutesInput.className =
           "editor-input preset-minutes-input";
         minutesInput.type = "number";
@@ -1829,7 +2278,7 @@
       );
     }
 
-    function openTimerEditor() {
+    function openTimerEditor(opener = document.activeElement) {
       pauseTimer();
       pauseStopwatch();
 
@@ -1844,7 +2293,14 @@
 
       buildTimerEditor();
 
-      editOverlay.classList.remove("hidden");
+      const firstTimerField =
+        timerPresetEditor.querySelector(".preset-label-input");
+
+      setDialogOpen(
+        editOverlay,
+        opener,
+        firstTimerField || editOverlayClose
+      );
     }
 
     countdownEnabledInput.addEventListener(
@@ -2088,6 +2544,9 @@
     const classEditorSave =
       document.getElementById("class-editor-save");
 
+    const nameEditButton = document.getElementById("name-edit-button");
+    const groupEditButton = document.getElementById("group-edit-button");
+
     let editingClassId = null;
     let editingClassSource = null;
 
@@ -2130,7 +2589,7 @@
       resetGroups();
     }
 
-    function openClassEditor(source) {
+    function openClassEditor(source, opener = document.activeElement) {
       editingClassSource = source;
 
       editingClassId =
@@ -2169,12 +2628,15 @@
         source !== "names"
       );
 
-      editOverlay.classList.remove("hidden");
+      setDialogOpen(
+        editOverlay,
+        opener,
+        classNameInput
+      );
 
-      setTimeout(() => {
-        classNameInput.focus();
+      requestAnimationFrame(() => {
         classNameInput.select();
-      }, 0);
+      });
     }
 
     classEditorSave.addEventListener(
@@ -2237,6 +2699,12 @@
     const nameReset =
       document.getElementById("name-reset");
 
+    const nameSkipToggle =
+      document.getElementById("name-skip-toggle");
+
+    const nameRepeatsToggle =
+      document.getElementById("name-repeats-toggle");
+
     let namePool = [];
     let skipMode = false;
     let noRepeats = true;
@@ -2247,23 +2715,72 @@
       );
     }
 
+    function emptyEditMarkup() {
+      return `
+        <button id="name-empty-edit" class="empty-edit-button" type="button">
+          <span class="desktop-empty-text">CLICK OR PRESS E TO EDIT NAMES</span>
+          <span class="touch-empty-text">TAP TO ADD NAMES</span>
+        </button>
+      `;
+    }
+
+    function showStatus(message) {
+      clearTimeout(statusTimer);
+      statusToast.textContent = message;
+      statusToast.classList.add('show');
+
+      statusTimer = setTimeout(() => {
+        statusToast.classList.remove('show');
+      }, 1000);
+    }
+
+    function updateNamesOptionUI() {
+      nameSkipToggle.textContent =
+        `SKIP: ${skipMode ? 'ON' : 'OFF'}`;
+      nameSkipToggle.setAttribute(
+        'aria-pressed',
+        String(skipMode)
+      );
+
+      const repeatsOn = !noRepeats;
+      nameRepeatsToggle.textContent =
+        `REPEATS: ${repeatsOn ? 'ON' : 'OFF'}`;
+      nameRepeatsToggle.setAttribute(
+        'aria-pressed',
+        String(repeatsOn)
+      );
+
+      nameRepeatsIndicator.classList.toggle(
+        'on',
+        repeatsOn
+      );
+
+      nameSkipIndicator.classList.toggle(
+        'on',
+        activeTool === 'names' && skipMode
+      );
+    }
+
     function updateNamePlaceholder() {
-      const selected =
-        currentNameClass();
-
+      const selected = currentNameClass();
       const needsNames =
-        !selected ||
-        selected.roster.length === 0;
+        !selected || selected.roster.length === 0;
 
-      nameDisplay.classList.toggle(
-        "small-placeholder",
+      nameEditButton.classList.toggle(
+        'hidden-control',
         needsNames
       );
 
-      nameDisplay.textContent =
+      nameDisplay.classList.toggle(
+        'small-placeholder',
         needsNames
-          ? "PRESS E TO EDIT NAMES"
-          : "CLICK OR PRESS SPACE";
+      );
+
+      if (needsNames) {
+        nameDisplay.innerHTML = emptyEditMarkup();
+      } else {
+        nameDisplay.textContent = 'CLICK OR PRESS SPACE';
+      }
     }
 
     function resetNamePool() {
@@ -2292,9 +2809,7 @@
         !selected ||
         selected.roster.length === 0
       ) {
-        nameDisplay.classList.add("small-placeholder");
-        nameDisplay.textContent =
-          "PRESS E TO EDIT NAMES";
+        openClassEditor("names", nameDisplay.querySelector(".empty-edit-button") || nameMain);
         return;
       }
 
@@ -2340,28 +2855,51 @@
 
     function toggleSkipMode() {
       skipMode = !skipMode;
-
-      nameSkipIndicator.classList.toggle(
-        "on",
+      updateNamesOptionUI();
+      showStatus(
         skipMode
+          ? "SKIP LIST ON"
+          : "SKIP LIST OFF"
       );
     }
 
     function toggleRepeats() {
       noRepeats = !noRepeats;
-
-      nameRepeatsIndicator.classList.toggle(
-        "on",
-        !noRepeats
-      );
-
       resetNamePool();
+      updateNamesOptionUI();
+      showStatus(
+        !noRepeats
+          ? "REPEATS ON"
+          : "REPEATS OFF"
+      );
     }
 
     nameMain.addEventListener(
       "click",
-      pickName
+      event => {
+        const selected = currentNameClass();
+        const needsNames =
+          !selected || selected.roster.length === 0;
+
+        if (needsNames) {
+          event.preventDefault();
+          openClassEditor(
+            "names",
+            event.target.closest(".empty-edit-button") || nameMain
+          );
+          return;
+        }
+
+        pickName();
+      }
     );
+
+    nameEditButton.addEventListener("click", () => {
+      openClassEditor("names", nameEditButton);
+    });
+
+    nameSkipToggle.addEventListener("click", toggleSkipMode);
+    nameRepeatsToggle.addEventListener("click", toggleRepeats);
 
     nameReset.addEventListener(
       "click",
@@ -2414,6 +2952,7 @@
     }
 
     function renderGroups(groups) {
+      groupEditButton.classList.remove("hidden-control");
       groupsContainer.innerHTML = "";
 
       groups.forEach((group,index) => {
@@ -2459,8 +2998,7 @@
         !selected ||
         selected.roster.length === 0
       ) {
-        groupsContainer.innerHTML =
-          '<div class="group-placeholder">PRESS E TO EDIT NAMES</div>';
+        renderGroupEmptyState();
         return;
       }
 
@@ -2492,21 +3030,51 @@
       renderGroups(groups);
     }
 
-    function resetGroups() {
-      const selected =
-        currentGroupClass();
+    function renderGroupEmptyState() {
+      groupEditButton.classList.add("hidden-control");
+      groupsContainer.innerHTML = `
+        <div class="group-placeholder">
+          <button class="empty-edit-button group-empty-edit" type="button">
+            <span class="desktop-empty-text">CLICK OR PRESS E TO EDIT NAMES</span>
+            <span class="touch-empty-text">TAP TO ADD NAMES</span>
+          </button>
+        </div>
+      `;
+    }
 
-      groupsContainer.innerHTML =
-        selected &&
-        selected.roster.length
-          ? '<div class="group-placeholder">GENERATE GROUPS</div>'
-          : '<div class="group-placeholder">PRESS E TO EDIT NAMES</div>';
+    function resetGroups() {
+      const selected = currentGroupClass();
+      const hasNames =
+        Boolean(selected && selected.roster.length);
+
+      groupEditButton.classList.toggle(
+        "hidden-control",
+        !hasNames
+      );
+
+      if (hasNames) {
+        groupsContainer.innerHTML =
+          '<div class="group-placeholder">GENERATE GROUPS</div>';
+      } else {
+        renderGroupEmptyState();
+      }
     }
 
     groupGenerate.addEventListener(
       "click",
       generateGroups
     );
+
+    groupEditButton.addEventListener("click", () => {
+      openClassEditor("groups", groupEditButton);
+    });
+
+    groupsContainer.addEventListener("click", event => {
+      const emptyEdit = event.target.closest(".group-empty-edit");
+      if (emptyEdit) {
+        openClassEditor("groups", emptyEdit);
+      }
+    });
 
     groupReset.addEventListener(
       "click",
@@ -2524,14 +3092,16 @@
       "keydown",
       event => {
         if (event.key === "Escape") {
-          closeAllOverlays();
+          if (!siteMenu.classList.contains("hidden")) {
+            closeSiteMenu();
+          } else {
+            closeAllOverlays();
+          }
           return;
         }
 
-        if (
-          !helpOverlay.classList.contains("hidden") ||
-          !editOverlay.classList.contains("hidden")
-        ) {
+        if (activeDialogOverlay) {
+          trapDialogTab(event);
           return;
         }
 
@@ -2563,7 +3133,7 @@
 
           if (key === "e") {
             event.preventDefault();
-            openTimerEditor();
+            openTimerEditor(document.querySelector('.tool-tab.active'));
           }
         }
 
@@ -2575,7 +3145,7 @@
 
           if (key === "e") {
             event.preventDefault();
-            openClassEditor("names");
+            openClassEditor("names", document.querySelector('.tool-tab.active'));
           }
 
           if (key === "s") {
@@ -2602,7 +3172,7 @@
 
           if (key === "e") {
             event.preventDefault();
-            openClassEditor("groups");
+            openClassEditor("groups", document.querySelector('.tool-tab.active'));
           }
 
           if (key === "r") {
@@ -2613,10 +3183,35 @@
       }
     );
 
+
+    siteMenu.addEventListener("keydown", event => {
+      if (event.key !== "Tab") return;
+
+      const focusables = [
+        ...siteMenu.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ].filter(el => !el.hidden && el.offsetParent !== null);
+
+      if (!focusables.length) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
     /* INITIALIZE */
 
     renderTimerButtons();
     renderClassSelects();
+    updateNamesOptionUI();
     updateTimeDisplay();
   </script>
 

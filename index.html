@@ -126,40 +126,41 @@
       opacity: .45;
     }
 
-    /* SITE MENU */
+    /* THEME */
 
-    .menu-button {
+    .menu-trigger {
       font-size: 1.35rem;
       line-height: 1;
-      padding: .14rem .34rem;
       min-width: 2rem;
+      padding: .12rem .35rem;
     }
 
-    .site-menu {
+    .theme-panel.site-menu {
       position: fixed;
       top: 3rem;
       right: 1rem;
-      z-index: 7000;
-      width: min(280px, calc(100vw - 2rem));
-      padding: .55rem;
+      z-index: 6000;
+      width: 260px;
+      display: block;
+      padding: .5rem;
       background: var(--text);
       color: var(--bg);
-      border-radius: 7px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+      border-radius: 6px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.18);
     }
 
     .site-menu-links {
       display: flex;
       flex-direction: column;
-      gap: .12rem;
+      gap: .1rem;
     }
 
     .site-menu-link {
       display: block;
       padding: .48rem .55rem;
+      border-radius: 4px;
       color: var(--bg);
       text-decoration: none;
-      border-radius: 4px;
       font-size: .72rem;
       font-weight: 800;
       letter-spacing: .035em;
@@ -170,12 +171,13 @@
     .site-menu-link.active {
       background: var(--bg);
       color: var(--text);
+      opacity: 1;
       outline: none;
     }
 
     .site-menu-divider {
       height: 1px;
-      margin: .45rem .2rem;
+      margin: .45rem .15rem;
       background: color-mix(in srgb, var(--bg) 30%, transparent);
     }
 
@@ -183,18 +185,19 @@
       display: flex;
       align-items: center;
       gap: .45rem;
-      padding: .15rem .2rem;
+      min-height: 32px;
+      padding: .1rem .15rem;
     }
 
-    .site-menu-theme label {
+    .theme-panel label {
       margin-right: auto;
       font-size: .68rem;
       font-weight: 800;
     }
 
     #theme-color {
-      width: 30px;
-      height: 24px;
+      width: 28px;
+      height: 22px;
       padding: 0;
       border: none;
       background: transparent;
@@ -202,7 +205,7 @@
 
     #theme-reset {
       border: none;
-      padding: .22rem .34rem;
+      padding: .18rem .32rem;
       background: var(--bg);
       color: var(--text);
       border-radius: 3px;
@@ -737,16 +740,19 @@
     }
 
     @media (max-width: 700px) {
-      .menu-button {
+      .menu-trigger {
         min-width: 44px;
         min-height: 44px;
+        display: flex;
+        align-items: center;
         justify-content: center;
+        font-size: 1.4rem;
       }
 
-      .site-menu {
+      .theme-panel.site-menu {
         top: 3.6rem;
         right: .65rem;
-        width: min(300px, calc(100vw - 1.3rem));
+        width: min(280px, calc(100vw - 1.3rem));
       }
 
       .site-menu-link,
@@ -754,10 +760,6 @@
         min-height: 42px;
         display: flex;
         align-items: center;
-      }
-
-      .site-menu-theme {
-        min-height: 44px;
       }
 
       body {
@@ -1070,32 +1072,32 @@
     <span id="name-skip-indicator" aria-hidden="true">🦅</span>
     <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
     <button
-      id="menu-button"
-      class="utility-button menu-button"
-      aria-label="Open site menu"
+      id="theme-button"
+      class="utility-button menu-trigger"
+      aria-label="Open CLOCKED menu"
+      aria-haspopup="true"
       aria-expanded="false"
-      aria-controls="site-menu"
       title="Menu"
     >☰</button>
   </div>
 
   <div id="status-toast" class="status-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <div id="site-menu" class="site-menu hidden" aria-hidden="true">
+  <div id="theme-panel" class="theme-panel site-menu hidden">
     <nav class="site-menu-links" aria-label="CLOCKED sections">
-      <a class="site-menu-link active" href="/">CLASS TOOLS</a>
-      <a class="site-menu-link" href="/math/">MATH TOOLS</a>
-      <a class="site-menu-link" href="/geography/">GEOGRAPHY TOOLS</a>
-      <a class="site-menu-link" href="/ela/">ELA TOOLS</a>
-      <a class="site-menu-link" href="/social/">SOCIAL STUDIES</a>
-      <a class="site-menu-link" href="/health/">HEALTH</a>
+      <a href="/" class="site-menu-link active">CLASS TOOLS</a>
+      <a href="/math/" class="site-menu-link">MATH TOOLS</a>
+      <a href="/geography/" class="site-menu-link">GEOGRAPHY TOOLS</a>
+      <a href="/ela/" class="site-menu-link">ELA TOOLS</a>
+      <a href="/social/" class="site-menu-link">SOCIAL STUDIES</a>
+      <a href="/health/" class="site-menu-link">HEALTH</a>
     </nav>
 
     <div class="site-menu-divider"></div>
 
     <div class="site-menu-theme">
       <label for="theme-color">THEME</label>
-      <input id="theme-color" type="color" value="#fed500" aria-label="Theme background color" />
+      <input id="theme-color" type="color" value="#fed500" />
       <button id="theme-reset">DEFAULT</button>
     </div>
   </div>
@@ -1494,8 +1496,8 @@
     const timerEditorContent = document.getElementById("timer-editor-content");
     const classEditorContent = document.getElementById("class-editor-content");
 
-    const menuButton = document.getElementById("menu-button");
-    const siteMenu = document.getElementById("site-menu");
+    const themeButton = document.getElementById("theme-button");
+    const themePanel = document.getElementById("theme-panel");
     const themeColor = document.getElementById("theme-color");
     const themeReset = document.getElementById("theme-reset");
     const statusToast = document.getElementById("status-toast");
@@ -1574,6 +1576,7 @@
         closeEditor();
       }
       themePanel.classList.add('hidden');
+      themeButton.setAttribute("aria-expanded", "false");
     }
 
     function trapDialogTab(event) {
@@ -1601,6 +1604,7 @@
     helpButton.addEventListener('click', () => {
       closeEditor();
       themePanel.classList.add('hidden');
+      themeButton.setAttribute("aria-expanded", "false");
       setDialogOpen(helpOverlay, helpButton, helpClose);
     });
 
@@ -1663,37 +1667,17 @@
       localStorage.setItem(STORAGE.theme, color);
     }
 
-    menuButton.addEventListener("click", event => {
-      event.preventDefault();
-      event.stopPropagation();
-
+    themeButton.addEventListener("click", () => {
       closeHelp();
       closeEditor();
 
-      const opening = siteMenu.classList.contains("hidden");
-      siteMenu.classList.toggle("hidden");
+      const opening = themePanel.classList.contains("hidden");
+      themePanel.classList.toggle("hidden");
 
-      siteMenu.setAttribute(
-        "aria-hidden",
-        opening ? "false" : "true"
-      );
-
-      menuButton.setAttribute(
+      themeButton.setAttribute(
         "aria-expanded",
         opening ? "true" : "false"
       );
-    });
-
-    document.addEventListener("click", event => {
-      if (
-        !siteMenu.classList.contains("hidden") &&
-        !siteMenu.contains(event.target) &&
-        event.target !== menuButton
-      ) {
-        siteMenu.classList.add("hidden");
-        siteMenu.setAttribute("aria-hidden", "true");
-        menuButton.setAttribute("aria-expanded", "false");
-      }
     });
 
     themeColor.addEventListener("input", () => {
@@ -1702,6 +1686,17 @@
 
     themeReset.addEventListener("click", () => {
       applyTheme("#fed500");
+    });
+
+    document.addEventListener("click", event => {
+      if (
+        !themePanel.classList.contains("hidden") &&
+        !themePanel.contains(event.target) &&
+        !themeButton.contains(event.target)
+      ) {
+        themePanel.classList.add("hidden");
+        themeButton.setAttribute("aria-expanded", "false");
+      }
     });
 
     applyTheme(
@@ -2984,10 +2979,6 @@
 
         if (activeDialogOverlay) {
           trapDialogTab(event);
-          return;
-        }
-
-        if (!siteMenu.classList.contains("hidden")) {
           return;
         }
 

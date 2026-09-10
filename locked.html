@@ -41,7 +41,7 @@
     <section class="lesson" aria-live="polite">
       <p class="eyebrow" id="modeLabel">Guided practice</p>
       <div class="step-line"><div class="step-num reset-step" id="stepNum">RESET</div><h1 class="step-title" id="stepTitle">Reset the lock</h1></div>
-      <p class="instruction" id="instruction">Spin the dial <strong>right</strong> at least three full turns, then stop at <strong>0</strong>.</p>
+      <p class="instruction" id="instruction">Turn the dial <strong>right three full times</strong> to reset it.</p>
       <div class="direction" id="direction"><span class="arrow">↻</span><span>Turn right</span></div>
       <div class="progress" aria-label="Lesson progress"><span class="pip now"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span></div>
       <div class="combo-editor" aria-label="Choose a combination">
@@ -65,7 +65,7 @@
   <footer><div class="footer-brand">LOCKED <span>BY CLOCKED</span></div><div class="keys">← → turn &nbsp; · &nbsp; R restart &nbsp; · &nbsp; D demo</div></footer>
 </div>
 <div class="feedback" id="feedback" role="status"></div>
-<dialog id="helpDialog"><button class="icon-btn close" id="closeHelp" aria-label="Close help">×</button><h2>How to use it</h2><p>Drag the dial in the direction shown. Hold each target number still for one second to continue.</p><ol><li>Reset: spin right at least three full turns and stop at 0.</li><li>Turn right to the first number.</li><li>Turn left, pass the first number once, then stop at the second.</li><li>Turn right directly to the third number and pull the lock open.</li></ol><p>You can also use the arrow keys. Press <strong>D</strong> to watch a demonstration.</p></dialog>
+<dialog id="helpDialog"><button class="icon-btn close" id="closeHelp" aria-label="Close help">×</button><h2>How to use it</h2><p>Drag the dial in the direction shown. Hold each combination number still for one second to continue.</p><ol><li>Reset: turn right three full times. The trainer will return the dial to 0.</li><li>Turn right to the first number.</li><li>Turn left, pass the first number once, then stop at the second.</li><li>Turn right directly to the third number and pull the lock open.</li></ol><p>You can also use the arrow keys. Press <strong>D</strong> to watch a demonstration.</p></dialog>
 <script>
   const dial=document.getElementById('dial'),wrap=document.getElementById('dialWrap'),numberEl=document.getElementById('currentNumber'),lock=document.getElementById('lock');
   const title=document.getElementById('stepTitle'),instruction=document.getElementById('instruction'),stepNum=document.getElementById('stepNum'),directionEl=document.getElementById('direction'),feedback=document.getElementById('feedback'),pips=[...document.querySelectorAll('.pip')];
@@ -75,7 +75,7 @@
   function numberAt(a){return ((Math.round(-a/9)%40)+40)%40}
   function render(){dial.style.transform=`rotate(${angle}deg)`;const n=numberAt(angle);numberEl.textContent=n;wrap.setAttribute('aria-valuenow',n);wrap.setAttribute('aria-valuetext',`${n} at the pointer`)}
   const data=()=>{const [a,b,c]=combo();return[
-    ['Reset the lock','Spin the dial <strong>right</strong> at least three full turns, then stop at <strong>0</strong>.','right','↻'],
+    ['Reset the lock','Turn the dial <strong>right three full times</strong> to reset it.','right','↻'],
     ['First number',`Turn <strong>right</strong> and stop at <strong>${a}</strong>.`,'right','↻'],
     ['Second number',`Turn <strong>left</strong>. Pass <strong>${a}</strong> once, then stop at <strong>${b}</strong>.`,'left','↺'],
     ['Third number',`Turn <strong>right</strong> directly to <strong>${c}</strong>. Do not make another full turn.`,'right','↻'],
@@ -83,11 +83,11 @@
   function setStep(n){cancelHold(false);step=n;totalTravel=0;const d=data()[n];stepNum.textContent=n===0?'RESET':n<4?n:'✓';stepNum.classList.toggle('reset-step',n===0);title.textContent=d[0];instruction.innerHTML=d[1];restoreDirection();pips.forEach((p,i)=>p.className='pip '+(i<n?'done':i===n?'now':''));if(n===4){lock.classList.add('open');showToast('LOCK OPEN','good')}}
   function restoreDirection(){const d=data()[step];directionEl.classList.remove('holding');directionEl.innerHTML=`<span class="arrow">${d[3]}</span><span>${d[2]==='open'?'Unlocked':`Turn ${d[2]}`}</span>`}
   function cancelHold(restore=true){if(holdTimer){clearTimeout(holdTimer);holdTimer=null}if(restore&&step<4)restoreDirection()}
-  function targetReady(){const [a,b,c]=combo(),n=numberAt(angle);if(step===0)return totalTravel>=1080&&n===0;if(step===1)return totalTravel>8&&n===a;if(step===2)return totalTravel>=360&&n===b;if(step===3)return totalTravel>8&&n===c;return false}
+  function targetReady(){const [a,b,c]=combo(),n=numberAt(angle);if(step===1)return totalTravel>8&&n===a;if(step===2)return totalTravel>=360&&n===b;if(step===3)return totalTravel>8&&n===c;return false}
   function beginHold(){if(holdTimer||!targetReady())return;directionEl.classList.add('holding');directionEl.innerHTML='<span class="arrow">●</span><span>Hold it there…</span>';holdTimer=setTimeout(()=>{holdTimer=null;if(!targetReady())return restoreDirection();showToast(step===0?'RESET COMPLETE':'GOOD — NEXT STEP','good');setStep(step+1)},1000)}
   function showToast(msg,type=''){clearTimeout(toastTimer);feedback.textContent=msg;feedback.className='feedback show '+type;toastTimer=setTimeout(()=>feedback.className='feedback',1100)}
   function passTarget(prev,next,target,direction){const p=numberAt(prev),q=numberAt(next);if(direction==='right')return ((p-target+40)%40)<((q-target+40)%40);return ((target-p+40)%40)<((target-q+40)%40)}
-  function evaluate(delta,prev){if(demoing||step===4)return;const dir=delta>0?'right':'left',expected=data()[step][2];if(Math.abs(delta)>.01&&dir!==expected){cancelHold();showToast(`TURN ${expected.toUpperCase()}`,'bad');return}totalTravel+=Math.abs(delta);if(targetReady())beginHold();else cancelHold()}
+  function evaluate(delta,prev){if(demoing||step===4)return;const dir=delta>0?'right':'left',expected=data()[step][2];if(Math.abs(delta)>.01&&dir!==expected){cancelHold();showToast(`TURN ${expected.toUpperCase()}`,'bad');return}totalTravel+=Math.abs(delta);if(step===0&&totalTravel>=1080){angle=Math.round(angle/360)*360;render();showToast('RESET COMPLETE','good');setStep(1);return}if(targetReady())beginHold();else cancelHold()}
   function pointerAngle(e){const r=wrap.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);return Math.atan2(y,x)*180/Math.PI}
   wrap.addEventListener('pointerdown',e=>{if(demoing)return;dragging=true;lastPointerAngle=pointerAngle(e);wrap.setPointerCapture(e.pointerId)});wrap.addEventListener('pointermove',e=>{if(!dragging)return;let a=pointerAngle(e),d=a-lastPointerAngle;if(d>180)d-=360;if(d<-180)d+=360;lastPointerAngle=a;const prev=angle;angle+=d;render();evaluate(d,prev)});wrap.addEventListener('pointerup',()=>dragging=false);wrap.addEventListener('pointercancel',()=>dragging=false);
   wrap.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key)||demoing)return;e.preventDefault();const d=e.key==='ArrowLeft'?-9:9,prev=angle;angle+=d;render();evaluate(d,prev)});

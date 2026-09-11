@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CLOCKED | VOICE</title>
+<style>
+  :root{
+    --bg:#7ae0ff;
+    --ink:#0a0a0a;
+    --panel:rgba(255,255,255,.18);
+    --line:rgba(10,10,10,.22);
+    --good:#0a0a0a;
+    --danger:#ff5b5b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  body{min-height:100vh;display:flex;flex-direction:column}
+  button,select,input{font:inherit;color:inherit}
+  button,select{
+    border:2px solid var(--ink);
+    background:transparent;
+    border-radius:999px;
+    min-height:42px;
+    padding:0 15px;
+    font-weight:800;
+  }
+  button{cursor:pointer}
+  button:hover,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid rgba(0,0,0,.18);outline-offset:2px}
+  button.active,.primary{
+    background:var(--ink);
+    color:var(--bg);
+  }
+  .wrap{width:min(1120px,calc(100% - 32px));margin:0 auto}
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:16px;padding:18px 0 8px;
+  }
+  .brand{font-weight:1000;letter-spacing:-.05em;font-size:clamp(28px,5vw,56px);line-height:.9}
+  .brand small{display:block;font-size:.22em;letter-spacing:.16em;margin-top:8px}
+  .status-pill{
+    display:inline-flex;align-items:center;gap:9px;border:2px solid var(--ink);
+    border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900;
+  }
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--danger)}
+  .dot.on{background:#2dbd69}
+  main{flex:1;display:grid;place-items:center;padding:12px 0 28px}
+  .console{
+    width:100%;
+    display:grid;grid-template-columns:1.1fr .9fr;gap:22px;
+  }
+  .card{
+    border:2px solid var(--ink);border-radius:28px;padding:22px;background:var(--panel);
+    backdrop-filter:blur(5px);
+  }
+  .card h2{font-size:14px;letter-spacing:.12em;margin:0 0 18px}
+  .hero{
+    display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-bottom:20px;
+  }
+  .hero-title{font-size:clamp(34px,5vw,64px);font-weight:1000;letter-spacing:-.055em;line-height:.9}
+  .hero-sub{font-size:14px;font-weight:700;opacity:.7;margin-top:9px}
+  .power{
+    width:94px;height:94px;border-radius:50%;padding:0;font-size:14px;
+    display:grid;place-items:center;
+  }
+  .row{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;margin:15px 0}
+  .label{font-size:12px;font-weight:1000;letter-spacing:.08em}
+  select{width:100%;appearance:auto}
+  input[type=range]{width:100%;accent-color:#0a0a0a}
+  .meter{
+    height:28px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;
+    position:relative;background:rgba(255,255,255,.14)
+  }
+  .meter-fill{height:100%;width:0%;background:var(--ink);transition:width .06s linear}
+  .meter-peak{position:absolute;top:0;bottom:0;width:3px;background:var(--ink);left:0}
+  .toggles{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px;
+  }
+  .toggle{text-align:left;border-radius:18px;min-height:58px;padding:10px 14px}
+  .toggle span{display:block;font-size:10px;letter-spacing:.08em;opacity:.7;margin-top:2px}
+  .tiny{font-size:11px;font-weight:800;opacity:.7;line-height:1.4}
+  .diag{
+    display:grid;grid-template-columns:1fr auto;gap:10px 14px;
+    font-size:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:16px
+  }
+  .diag strong{text-align:right}
+  .feedback-note{
+    border-top:1px solid var(--line);margin-top:16px;padding-top:14px;
+    font-size:11px;line-height:1.45;font-weight:700;opacity:.78;
+  }
+  .advanced{margin-top:18px}
+  details{border-top:1px solid var(--line);padding-top:14px}
+  summary{cursor:pointer;font-size:12px;font-weight:1000;letter-spacing:.08em}
+  .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .mini{border:1px solid var(--line);border-radius:16px;padding:12px}
+  .mini .label{margin-bottom:8px}
+  footer{
+    display:flex;justify-content:space-between;align-items:center;padding:14px 0 20px;
+    font-size:11px;font-weight:1000;letter-spacing:.12em
+  }
+  .warning{
+    display:none;border:2px solid var(--ink);border-radius:18px;padding:12px 14px;
+    margin-bottom:16px;font-size:12px;font-weight:800;background:rgba(255,255,255,.26)
+  }
+  .warning.show{display:block}
+  @media (max-width:800px){
+    .console{grid-template-columns:1fr}
+    .row{grid-template-columns:1fr;gap:6px}
+    header{align-items:flex-start}
+    .status-pill{font-size:10px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">VOICE<small>BY CLOCKED</small></div>
+      <div class="status-pill"><span id="statusDot" class="dot"></span><span id="statusText">OFF AIR</span></div>
+    </header>
+
+    <main>
+      <div class="console">
+        <section class="card">
+          <div id="secureWarn" class="warning">Microphone access requires HTTPS (or localhost). Put this file on your CLOCKED site to use it.</div>
+
+          <div class="hero">
+            <div>
+              <div class="hero-title">CLASSROOM<br>VOICE</div>
+              <div class="hero-sub">NEEWER CM28 → CHROME → CLASSROOM SPEAKERS</div>
+            </div>
+            <button id="powerBtn" class="power primary" aria-pressed="false">START</button>
+          </div>
+
+          <div class="row">
+            <div class="label">MIC INPUT</div>
+            <select id="inputSelect" aria-label="Microphone input">
+              <option value="">Default microphone</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="label">MIC LEVEL</div>
+            <div class="meter" aria-label="Microphone level meter">
+              <div id="meterFill" class="meter-fill"></div>
+              <div id="meterPeak" class="meter-peak"></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="label">VOICE VOLUME</div>
+            <input id="volume" type="range" min="0" max="1.5" step="0.01" value="0.75" aria-label="Voice volume">
+          </div>
+
+          <div class="toggles">
+            <button id="echoBtn" class="toggle active" aria-pressed="true">
+              ECHO CONTROL
+              <span>Browser acoustic echo cancellation</span>
+            </button>
+            <button id="noiseBtn" class="toggle active" aria-pressed="true">
+              NOISE REDUCTION
+              <span>Browser noise suppression</span>
+            </button>
+            <button id="levelBtn" class="toggle" aria-pressed="false">
+              AUTO LEVEL
+              <span>Browser automatic gain control</span>
+            </button>
+            <button id="guardBtn" class="toggle" aria-pressed="false">
+              FEEDBACK GUARD
+              <span>Experimental narrow-band protection</span>
+            </button>
+          </div>
+
+          <div class="advanced">
+            <details>
+              <summary>ADVANCED VOICE SHAPING</summary>
+              <div class="mini-grid">
+                <div class="mini">
+                  <div class="label">LOW CUT</div>
+                  <input id="lowCut" type="range" min="50" max="180" step="1" value="90" aria-label="Low cut frequency">
+                  <div class="tiny"><span id="lowCutVal">90</span> Hz</div>
+                </div>
+                <div class="mini">
+                  <div class="label">COMPRESSOR</div>
+                  <input id="compAmount" type="range" min="0" max="1" step="0.01" value="0.45" aria-label="Compressor amount">
+                  <div class="tiny" id="compVal">LIGHT</div>
+                </div>
+                <div class="mini">
+                  <div class="label">PRESENCE</div>
+                  <input id="presence" type="range" min="-4" max="5" step="0.5" value="1.5" aria-label="Presence">
+                  <div class="tiny"><span id="presenceVal">+1.5</span> dB @ 3 kHz</div>
+                </div>
+                <div class="mini">
+                  <div class="label">MASTER LIMITER</div>
+                  <div class="tiny">Always on at the end of the chain to catch sudden peaks.</div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <aside class="card">
+          <h2>DIAGNOSTICS</h2>
+
+          <div class="diag">
+            <div>MIC</div><strong id="dMic">NOT STARTED</strong>
+            <div>SAMPLE RATE</div><strong id="dRate">—</strong>
+            <div>BASE LATENCY</div><strong id="dLatency">—</strong>
+            <div>ECHO CANCELLATION</div><strong id="dEcho">—</strong>
+            <div>NOISE SUPPRESSION</div><strong id="dNoise">—</strong>
+            <div>AUTO GAIN</div><strong id="dAgc">—</strong>
+            <div>FEEDBACK GUARD</div><strong id="dGuard">OFF</strong>
+            <div>DETECTED TONE</div><strong id="dTone">—</strong>
+          </div>
+
+          <div class="feedback-note">
+            <strong>USE TIP:</strong> Keep the classroom speakers in front of you when possible, keep the CM28 close to your chest, and run only as much amplification as you need. Browser echo control can help, but physical mic/speaker placement still matters most.
+          </div>
+
+          <div class="feedback-note">
+            <strong>LATENCY TEST:</strong> If your amplified voice feels doubled or “slapback-y,” this setup is too delayed on that computer/output path. Chrome's reported base latency is only one part of the total real-world delay.
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer>
+      <span>CLOCKED | VOICE TOOLS</span>
+      <span>NO RECORDING • LOCAL PROCESSING</span>
+    </footer>
+  </div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  const powerBtn = $("powerBtn");
+  const inputSelect = $("inputSelect");
+  const volume = $("volume");
+  const meterFill = $("meterFill");
+  const meterPeak = $("meterPeak");
+  const statusDot = $("statusDot");
+  const statusText = $("statusText");
+
+  const echoBtn = $("echoBtn");
+  const noiseBtn = $("noiseBtn");
+  const levelBtn = $("levelBtn");
+  const guardBtn = $("guardBtn");
+
+  const lowCut = $("lowCut");
+  const compAmount = $("compAmount");
+  const presence = $("presence");
+  const lowCutVal = $("lowCutVal");
+  const compVal = $("compVal");
+  const presenceVal = $("presenceVal");
+
+  let echoOn = true;
+  let noiseOn = true;
+  let agcOn = false;
+  let guardOn = false;
+
+  let ctx = null;
+  let stream = null;
+  let source = null;
+  let hp = null;
+  let presenceEQ = null;
+  let feedbackNotch = null;
+  let compressor = null;
+  let limiter = null;
+  let master = null;
+  let analyser = null;
+  let raf = null;
+  let peakHold = 0;
+
+  let guardCandidateFreq = null;
+  let guardCandidateSince = 0;
+  let guardHoldUntil = 0;
+
+  const secureOkay = window.isSecureContext || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (!secureOkay) $("secureWarn").classList.add("show");
+
+  function setToggle(btn, on) {
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-pressed", String(on));
+  }
+
+  function updateComp() {
+    const a = Number(compAmount.value);
+    if (!compressor) return;
+    compressor.threshold.value = -10 - (a * 18);
+    compressor.knee.value = 8 + (a * 18);
+    compressor.ratio.value = 2 + (a * 4);
+    compressor.attack.value = 0.006;
+    compressor.release.value = 0.18 + (a * 0.12);
+    compVal.textContent = a < .25 ? "VERY LIGHT" : a < .6 ? "LIGHT" : a < .85 ? "MEDIUM" : "STRONG";
+  }
+
+  function updateAdvanced() {
+    lowCutVal.textContent = lowCut.value;
+    const p = Number(presence.value);
+    presenceVal.textContent = (p > 0 ? "+" : "") + p.toFixed(1);
+    if (hp) hp.frequency.value = Number(lowCut.value);
+    if (presenceEQ) presenceEQ.gain.value = p;
+    updateComp();
+  }
+
+  async function refreshDevices() {
+    if (!navigator.mediaDevices?.enumerateDevices) return;
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const inputs = devices.filter(d => d.kind === "audioinput");
+    const current = inputSelect.value;
+    inputSelect.innerHTML = "";
+    const def = document.createElement("option");
+    def.value = "";
+    def.textContent = "Default microphone";
+    inputSelect.appendChild(def);
+    inputs.forEach((d, i) => {
+      const opt = document.createElement("option");
+      opt.value = d.deviceId;
+      opt.textContent = d.label || `Microphone ${i+1}`;
+      inputSelect.appendChild(opt);
+    });
+    if ([...inputSelect.options].some(o => o.value === current)) inputSelect.value = current;
+  }
+
+  function buildConstraints() {
+    const audio = {
+      echoCancellation: echoOn,
+      noiseSuppression: noiseOn,
+      autoGainControl: agcOn,
+      channelCount: 1,
+      latency: 0
+    };
+    if (inputSelect.value) audio.deviceId = { exact: inputSelect.value };
+    return { audio };
+  }
+
+  async function start() {
+    try {
+      if (!secureOkay) throw new Error("Microphone access needs HTTPS or localhost.");
+
+      stream = await navigator.mediaDevices.getUserMedia(buildConstraints());
+      await refreshDevices();
+
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      ctx = new AudioCtx({ latencyHint: "interactive" });
+      await ctx.resume();
+
+      source = ctx.createMediaStreamSource(stream);
+
+      hp = ctx.createBiquadFilter();
+      hp.type = "highpass";
+      hp.frequency.value = Number(lowCut.value);
+      hp.Q.value = 0.707;
+
+      presenceEQ = ctx.createBiquadFilter();
+      presenceEQ.type = "peaking";
+      presenceEQ.frequency.value = 3000;
+      presenceEQ.Q.value = 0.85;
+      presenceEQ.gain.value = Number(presence.value);
+
+      feedbackNotch = ctx.createBiquadFilter();
+      feedbackNotch.type = "notch";
+      feedbackNotch.frequency.value = 1000;
+      feedbackNotch.Q.value = 28;
+
+      compressor = ctx.createDynamicsCompressor();
+
+      limiter = ctx.createDynamicsCompressor();
+      limiter.threshold.value = -3;
+      limiter.knee.value = 0;
+      limiter.ratio.value = 20;
+      limiter.attack.value = 0.001;
+      limiter.release.value = 0.07;
+
+      master = ctx.createGain();
+      master.gain.value = Number(volume.value);
+
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.72;
+
+      source.connect(hp);
+      hp.connect(presenceEQ);
+      presenceEQ.connect(feedbackNotch);
+      feedbackNotch.connect(compressor);
+      compressor.connect(limiter);
+      limiter.connect(master);
+      master.connect(analyser);
+      analyser.connect(ctx.destination);
+
+      updateAdvanced();
+      updateDiagnostics();
+      runMeter();
+
+      statusDot.classList.add("on");
+      statusText.textContent = "ON AIR";
+      powerBtn.textContent = "STOP";
+      powerBtn.classList.add("active");
+      powerBtn.setAttribute("aria-pressed","true");
+    } catch (err) {
+      console.error(err);
+      alert("Could not start microphone audio.\n\n" + err.message);
+      stop();
+    }
+  }
+
+  function stop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    if (ctx) ctx.close().catch(()=>{});
+    ctx = null;
+    source = hp = presenceEQ = feedbackNotch = compressor = limiter = master = analyser = null;
+
+    meterFill.style.width = "0%";
+    meterPeak.style.left = "0%";
+    statusDot.classList.remove("on");
+    statusText.textContent = "OFF AIR";
+    powerBtn.textContent = "START";
+    powerBtn.classList.remove("active");
+    powerBtn.setAttribute("aria-pressed","false");
+
+    $("dMic").textContent = "NOT STARTED";
+    $("dRate").textContent = "—";
+    $("dLatency").textContent = "—";
+    $("dEcho").textContent = "—";
+    $("dNoise").textContent = "—";
+    $("dAgc").textContent = "—";
+    $("dTone").textContent = "—";
+  }
+
+  async function restart() {
+    const wasOn = !!stream;
+    if (wasOn) {
+      stop();
+      await start();
+    }
+  }
+
+  function updateDiagnostics() {
+    if (!stream || !ctx) return;
+    const track = stream.getAudioTracks()[0];
+    const settings = track.getSettings ? track.getSettings() : {};
+
+    $("dMic").textContent = track.label || "MICROPHONE";
+    $("dRate").textContent = `${ctx.sampleRate.toLocaleString()} Hz`;
+    $("dLatency").textContent = Number.isFinite(ctx.baseLatency) ? `${Math.round(ctx.baseLatency*1000)} ms` : "UNKNOWN";
+    $("dEcho").textContent = settings.echoCancellation === undefined ? "UNKNOWN" : (settings.echoCancellation ? "ON" : "OFF");
+    $("dNoise").textContent = settings.noiseSuppression === undefined ? "UNKNOWN" : (settings.noiseSuppression ? "ON" : "OFF");
+    $("dAgc").textContent = settings.autoGainControl === undefined ? "UNKNOWN" : (settings.autoGainControl ? "ON" : "OFF");
+    $("dGuard").textContent = guardOn ? "ARMED" : "OFF";
+  }
+
+  function runMeter() {
+    if (!analyser || !ctx) return;
+    const time = new Uint8Array(analyser.fftSize);
+    const freq = new Float32Array(analyser.frequencyBinCount);
+
+    const loop = () => {
+      if (!analyser || !ctx) return;
+
+      analyser.getByteTimeDomainData(time);
+      let sum = 0;
+      for (let i=0;i<time.length;i++) {
+        const v = (time[i]-128)/128;
+        sum += v*v;
+      }
+      const rms = Math.sqrt(sum/time.length);
+      const db = 20*Math.log10(Math.max(rms, 0.00001));
+      const pct = Math.max(0, Math.min(100, (db + 55) / 55 * 100));
+      meterFill.style.width = pct + "%";
+      peakHold = Math.max(pct, peakHold * 0.992);
+      meterPeak.style.left = Math.min(99, peakHold) + "%";
+
+      if (guardOn) feedbackGuard(freq);
+
+      raf = requestAnimationFrame(loop);
+    };
+    loop();
+  }
+
+  function feedbackGuard(freqData) {
+    if (!analyser || !ctx || !feedbackNotch) return;
+
+    analyser.getFloatFrequencyData(freqData);
+    const nyquist = ctx.sampleRate / 2;
+    const binHz = nyquist / freqData.length;
+
+    const minBin = Math.max(1, Math.floor(220 / binHz));
+    const maxBin = Math.min(freqData.length - 2, Math.floor(8000 / binHz));
+
+    let bestBin = -1;
+    let bestProminence = 0;
+    let bestDb = -Infinity;
+
+    for (let i=minBin+5;i<maxBin-5;i++) {
+      const db = freqData[i];
+      if (db < -32) continue;
+
+      let neigh = 0;
+      let count = 0;
+      for (let j=i-5;j<=i+5;j++) {
+        if (Math.abs(j-i) <= 1) continue;
+        neigh += freqData[j];
+        count++;
+      }
+      const avg = neigh / count;
+      const prominence = db - avg;
+
+      if (prominence > bestProminence) {
+        bestProminence = prominence;
+        bestBin = i;
+        bestDb = db;
+      }
+    }
+
+    const now = performance.now();
+
+    if (bestBin >= 0 && bestProminence > 15 && bestDb > -28) {
+      const hz = bestBin * binHz;
+      $("dTone").textContent = `${Math.round(hz)} Hz`;
+
+      if (guardCandidateFreq && Math.abs(hz - guardCandidateFreq) < 80) {
+        if (!guardCandidateSince) guardCandidateSince = now;
+      } else {
+        guardCandidateFreq = hz;
+        guardCandidateSince = now;
+      }
+
+      if (now - guardCandidateSince > 450) {
+        feedbackNotch.frequency.setTargetAtTime(hz, ctx.currentTime, 0.02);
+        feedbackNotch.Q.setTargetAtTime(30, ctx.currentTime, 0.02);
+        guardHoldUntil = now + 1600;
+        $("dGuard").textContent = `NOTCH ${Math.round(hz)} Hz`;
+      }
+    } else {
+      $("dTone").textContent = "—";
+      guardCandidateFreq = null;
+      guardCandidateSince = 0;
+    }
+
+    if (now > guardHoldUntil && guardHoldUntil !== 0) {
+      // Move the notch outside the speech band rather than disconnecting the node.
+      feedbackNotch.frequency.setTargetAtTime(18000, ctx.currentTime, 0.08);
+      guardHoldUntil = 0;
+      $("dGuard").textContent = "ARMED";
+    }
+  }
+
+  powerBtn.addEventListener("click", () => stream ? stop() : start());
+
+  echoBtn.addEventListener("click", async () => {
+    echoOn = !echoOn; setToggle(echoBtn, echoOn); await restart();
+  });
+  noiseBtn.addEventListener("click", async () => {
+    noiseOn = !noiseOn; setToggle(noiseBtn, noiseOn); await restart();
+  });
+  levelBtn.addEventListener("click", async () => {
+    agcOn = !agcOn; setToggle(levelBtn, agcOn); await restart();
+  });
+  guardBtn.addEventListener("click", () => {
+    guardOn = !guardOn; setToggle(guardBtn, guardOn);
+    $("dGuard").textContent = guardOn ? "ARMED" : "OFF";
+    $("dTone").textContent = "—";
+    guardCandidateFreq = null;
+    guardCandidateSince = 0;
+    guardHoldUntil = 0;
+    if (feedbackNotch && ctx && !guardOn) feedbackNotch.frequency.setValueAtTime(18000, ctx.currentTime);
+  });
+
+  inputSelect.addEventListener("change", restart);
+  volume.addEventListener("input", () => {
+    if (master && ctx) master.gain.setTargetAtTime(Number(volume.value), ctx.currentTime, 0.01);
+  });
+
+  lowCut.addEventListener("input", updateAdvanced);
+  compAmount.addEventListener("input", updateAdvanced);
+  presence.addEventListener("input", updateAdvanced);
+
+  navigator.mediaDevices?.addEventListener?.("devicechange", refreshDevices);
+
+  refreshDevices().catch(()=>{});
+  updateAdvanced();
+})();
+</script>
+</body>
+</html>

@@ -1,1066 +1,423 @@
-```html
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CLOCKED — Integer Line</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLOCKED | NUMBER LINE</title>
 <style>
-  :root {
-    --bg: #7ae0ff;
-    --ink: #000000;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  html,
-  body {
-    margin: 0;
-    width: 100%;
-    min-height: 100%;
-  }
-
-  body {
-    font-family: Inter, Arial, Helvetica, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    overflow-x: hidden;
-  }
-
-  button,
-  input,
-  select {
-    font: inherit;
-    color: inherit;
-  }
-
-  button,
-  select {
-    cursor: pointer;
-  }
-
-  .topbar {
-    min-height: 76px;
-    padding: 18px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    flex-wrap: wrap;
-  }
-
-  .brand {
-    font-size: 14px;
-    font-weight: 900;
-    letter-spacing: .14em;
-  }
-
-  .top-controls {
-    display: flex;
-    gap: 9px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .control {
-    border: 2px solid var(--ink);
-    background: transparent;
-    border-radius: 999px;
-    padding: 8px 13px;
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-  }
-
-  .control:hover,
-  .control:focus-visible {
-    background: var(--ink);
-    color: var(--bg);
-  }
-
-  select.control {
-    padding-right: 30px;
-  }
-
-  main {
-    min-height: calc(100vh - 76px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 28px 28px 42px;
-  }
-
-  .equation-area {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-
-  #equationInput {
-    width: min(480px, 75vw);
-    border: 3px solid var(--ink);
-    background: transparent;
-    border-radius: 14px;
-    padding: 15px 18px;
-    text-align: center;
-    font-size: clamp(28px, 5vw, 56px);
-    line-height: 1;
-    font-weight: 900;
-    outline: none;
-  }
-
-  #equationInput::placeholder {
-    color: rgba(0,0,0,.38);
-  }
-
-  #equationInput:focus {
-    border-width: 4px;
-    padding: 14px 17px;
-  }
-
-  .main-button {
-    border: 0;
-    border-radius: 12px;
-    background: var(--ink);
-    color: var(--bg);
-    padding: 16px 24px;
-    font-weight: 950;
-    font-size: 15px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-  }
-
-  .main-button:hover {
-    transform: translateY(-1px);
-  }
-
-  .learning-panel {
-    width: min(900px, 100%);
-    margin: 0 auto 28px;
-    min-height: 118px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-  }
-
-  #learningMain {
-    font-size: clamp(22px, 4vw, 42px);
-    font-weight: 950;
-    letter-spacing: -.025em;
-    min-height: 50px;
-  }
-
-  #learningSub {
-    margin-top: 8px;
-    font-size: clamp(12px, 1.7vw, 16px);
-    font-weight: 850;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    min-height: 22px;
-  }
-
-  .rewrite {
-    display: inline-block;
-    padding: 4px 10px;
-    border-bottom: 4px solid var(--ink);
-  }
-
-  .line-wrap {
-    width: 100%;
-    max-width: 1250px;
-    margin: 0 auto;
-    position: relative;
-    padding: 100px 18px 125px;
-  }
-
-  .line {
-    position: relative;
-    height: 8px;
-    background: var(--ink);
-    border-radius: 999px;
-  }
-
-  .ticks {
-    position: absolute;
-    inset: 0;
-  }
-
-  .tick {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 2px;
-    height: 18px;
-    background: var(--ink);
-  }
-
-  .tick.major {
-    width: 3px;
-    height: 28px;
-  }
-
-  .tick.zero {
-    width: 5px;
-    height: 44px;
-  }
-
-  .tick-label {
-    position: absolute;
-    top: 32px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(11px, 1.35vw, 17px);
-    font-weight: 800;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  .zero-label {
-    top: 42px;
-    font-size: clamp(14px, 1.8vw, 21px);
-    font-weight: 950;
-  }
-
-  .endcap {
-    position: absolute;
-    top: 50%;
-    width: 18px;
-    height: 18px;
-    border-top: 7px solid var(--ink);
-    border-right: 7px solid var(--ink);
-    z-index: 3;
-  }
-
-  .endcap.left {
-    left: -2px;
-    transform: translateY(-50%) rotate(-135deg);
-  }
-
-  .endcap.right {
-    right: -2px;
-    transform: translateY(-50%) rotate(45deg);
-  }
-
-  #marker {
-    position: absolute;
-    left: 50%;
-    top: -54px;
-    width: 34px;
-    height: 34px;
-    background: var(--ink);
-    border-radius: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition:
-      left .75s cubic-bezier(.2,.8,.2,1),
-      opacity .25s ease;
-    z-index: 10;
-  }
-
-  #marker::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 30px;
-    width: 3px;
-    height: 24px;
-    background: var(--ink);
-    transform: translateX(-50%);
-  }
-
-  #marker.visible {
-    opacity: 1;
-  }
-
-  #movePath {
-    position: absolute;
-    top: -31px;
-    height: 30px;
-    border-top: 5px solid var(--ink);
-    opacity: 0;
-    z-index: 4;
-  }
-
-  #movePath.visible {
-    opacity: 1;
-  }
-
-  #movePath.right::after {
-    content: "";
-    position: absolute;
-    right: -2px;
-    top: -11px;
-    width: 15px;
-    height: 15px;
-    border-top: 5px solid var(--ink);
-    border-right: 5px solid var(--ink);
-    transform: rotate(45deg);
-  }
-
-  #movePath.left::after {
-    content: "";
-    position: absolute;
-    left: -2px;
-    top: -11px;
-    width: 15px;
-    height: 15px;
-    border-top: 5px solid var(--ink);
-    border-left: 5px solid var(--ink);
-    transform: rotate(-45deg);
-  }
-
-  #moveLabel {
-    position: absolute;
-    top: -34px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(18px, 3vw, 32px);
-    font-weight: 950;
-    white-space: nowrap;
-  }
-
-  #result {
-    min-height: 70px;
-    margin-top: 22px;
-    text-align: center;
-    font-size: clamp(34px, 6vw, 76px);
-    font-weight: 950;
-    letter-spacing: -.04em;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: .25s ease;
-  }
-
-  #result.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  #message {
-    min-height: 24px;
-    text-align: center;
-    margin-top: 12px;
-    font-weight: 850;
-    font-size: 13px;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-  }
-
-  .bottom-controls {
-    margin-top: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 9px;
-    flex-wrap: wrap;
-  }
-
-  .small-button {
-    border: 2px solid var(--ink);
-    background: transparent;
-    border-radius: 999px;
-    padding: 9px 14px;
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-  }
-
-  .small-button:hover,
-  .small-button.active {
-    background: var(--ink);
-    color: var(--bg);
-  }
-
-  @media (max-width: 700px) {
-    .topbar {
-      padding: 14px 16px;
-    }
-
-    main {
-      padding: 20px 14px 28px;
-      justify-content: flex-start;
-    }
-
-    .equation-area {
-      margin-top: 30px;
-    }
-
-    #equationInput {
-      width: 100%;
-    }
-
-    .main-button {
-      width: 100%;
-    }
-
-    .learning-panel {
-      min-height: 100px;
-    }
-
-    .line-wrap {
-      padding-left: 8px;
-      padding-right: 8px;
-      padding-bottom: 120px;
-      overflow-x: auto;
-    }
-
-    .line {
-      min-width: 720px;
-    }
-
-    .tick-label {
-      font-size: 13px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    #marker,
-    #result {
-      transition: none;
-    }
-  }
+:root{font-family:Inter,Arial,sans-serif;color:#111;background:#f5f5f2}
+*{box-sizing:border-box}
+body{margin:0}
+header{background:#fed500;padding:18px 25px;display:flex;justify-content:space-between;align-items:center}
+header strong{font-size:22px;letter-spacing:-1px}
+header a{color:inherit;text-decoration:none;font-weight:800}
+main{max-width:1400px;margin:auto;padding:22px}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.field{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:800;text-transform:uppercase}
+input,select,button{font:inherit;border:2px solid #111;border-radius:5px;padding:10px;background:white}
+input{width:95px}
+button{font-weight:800;cursor:pointer}
+button:hover{background:#f0f0ed}
+.primary{background:#fed500}
+.panel{background:#fff;border:2px solid #111;border-radius:9px;padding:20px;margin:16px 0}
+.line-head{display:flex;align-items:center;justify-content:space-between}
+.line-head strong{font-size:15px}
+.icon-btn{
+  width:33px;height:33px;padding:6px;
+  border:0;background:transparent;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  color:#777;cursor:pointer
+}
+.icon-btn:hover{color:#111;background:#f2f2f2}
+.icon-btn svg{width:19px;height:19px}
+.canvas{height:330px;position:relative;touch-action:pan-y}
+.canvas svg{width:100%;height:100%;display:block}
+.hint{color:#555;font-size:13px;margin-top:4px}
+.stat{font-size:24px;font-weight:900;margin-left:auto}
+.fs-toolbar{display:none}
+#numberPanel:fullscreen{
+  border:0;border-radius:0;margin:0;
+  width:100vw;height:100vh;
+  background:#fff;padding:20px;
+  display:flex;flex-direction:column
+}
+#numberPanel:fullscreen .canvas{flex:1;min-height:0;height:auto}
+#numberPanel:fullscreen .hint{display:none}
+#numberPanel:fullscreen .fs-toolbar{
+ display:flex;justify-content:center;align-items:center;
+ flex-wrap:wrap;gap:8px;padding:12px 0 5px
+}
+#numberPanel:fullscreen .fs-toolbar button{padding:10px 16px}
+#numberPanel:fullscreen #fullscreenBtn{color:#111}
+footer{text-align:center;padding:18px;font-weight:900;font-size:12px;letter-spacing:2px}
+@media(max-width:700px){
+ main{padding:10px}
+ .panel{padding:12px}
+ .canvas{height:260px}
+ .stat{width:100%}
+ header{padding:14px}
+ #numberPanel:fullscreen{padding:10px}
+ #numberPanel:fullscreen .fs-toolbar button{padding:8px}
+}
 </style>
 </head>
-
 <body>
-
-<header class="topbar">
-  <div class="brand">CLOCKED / INTEGER LINE</div>
-
-  <div class="top-controls">
-    <select id="rangeSelect" class="control" aria-label="Number line range">
-      <option value="10">−10 TO 10</option>
-      <option value="20">−20 TO 20</option>
-      <option value="100">−100 TO 100</option>
-    </select>
-
-    <button id="randomBtn" class="control" type="button">
-      RANDOM
-    </button>
-  </div>
+<header>
+<strong>CLOCKED <span style="font-weight:400">/ NUMBER LINE</span></strong>
+<a href="/math">☰ MATH TOOLS</a>
 </header>
-
 <main>
+<div class="panel">
+<div class="controls">
+<label class="field">Mode
+<select id="mode">
+<option value="count">Count / Integers</option>
+<option value="fraction">Fractions</option>
+<option value="groups">Multiply / Divide</option>
+</select>
+</label>
+<label class="field">Minimum
+<input type="number" id="min" value="-10" step="any">
+</label>
+<label class="field">Maximum
+<input type="number" id="max" value="10" step="any">
+</label>
+<label class="field">Major interval
+<select id="tick">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="5">5</option>
+<option value="10">10</option>
+</select>
+</label>
+<label class="field">Subdivisions
+<input type="number" id="segments" value="1" min="1" max="100" step="1">
+</label>
+<label class="field">Labels
+<select id="labels">
+<option value="whole">Whole numbers</option>
+<option value="all">Every tick</option>
+<option value="decimal">Decimals</option>
+<option value="none">Hide labels</option>
+</select>
+</label>
+<button id="resetView">Reset view</button>
+</div>
+</div>
 
-  <section class="equation-area">
+<div class="panel" id="numberPanel">
+<div class="line-head">
+<strong>NUMBER LINE</strong>
+<button id="fullscreenBtn" class="icon-btn"
+ aria-label="Enter fullscreen" title="Fullscreen">
+<svg id="expandIcon" viewBox="0 0 24 24" fill="none"
+ stroke="currentColor" stroke-width="2" stroke-linecap="round"
+ stroke-linejoin="round">
+<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/>
+</svg>
+</button>
+</div>
+<div class="canvas">
+<svg id="line" viewBox="0 0 1200 320"
+ preserveAspectRatio="xMidYMid meet"
+ role="img" aria-label="Interactive number line"></svg>
+</div>
+<div class="hint">
+Click the number line to choose a starting point.
+Adjust subdivisions to display fractions such as sixths or sevenths.
+</div>
+<div class="fs-toolbar">
+<button id="fsBack">← Jump</button>
+<button id="fsForward" class="primary">Jump →</button>
+<button id="fsUndo">Undo</button>
+<button id="fsClear">Clear</button>
+<button id="fsZoomIn">Zoom +</button>
+<button id="fsZoomOut">Zoom −</button>
+<strong id="fsResult" style="margin-left:14px;font-size:20px">0</strong>
+</div>
+</div>
 
-    <input
-      id="equationInput"
-      type="text"
-      autocomplete="off"
-      spellcheck="false"
-      placeholder="8 − (−1)"
-      aria-label="Integer equation"
-    >
-
-    <button id="showBtn" class="main-button" type="button">
-      SHOW
-    </button>
-
-  </section>
-
-  <section class="learning-panel" aria-live="polite">
-    <div id="learningMain"></div>
-    <div id="learningSub"></div>
-  </section>
-
-  <section>
-
-    <div class="line-wrap" id="lineWrap">
-
-      <div class="line" id="numberLine">
-
-        <div class="ticks" id="ticks"></div>
-
-        <div id="movePath">
-          <div id="moveLabel"></div>
-        </div>
-
-        <div id="marker"></div>
-
-        <div class="endcap left"></div>
-        <div class="endcap right"></div>
-
-      </div>
-
-    </div>
-
-    <div id="result" aria-live="polite"></div>
-    <div id="message" aria-live="polite"></div>
-
-    <div class="bottom-controls">
-      <button id="stepBtn" class="small-button" type="button">
-        STEP
-      </button>
-
-      <button id="resetBtn" class="small-button" type="button">
-        RESET
-      </button>
-    </div>
-
-  </section>
-
+<div class="panel">
+<div class="controls">
+<label class="field">Starting point
+<input type="number" id="start" value="0" step="any">
+</label>
+<label class="field">Jump size
+<input type="number" id="step" value="1" step="any">
+</label>
+<label class="field">Number of jumps
+<input type="number" id="jumps" value="1" min="1" max="100">
+</label>
+<button class="primary" id="forward">Jump →</button>
+<button id="backward">← Jump</button>
+<button id="all">Show all jumps</button>
+<button id="undo">Undo</button>
+<button id="clear">Clear</button>
+<button id="zoomIn">Zoom +</button>
+<button id="zoomOut">Zoom −</button>
+<div class="stat" id="result">0</div>
+</div>
+</div>
 </main>
+<footer>CLOCKED | MATH TOOLS</footer>
 
 <script>
-(() => {
-
-  const input = document.getElementById("equationInput");
-  const showBtn = document.getElementById("showBtn");
-  const stepBtn = document.getElementById("stepBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const randomBtn = document.getElementById("randomBtn");
-  const rangeSelect = document.getElementById("rangeSelect");
-
-  const ticks = document.getElementById("ticks");
-  const marker = document.getElementById("marker");
-  const movePath = document.getElementById("movePath");
-  const moveLabel = document.getElementById("moveLabel");
-  const result = document.getElementById("result");
-  const message = document.getElementById("message");
-  const learningMain = document.getElementById("learningMain");
-  const learningSub = document.getElementById("learningSub");
-
-  let range = 10;
-  let currentProblem = null;
-  let stepStage = 0;
-  let running = false;
-  let timers = [];
-
-
-  function minus(n) {
-    return String(n).replace("-", "−");
-  }
-
-
-  function formatSecondNumber(n) {
-    return n < 0
-      ? "(" + minus(n) + ")"
-      : minus(n);
-  }
-
-
-  function formatEquation(problem, includeAnswer = false) {
-
-    let text =
-      minus(problem.start) +
-      " " +
-      problem.operator +
-      " " +
-      formatSecondNumber(problem.second);
-
-    if (includeAnswer) {
-      text += " = " + minus(problem.answer);
-    }
-
-    return text;
-  }
-
-
-  function clearTimers() {
-    timers.forEach(id => clearTimeout(id));
-    timers = [];
-  }
-
-
-  function later(fn, ms) {
-    const id = setTimeout(fn, ms);
-    timers.push(id);
-  }
-
-
-  function buildLine() {
-
-    range = Number(rangeSelect.value);
-    ticks.innerHTML = "";
-
-    let labelInterval = 1;
-
-    if (range === 20) {
-      labelInterval = 2;
-    }
-
-    if (range === 100) {
-      labelInterval = 10;
-    }
-
-    for (let n = -range; n <= range; n++) {
-
-      const pct = ((n + range) / (range * 2)) * 100;
-
-      const tick = document.createElement("div");
-      tick.className = "tick";
-
-      if (n === 0) {
-        tick.classList.add("zero");
-      }
-      else if (n % labelInterval === 0) {
-        tick.classList.add("major");
-      }
-
-      tick.style.left = pct + "%";
-
-      if (n === 0 || n % labelInterval === 0) {
-
-        const label = document.createElement("div");
-        label.className = "tick-label";
-
-        if (n === 0) {
-          label.classList.add("zero-label");
-        }
-
-        label.textContent = minus(n);
-        tick.appendChild(label);
-      }
-
-      ticks.appendChild(tick);
-    }
-
-    resetVisuals();
-  }
-
-
-  function parseEquation(raw) {
-
-    const value = raw
-      .replace(/−/g, "-")
-      .replace(/\s+/g, "");
-
-    const match = value.match(
-      /^(-?\d+)([+-])\(?(-?\d+)\)?$/
-    );
-
-    if (!match) {
-      return null;
-    }
-
-    const start = Number(match[1]);
-    const operator = match[2];
-    const second = Number(match[3]);
-
-    let movement;
-
-    if (operator === "+") {
-      movement = second;
-    }
-    else {
-      movement = -second;
-    }
-
-    const answer = start + movement;
-
-    return {
-      start,
-      operator,
-      second,
-      movement,
-      answer
-    };
-  }
-
-
-  function getPosition(value) {
-    return ((value + range) / (range * 2)) * 100;
-  }
-
-
-  function isVisible(problem) {
-    return (
-      problem.start >= -range &&
-      problem.start <= range &&
-      problem.answer >= -range &&
-      problem.answer <= range
-    );
-  }
-
-
-  function resetVisuals() {
-
-    clearTimers();
-
-    running = false;
-    currentProblem = null;
-    stepStage = 0;
-
-    marker.classList.remove("visible");
-
-    movePath.className = "";
-    movePath.style.left = "";
-    movePath.style.width = "";
-
-    moveLabel.textContent = "";
-
-    result.classList.remove("visible");
-    result.textContent = "";
-
-    message.textContent = "";
-
-    learningMain.innerHTML = "";
-    learningSub.textContent = "";
-
-    stepBtn.classList.remove("active");
-  }
-
-
-  function loadProblem() {
-
-    resetVisuals();
-
-    const parsed = parseEquation(input.value);
-
-    if (!parsed) {
-      message.textContent = "TRY SOMETHING LIKE 8 − (−1)";
-      return false;
-    }
-
-    if (!isVisible(parsed)) {
-      message.textContent =
-        "THAT ANSWER FALLS OUTSIDE THIS NUMBER LINE";
-      return false;
-    }
-
-    currentProblem = parsed;
-
-    return true;
-  }
-
-
-  function showRead() {
-
-    if (!currentProblem) return;
-
-    learningMain.innerHTML =
-      '<span class="rewrite">' +
-      formatEquation(currentProblem) +
-      '</span>';
-
-    learningSub.textContent = "READ THE EXPRESSION";
-  }
-
-
-  function showNegativeMeaning() {
-
-    if (!currentProblem) return;
-
-    learningMain.textContent =
-      minus(currentProblem.second) +
-      " MEANS " +
-      Math.abs(currentProblem.second) +
-      " STEP" +
-      (Math.abs(currentProblem.second) === 1 ? "" : "S") +
-      " LEFT";
-
-    learningSub.textContent =
-      "THE SIGN ON THE NUMBER TELLS ITS DIRECTION";
-  }
-
-
-  function showReverseMeaning() {
-
-    if (!currentProblem) return;
-
-    learningMain.textContent = "SUBTRACT = REVERSE";
-
-    learningSub.textContent =
-      "REVERSE LEFT → MOVE RIGHT";
-  }
-
-
-  function showRewrite() {
-
-    if (!currentProblem) return;
-
-    const rewrittenOperator =
-      currentProblem.movement >= 0 ? "+" : "−";
-
-    const rewrittenAmount =
-      Math.abs(currentProblem.movement);
-
-    learningMain.innerHTML =
-      '<span class="rewrite">' +
-      minus(currentProblem.start) +
-      " " +
-      rewrittenOperator +
-      " " +
-      rewrittenAmount +
-      '</span>';
-
-    learningSub.textContent =
-      "NOW THE MOVEMENT IS CLEAR";
-  }
-
-
-  function showStart() {
-
-    if (!currentProblem) return;
-
-    const startPct = getPosition(currentProblem.start);
-
-    marker.style.left = startPct + "%";
-    marker.classList.add("visible");
-
-    message.textContent =
-      "START AT " + minus(currentProblem.start);
-  }
-
-
-  function showMovement() {
-
-    if (!currentProblem) return;
-
-    const startPct = getPosition(currentProblem.start);
-    const endPct = getPosition(currentProblem.answer);
-
-    const left = Math.min(startPct, endPct);
-    const width = Math.abs(endPct - startPct);
-
-    movePath.style.left = left + "%";
-    movePath.style.width = width + "%";
-
-    movePath.className =
-      currentProblem.movement >= 0
-        ? "visible right"
-        : "visible left";
-
-    const direction =
-      currentProblem.movement >= 0
-        ? "RIGHT"
-        : "LEFT";
-
-    moveLabel.textContent =
-      Math.abs(currentProblem.movement) +
-      " " +
-      direction;
-
-    message.textContent =
-      "MOVE " +
-      Math.abs(currentProblem.movement) +
-      " " +
-      direction;
-  }
-
-
-  function showAnswer() {
-
-    if (!currentProblem) return;
-
-    const answerPct = getPosition(currentProblem.answer);
-
-    marker.style.left = answerPct + "%";
-
-    result.textContent =
-      formatEquation(currentProblem, true);
-
-    result.classList.add("visible");
-
-    learningMain.textContent = "";
-    learningSub.textContent = "";
-
-    message.textContent =
-      "LAND ON " + minus(currentProblem.answer);
-  }
-
-
-  function runFullAnimation() {
-
-    if (!loadProblem()) return;
-
-    running = true;
-
-    showRead();
-
-    const needsExtraTeaching =
-      currentProblem.second < 0;
-
-    if (needsExtraTeaching) {
-
-      later(() => {
-        showNegativeMeaning();
-      }, 900);
-
-      later(() => {
-        showReverseMeaning();
-      }, 2000);
-
-      later(() => {
-        showRewrite();
-      }, 3100);
-
-      later(() => {
-        showStart();
-      }, 4100);
-
-      later(() => {
-        showMovement();
-      }, 4800);
-
-      later(() => {
-        showAnswer();
-        running = false;
-      }, 5800);
-
-    } else {
-
-      later(() => {
-        showStart();
-      }, 700);
-
-      later(() => {
-        showMovement();
-      }, 1400);
-
-      later(() => {
-        showAnswer();
-        running = false;
-      }, 2400);
-    }
-  }
-
-
-  function getStepSequence(problem) {
-
-    const steps = [showRead];
-
-    if (problem.second < 0) {
-      steps.push(
-        showNegativeMeaning,
-        showReverseMeaning,
-        showRewrite
-      );
-    }
-
-    steps.push(
-      showStart,
-      showMovement,
-      showAnswer
-    );
-
-    return steps;
-  }
-
-
-  function runStep() {
-
-    if (running) return;
-
-    if (!currentProblem) {
-
-      if (!loadProblem()) return;
-
-      stepStage = 0;
-      stepBtn.classList.add("active");
-    }
-
-    const sequence = getStepSequence(currentProblem);
-
-    if (stepStage >= sequence.length) {
-
-      if (!loadProblem()) return;
-
-      stepBtn.classList.add("active");
-      stepStage = 0;
-    }
-
-    sequence[stepStage]();
-    stepStage++;
-  }
-
-
-  function randomProblem() {
-
-    resetVisuals();
-
-    let start;
-    let movement;
-    let answer;
-
-    const maxMove =
-      range === 100 ? 20 :
-      range === 20 ? 12 :
-      9;
-
-    do {
-
-      start =
-        Math.floor(
-          Math.random() * (range * 2 + 1)
-        ) - range;
-
-      movement =
-        Math.floor(
-          Math.random() * (maxMove * 2 + 1)
-        ) - maxMove;
-
-      answer = start + movement;
-
-    } while (
-      movement === 0 ||
-      answer < -range ||
-      answer > range
-    );
-
-    const useAddition = Math.random() > .5;
-
-    let operator;
-    let second;
-
-    if (useAddition) {
-      operator = "+";
-      second = movement;
-    }
-    else {
-      operator = "−";
-      second = -movement;
-    }
-
-    input.value =
-      minus(start) +
-      " " +
-      operator +
-      " " +
-      formatSecondNumber(second);
-
-    input.focus();
-  }
-
-
-  showBtn.addEventListener("click", runFullAnimation);
-
-  stepBtn.addEventListener("click", runStep);
-
-  resetBtn.addEventListener("click", () => {
-    resetVisuals();
-    input.value = "";
-    input.focus();
+const $=id=>document.getElementById(id);
+const svg=$('line');
+const NS='http://www.w3.org/2000/svg';
+let path=[],current=0;
+
+function el(tag,attrs={},text){
+ const n=document.createElementNS(NS,tag);
+ Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));
+ if(text!==undefined)n.textContent=text;
+ svg.append(n);
+ return n;
+}
+const val=id=>Number($(id).value);
+const subdivisions=()=>Math.max(1,Math.min(100,Math.floor(val('segments')||1)));
+const interval=()=>val('tick');
+const minorStep=()=>interval()/subdivisions();
+
+function gcd(a,b){
+ a=Math.abs(a);b=Math.abs(b);
+ while(b){let t=b;b=a%b;a=t;}
+ return a||1;
+}
+function fractionString(n){
+ if(Math.abs(n)<1e-8)return '0';
+ const den=subdivisions();
+ const base=interval();
+ const num=Math.round(n*den/base);
+ const numerator=num*base;
+ if(!Number.isInteger(numerator))
+  return String(Number(n.toFixed(5)));
+ const divisor=gcd(numerator,den);
+ const a=numerator/divisor,b=den/divisor;
+ return b===1?String(a):a+'/'+b;
+}
+function fmt(n){
+ if(Math.abs(n)<1e-8)n=0;
+ if($('mode').value==='fraction' ||
+    ($('labels').value==='all'&&subdivisions()>1)){
+  const rounded=Math.round(n/minorStep())*minorStep();
+  if(Math.abs(n-rounded)<1e-6)
+   return fractionString(n);
+ }
+ return String(Number(n.toFixed(5)));
+}
+function render(){
+ const lo=val('min'),hi=val('max');
+ const major=interval(),segments=subdivisions();
+ const tick=minorStep();
+ if(!(hi>lo)||!(tick>0)||!Number.isFinite(hi-lo))return;
+ svg.replaceChildren();
+
+ const x=n=>70+(n-lo)/(hi-lo)*1060;
+ const y=155;
+ el('line',{x1:50,y1:y,x2:1150,y2:y,
+  stroke:'#111','stroke-width':5});
+ el('path',{d:'M50 155 L65 146 L65 164 Z M1150 155 L1135 146 L1135 164 Z',fill:'#111'});
+
+ const total=(hi-lo)/tick;
+ // Avoid excessive ticks on very wide ranges.
+ const stride=Math.max(1,Math.ceil(total/500));
+ const first=Math.ceil((lo-1e-9)/tick);
+
+ const labels=$('labels').value;
+ const every=labels==='all'||labels==='decimal';
+ const labelWidth=(hi-lo)*34/1060;
+ let lastLabel=-Infinity;
+
+ for(let i=first;i*tick<=hi+1e-8;i+=stride){
+  const n=i*tick;
+  if(n<lo-1e-8)continue;
+  const isMajor=i%segments===0;
+  const isWhole=Math.abs(n-Math.round(n))<1e-7;
+  const boldTick=isMajor||isWhole;
+  el('line',{
+   x1:x(n),y1:y-(boldTick?17:10),
+   x2:x(n),y2:y+(boldTick?17:10),
+   stroke:'#111','stroke-width':boldTick?3:1.5
   });
 
-  randomBtn.addEventListener("click", randomProblem);
+  const show=every||(labels==='whole'&&isWhole);
+  // Space labels sufficiently to avoid overlaps.
+  const textValue=labels==='decimal'
+   ?String(Number(n.toFixed(5))):fmt(n);
+  const minSpace=(textValue.length*9+14)/1060*(hi-lo);
+  if(show && n-lastLabel>=Math.max(labelWidth,minSpace)){
+   el('text',{
+    x:x(n),y:195,'text-anchor':'middle',
+    'font-size':isWhole?19:15,
+    'font-weight':isWhole?800:500
+   },textValue);
+   lastLabel=n;
+  }
+ }
 
-  rangeSelect.addEventListener("change", buildLine);
-
-  input.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      runFullAnimation();
-    }
+ const visiblePaths=path.slice(-100);
+ visiblePaths.forEach(([a,b],i)=>{
+  const xa=x(a),xb=x(b);
+  if(Math.max(xa,xb)<45||Math.min(xa,xb)>1155)return;
+  const offset=38+(i%4)*25;
+  const color=i%2?'#008ac5':'#ef6a21';
+  el('path',{
+   d:`M${xa} ${y-5} Q${(xa+xb)/2} ${y-offset-40} ${xb} ${y-5}`,
+   fill:'none',stroke:color,'stroke-width':4,
+   'stroke-linecap':'round'
   });
+  if(Math.abs(xb-xa)>2)
+   el('path',{
+    d:`M${xb-7*Math.sign(b-a)} ${y-12} L${xb} ${y-5} L${xb-10*Math.sign(b-a)} ${y-1}`,
+    fill:'none',stroke:color,'stroke-width':3
+   });
+ });
 
-  buildLine();
+ if(current>=lo&&current<=hi){
+  el('circle',{cx:x(current),cy:y,r:10,
+   fill:'#fed500',stroke:'#111','stroke-width':3});
+  el('text',{x:x(current),y:240,
+   'text-anchor':'middle','font-size':27,
+   'font-weight':900},fmt(current));
+ }
+ $('result').textContent='Position: '+fmt(current);
+ $('fsResult').textContent='Position: '+fmt(current);
+}
 
-})();
+function setStart(){
+ current=val('start');
+ path=[];
+ render();
+}
+function jump(direction,n=1){
+ const amount=val('step')*direction;
+ if(!Number.isFinite(amount)||amount===0)return;
+ for(let i=0;i<n;i++){
+  const next=Number((current+amount).toFixed(10));
+  path.push([current,next]);
+  current=next;
+ }
+ render();
+}
+function undo(){
+ if(path.length){
+  current=path.pop()[0];
+  render();
+ }
+}
+function zoom(f){
+ const lo=val('min'),hi=val('max');
+ const mid=(lo+hi)/2,half=(hi-lo)*f/2;
+ $('min').value=Number((mid-half).toFixed(8));
+ $('max').value=Number((mid+half).toFixed(8));
+ render();
+}
+
+svg.addEventListener('click',e=>{
+ const matrix=svg.getScreenCTM();
+ if(!matrix)return;
+ const pt=svg.createSVGPoint();
+ pt.x=e.clientX;pt.y=e.clientY;
+ const p=pt.matrixTransform(matrix.inverse());
+ if(p.x<65||p.x>1135)return;
+ const lo=val('min'),hi=val('max');
+ const t=minorStep();
+ const raw=lo+(p.x-70)/1060*(hi-lo);
+ current=Number((Math.round(raw/t)*t).toFixed(10));
+ $('start').value=current;
+ path=[];
+ render();
+});
+
+$('forward').onclick=()=>jump(1);
+$('backward').onclick=()=>jump(-1);
+$('all').onclick=()=>{
+ setStart();
+ jump(1,Math.min(100,Math.max(1,Math.floor(val('jumps')||1))));
+};
+$('undo').onclick=undo;
+$('clear').onclick=setStart;
+$('start').onchange=setStart;
+$('zoomIn').onclick=()=>zoom(.5);
+$('zoomOut').onclick=()=>zoom(2);
+
+$('fsForward').onclick=()=>jump(1);
+$('fsBack').onclick=()=>jump(-1);
+$('fsUndo').onclick=undo;
+$('fsClear').onclick=setStart;
+$('fsZoomIn').onclick=()=>zoom(.5);
+$('fsZoomOut').onclick=()=>zoom(2);
+
+['min','max','tick','segments','labels','mode'].forEach(id=>{
+ $(id).onchange=()=>{
+  if(id==='mode'){
+   if($('mode').value==='fraction'){
+    $('min').value=-2;
+    $('max').value=2;
+    $('tick').value=1;
+    $('segments').value=4;
+    $('labels').value='all';
+    $('step').value=.25;
+   }else if($('mode').value==='groups'){
+    $('min').value=-20;
+    $('max').value=20;
+    $('tick').value=1;
+    $('segments').value=1;
+    $('labels').value='whole';
+    $('step').value=3;
+   }else{
+    $('min').value=-10;
+    $('max').value=10;
+    $('tick').value=1;
+    $('segments').value=1;
+    $('labels').value='whole';
+    $('step').value=1;
+   }
+   setStart();
+  }
+  if(id==='segments'){
+   $('segments').value=subdivisions();
+   if($('mode').value==='fraction')
+    $('step').value=Number(minorStep().toFixed(10));
+  }
+  render();
+ };
+});
+$('resetView').onclick=()=>{
+ $('min').value=-10;
+ $('max').value=10;
+ $('tick').value=1;
+ $('segments').value=1;
+ render();
+};
+
+// Fullscreen controls
+const panel=$('numberPanel');
+const fsBtn=$('fullscreenBtn');
+
+fsBtn.onclick=async()=>{
+ if(document.fullscreenElement){
+  await document.exitFullscreen();
+ }else if(panel.requestFullscreen){
+  try{
+   await panel.requestFullscreen();
+  }catch(err){
+   console.warn('Fullscreen is not supported here.',err);
+  }
+ }
+};
+document.addEventListener('fullscreenchange',()=>{
+ const isFull=document.fullscreenElement===panel;
+ fsBtn.setAttribute('aria-label',
+  isFull?'Exit fullscreen':'Enter fullscreen');
+ fsBtn.title=isFull?'Exit fullscreen':'Fullscreen';
+ $('expandIcon').innerHTML=isFull
+  ?'<path d="M8 3v5H3M16 3v5h5M3 16h5v5M21 16h-5v5"/>'
+  :'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/>';
+});
+render();
 </script>
-
 </body>
 </html>
-```

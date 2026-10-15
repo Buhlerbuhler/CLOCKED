@@ -1,466 +1,3691 @@
-
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CLOCKED | NUMBER LINE</title>
+<title>JAX'S WORLD / An Open Archive</title>
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 :root{
- --math:#7AE0FF;
- --ink:#111;
- --paper:#f5f5f2;
- font-family:Inter,Arial,sans-serif;
- color:var(--ink);
- background:var(--paper);
+  --ink:#141414;
+  --paper:#f0eee7;
+  --accent:#d7f344;
+  --line:#bbb9af;
+  --muted:#65655d;
 }
+
 *{box-sizing:border-box}
-body{margin:0}
-header{
- background:var(--math);
- padding:18px 25px;
- display:flex;justify-content:space-between;align-items:center
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Space Grotesk',Arial,sans-serif;
 }
-header strong{font-size:22px;letter-spacing:-1px}
-header a{color:inherit;text-decoration:none;font-weight:800}
-main{max-width:1400px;margin:auto;padding:22px}
-.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
-.field{
- display:flex;flex-direction:column;gap:5px;
- font-size:12px;font-weight:800;text-transform:uppercase
+
+button,input{font:inherit}
+button{cursor:pointer}
+
+.top{
+  position:sticky;
+  top:0;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:var(--ink);
+  color:var(--paper);
+  padding:15px 3vw;
+  gap:15px;
 }
-input,select,button{
- font:inherit;border:2px solid var(--ink);
- border-radius:5px;padding:10px;background:white
+
+.brand{
+  font-weight:700;
+  letter-spacing:-.07em;
+  font-size:clamp(22px,3vw,34px);
 }
-input{width:95px}
-button{font-weight:800;cursor:pointer}
-button:hover{background:#edfaff}
-.primary{background:var(--math)}
-.panel{
- background:white;border:2px solid var(--ink);
- border-radius:9px;padding:20px;margin:16px 0
+
+.brand span{color:var(--accent)}
+
+.top small,
+.mono,
+.eyebrow,
+.tag,
+.nav button,
+.meta{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
 }
-.line-head{display:flex;align-items:center;justify-content:space-between}
-.line-head strong{font-size:15px}
-.icon-btn{
- width:33px;height:33px;padding:6px;
- border:0;background:transparent;border-radius:5px;
- display:flex;align-items:center;justify-content:center;
- color:#777;cursor:pointer
+
+.top small{color:#c9c9c0}
+
+.nav{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
 }
-.icon-btn:hover{color:#111;background:#edfaff}
-.icon-btn svg{width:19px;height:19px}
-.canvas{height:330px;position:relative;touch-action:pan-y}
-.canvas svg{width:100%;height:100%;display:block}
-.hint{color:#555;font-size:13px;margin-top:4px}
-.stat{font-size:24px;font-weight:900;margin-left:auto}
-.fs-toolbar{display:none}
-#numberPanel:fullscreen{
- border:0;border-radius:0;margin:0;
- width:100vw;height:100vh;
- background:white;padding:20px;
- display:flex;flex-direction:column
+
+.nav button{
+  border:1px solid #777;
+  background:transparent;
+  color:white;
+  padding:10px 13px;
 }
-#numberPanel:fullscreen .canvas{flex:1;min-height:0;height:auto}
-#numberPanel:fullscreen .hint{display:none}
-#numberPanel:fullscreen .fs-toolbar{
- display:flex;justify-content:center;align-items:center;
- flex-wrap:wrap;gap:8px;padding:12px 0 5px
+
+.nav button.active,
+.nav button:hover{
+  background:var(--accent);
+  color:var(--ink);
+  border-color:var(--accent);
 }
-#numberPanel:fullscreen .fs-toolbar button{padding:10px 16px}
+
+main{
+  max-width:1500px;
+  margin:auto;
+  padding:0 3vw 65px;
+}
+
+.hero{
+  padding:75px 0 45px;
+  border-bottom:2px solid var(--ink);
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:30px;
+}
+
+.eyebrow{
+  display:inline-flex;
+  gap:12px;
+  align-items:center;
+}
+
+.dot{
+  height:8px;
+  width:8px;
+  background:#ee633d;
+  border-radius:50%;
+  display:inline-block;
+}
+
+.hero h1{
+  font-size:clamp(42px,5.5vw,76px);
+  line-height:.88;
+  letter-spacing:-.085em;
+  margin:24px 0;
+}
+
+.hero h1 em{
+  font-style:normal;
+  color:#8e9580;
+}
+
+.hero p{
+  font-size:clamp(18px,2vw,26px);
+  max-width:680px;
+  line-height:1.25;
+}
+
+.hero-aside{
+  align-self:end;
+  border-top:2px solid;
+  padding-top:18px;
+}
+
+.hero-aside strong{
+  font-size:clamp(24px,3vw,42px);
+  line-height:1.03;
+  letter-spacing:-.06em;
+  display:block;
+  margin:12px 0 25px;
+}
+
+.button{
+  border:2px solid var(--ink);
+  padding:13px 18px;
+  background:var(--accent);
+  color:var(--ink);
+  font-weight:700;
+  text-transform:uppercase;
+  font-size:12px;
+}
+
+.button:hover{
+  background:var(--ink);
+  color:var(--accent);
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  border-bottom:2px solid;
+  margin:45px 0 18px;
+  padding-bottom:12px;
+  gap:15px;
+}
+
+.section-head h2{
+  font-size:clamp(28px,4vw,52px);
+  letter-spacing:-.07em;
+  margin:0;
+}
+
+.section-head span{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+}
+
+.filters{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
+.filters button{
+  border:1px solid var(--ink);
+  background:transparent;
+  padding:10px 12px;
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+}
+
+.filters button.active{
+  background:var(--ink);
+  color:var(--paper);
+}
+
+.search{
+  margin-left:auto;
+  min-width:180px;
+  padding:10px;
+  border:1px solid var(--ink);
+  background:transparent;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+
+.entry{
+  min-height:260px;
+  border:1.5px solid var(--ink);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  background:#e6e4da;
+  transition:transform .15s,background .15s;
+  text-align:left;
+}
+
+.entry:hover{
+  transform:translateY(-4px);
+  background:var(--accent);
+}
+
+.entry:nth-child(4n+2){background:#dedfd3}
+.entry:nth-child(4n+3){background:#e8e3dc}
+
+.entry .num{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+}
+
+.entry h3{
+  font-size:clamp(28px,3vw,43px);
+  letter-spacing:-.075em;
+  line-height:1;
+  margin:35px 0 12px;
+}
+
+.entry p{
+  line-height:1.35;
+  font-size:14px;
+  max-width:350px;
+}
+
+.entry .creator{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  text-transform:uppercase;
+  margin-top:auto;
+  padding-top:14px;
+  color:var(--muted);
+}
+
+.entry .bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin-top:auto;
+  border-top:1px solid;
+  padding-top:12px;
+  gap:8px;
+}
+
+.tag{
+  border:1px solid;
+  padding:5px;
+}
+
+.arrow{font-size:26px}
+
+.empty{
+  padding:30px;
+  border:1px dashed var(--line);
+}
+
+.page{display:none}
+.page.active{display:block}
+
+.guide-grid,
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:20px;
+}
+
+.guide-box,
+.summary-box{
+  border:1.5px solid var(--ink);
+  padding:22px;
+  background:#e6e4da;
+}
+
+.guide-box{
+  min-height:180px;
+}
+
+.guide-box h3,
+.summary-box h3{
+  font-size:28px;
+  letter-spacing:-.055em;
+  margin:8px 0 14px;
+}
+
+.guide-box p{line-height:1.5}
+
+.summary-box.wide{grid-column:1/-1}
+
+.summary-box ul{
+  margin:0;
+  padding-left:20px;
+}
+
+.summary-box li{
+  margin:7px 0;
+  line-height:1.35;
+}
+
+.summary-actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin:22px 0;
+}
+
+.summary-intro{
+  font-size:clamp(18px,2vw,25px);
+  line-height:1.35;
+  max-width:850px;
+}
+
+.builder-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:22px;
+}
+
+.builder-card{
+  border:1.5px solid var(--ink);
+  padding:18px;
+  min-height:145px;
+  background:#e6e4da;
+}
+
+.builder-card h3{
+  font-size:24px;
+  letter-spacing:-.05em;
+  margin:7px 0 12px;
+}
+
+.builder-card p{
+  font-size:14px;
+  line-height:1.4;
+  margin:0;
+}
+
+.builder-card .mono{color:var(--muted)}
+
+.detail{
+  max-width:1100px;
+  padding:50px 0;
+}
+
+.back{
+  background:none;
+  border:0;
+  border-bottom:1px solid;
+  padding:0 0 5px;
+  font-family:'DM Mono',monospace;
+  text-transform:uppercase;
+  font-size:12px;
+}
+
+.detail h1{
+  font-size:clamp(50px,8vw,110px);
+  letter-spacing:-.09em;
+  line-height:.95;
+  margin:25px 0;
+}
+
+.detail .lead{
+  font-size:clamp(20px,3vw,31px);
+  line-height:1.3;
+  max-width:800px;
+}
+
+.detail-body{
+  border-top:2px solid;
+  margin-top:35px;
+  padding-top:25px;
+  display:grid;
+  grid-template-columns:minmax(180px,.7fr) minmax(0,2.3fr);
+  gap:30px;
+}
+
+.content-block{
+  white-space:pre-line;
+  line-height:1.6;
+  max-width:850px;
+}
+
+.world-image{
+  width:100%;
+  max-width:720px;
+  display:block;
+  margin:22px 0 28px;
+  border:2px solid var(--ink);
+}
+
+.resource-link,
+.popup-image-button{
+  display:inline-block;
+  border:1.5px solid var(--ink);
+  background:var(--accent);
+  color:var(--ink);
+  padding:11px 14px;
+  margin:15px 8px 22px 0;
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+  text-decoration:none;
+  font-weight:500;
+}
+
+.resource-link:hover,
+.popup-image-button:hover{
+  background:var(--ink);
+  color:var(--accent);
+}
+
+
+/* WORLD MAP */
+.map-panel{margin:22px 0 30px;border:2px solid var(--ink);background:#e6e4da}
+.map-panel img{display:block;width:100%;height:auto;max-height:850px;object-fit:contain;background:#13bbd0}
+.map-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:2px solid var(--ink)}
+.map-panel-links{padding:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:2px solid var(--ink)}
+.map-region{border:1.5px solid var(--ink);background:var(--paper);text-align:left;padding:14px;cursor:pointer;min-width:0}
+.map-region:hover{background:var(--accent)}
+.map-region strong{display:block;font-size:20px;letter-spacing:-.04em;margin-bottom:5px}
+.map-region small{font-size:12px;line-height:1.35;display:block}
+@media(max-width:650px){.map-panel-links{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.map-panel-links{grid-template-columns:1fr}}
+
+/* RESPONSIVE VIDEO PLAYER */
+.video-frame{
+  width:100%;
+  max-width:900px;
+  aspect-ratio:16 / 9;
+  margin:22px 0 28px;
+  border:1.5px solid var(--ink);
+  background:var(--ink);
+  overflow:hidden;
+}
+.video-frame iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+/* CHARACTER PROFILE */
+
+.character-profile{
+  display:grid;
+  grid-template-columns:minmax(220px,280px) minmax(0,1fr);
+  gap:18px;
+  margin:22px 0;
+  align-items:start;
+}
+
+.character-photo{
+  min-height:360px;
+  border:1.5px dashed var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:24px;
+  background:#dedfd3;
+}
+
+.profile-sections{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  gap:10px;
+  min-width:0;
+}
+
+.profile-box{
+  border:1.5px solid var(--ink);
+  padding:18px;
+  background:#e6e4da;
+  min-width:0;
+  overflow:hidden;
+}
+
+.profile-box.wide{grid-column:1/-1}
+
+.profile-box h3{
+  font-size:22px;
+  letter-spacing:-.05em;
+  margin:5px 0 12px;
+}
+
+.profile-list{
+  display:grid;
+  grid-template-columns:minmax(105px,.75fr) minmax(0,1.25fr);
+  gap:8px 14px;
+  font-size:14px;
+  line-height:1.35;
+  min-width:0;
+}
+
+.profile-list > *{min-width:0}
+
+.profile-list span{
+  overflow-wrap:anywhere;
+}
+
+.profile-list strong{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  text-transform:uppercase;
+}
+
+/* ANIMAL PHOTOS */
+
+.animal-photo{
+  width:100%;
+  max-width:900px;
+  aspect-ratio:16 / 9;
+  border:1.5px solid var(--ink);
+  background:#dedfd3;
+  margin:22px 0 28px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.animal-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.animal-photo-placeholder{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:25px;
+  background:
+    linear-gradient(135deg,transparent 49.7%,#c7c7bc 50%,transparent 50.3%),
+    linear-gradient(45deg,transparent 49.7%,#c7c7bc 50%,transparent 50.3%);
+}
+
+.animal-photo-placeholder strong{
+  display:block;
+  margin-top:8px;
+  font-size:clamp(25px,4vw,44px);
+  letter-spacing:-.06em;
+  background:#dedfd3;
+  padding:5px 12px;
+}
+
+.animal-photo-placeholder .mono{
+  background:#dedfd3;
+  padding:5px 8px;
+}
+
+/* SCROLLABLE DOCUMENT POPUP */
+
+.image-popup{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(20,20,20,.94);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:clamp(12px,3vw,40px);
+}
+
+.image-popup.open{display:flex}
+
+.image-popup-window{
+  position:relative;
+  width:min(1100px,94vw);
+  height:min(88dvh,900px);
+  background:var(--paper);
+  border:2px solid var(--ink);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 20px 80px rgba(0,0,0,.45);
+}
+
+.image-popup-header{
+  flex:0 0 auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:54px;
+  padding:8px 8px 8px 18px;
+  background:var(--accent);
+  border-bottom:2px solid var(--ink);
+}
+
+.image-popup-title{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  font-weight:500;
+}
+
+.image-popup-scroll{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  background:#dedfd3;
+  overscroll-behavior:contain;
+}
+
+.image-popup-scroll img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.image-popup-close{
+  flex:0 0 auto;
+  width:38px;
+  height:38px;
+  border:1.5px solid var(--ink);
+  background:var(--ink);
+  color:white;
+  font-size:24px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.image-popup-close:hover{
+  background:var(--paper);
+  color:var(--ink);
+}
+
+.image-popup-scroll::-webkit-scrollbar{width:12px}
+
+.image-popup-scroll::-webkit-scrollbar-track{
+  background:#c9c7bd;
+  border-left:1px solid var(--ink);
+}
+
+.image-popup-scroll::-webkit-scrollbar-thumb{
+  background:var(--ink);
+  border:2px solid #c9c7bd;
+}
+
+.connections{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.connections button{
+  border:1px solid;
+  background:transparent;
+  padding:10px;
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
+}
+
+.connections button:hover{background:var(--accent)}
+
 footer{
- text-align:center;padding:18px;
- font-weight:900;font-size:12px;letter-spacing:2px
+  border-top:2px solid;
+  margin-top:70px;
+  padding:20px 0;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  text-transform:uppercase;
 }
-@media(max-width:700px){
- main{padding:10px}
- .panel{padding:12px}
- .canvas{height:260px}
- .stat{width:100%}
- header{padding:14px}
- #numberPanel:fullscreen{padding:10px}
- #numberPanel:fullscreen .fs-toolbar button{padding:8px}
+
+@media print{
+  body{background:white}
+
+  .top,
+  footer,
+  .summary-actions .button,
+  .image-popup{
+    display:none!important;
+  }
+
+  main{
+    max-width:none;
+    padding:0;
+  }
+
+  .page{display:none!important}
+  #summary.page{display:block!important}
+
+  .summary-box{
+    break-inside:avoid;
+    background:white;
+  }
 }
+
+@media(max-width:850px){
+  .character-profile{grid-template-columns:1fr}
+
+  .profile-sections,
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .profile-box.wide,
+  .summary-box.wide{
+    grid-column:auto;
+  }
+
+  .builder-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .top{
+    position:relative;
+    flex-wrap:wrap;
+  }
+
+  .top small{display:none}
+  .nav{width:100%}
+
+  .hero,
+  .detail-body{
+    grid-template-columns:1fr;
+  }
+
+  .hero{padding-top:45px}
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .guide-grid{grid-template-columns:1fr}
+
+  .search{
+    width:100%;
+    margin-left:0;
+  }
+}
+
+@media(max-width:550px){
+  .builder-grid,
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .entry{min-height:220px}
+  .hero h1{font-size:46px}
+
+  footer{flex-direction:column}
+
+  .image-popup{padding:8px}
+
+  .image-popup-window{
+    width:100%;
+    height:94dvh;
+  }
+
+  .image-popup-header{
+    min-height:50px;
+    padding-left:12px;
+  }
+}
+
+/* DARK SHADOWS GALLERY */
+.shadow-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:24px 0}
+.shadow-gallery-card{border:1.5px solid var(--ink);background:#e6e4da;padding:0;text-align:left;cursor:pointer;color:var(--ink);font:inherit;overflow:hidden}
+.shadow-gallery-card img{width:100%;aspect-ratio:2/3;object-fit:contain;display:block;background:#222}
+.shadow-gallery-card span{display:block;padding:12px 14px;font-weight:700}
+.shadow-gallery-card:hover{outline:3px solid var(--accent);outline-offset:-3px}
+@media(min-width:900px){.shadow-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+
+.quick-links{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 32px}
+.quick-links button{border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:11px 15px;font:700 12px 'DM Mono',monospace;cursor:pointer}
+.quick-links button:hover,.quick-links button:focus-visible{background:var(--ink);color:var(--paper)}
+.search{min-width:210px}
+.entry:focus-visible,.map-region:focus-visible,.shadow-gallery-card:focus-visible{outline:3px solid #708500;outline-offset:3px}
+@media(max-width:700px){.quick-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.quick-links button{text-align:left}.filters{gap:6px}.filters button{padding:10px}.search{width:100%;min-width:0}}
+
+.country-list{border-top:1.5px solid var(--ink)}
+.country-section{border-bottom:1px solid var(--line);background:var(--paper)}
+.country-section summary{cursor:pointer;display:grid;grid-template-columns:minmax(95px,1fr) minmax(0,2fr) 20px;align-items:center;gap:14px;padding:16px;list-style:none}
+.country-section summary::-webkit-details-marker{display:none}
+.country-section summary span{font-size:13px;line-height:1.45}
+.country-section[open] .country-chevron{transform:rotate(45deg)}
+.country-body{padding:0 18px 20px}.country-body .content-block{white-space:pre-line}.country-flag{max-width:340px;width:100%;height:auto;display:block;margin:14px 0}
+@media(max-width:600px){.country-section summary{grid-template-columns:1fr 20px}.country-section summary span:not(.country-chevron){grid-column:1;grid-row:2}.country-chevron{grid-column:2;grid-row:1}}
+
+.collection{margin:26px 0 34px}.collection-title{font:800 1.15rem 'Space Grotesk',sans-serif;letter-spacing:-.03em;margin:0 0 14px}
+.collection-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.collection-grid.creature{grid-template-columns:repeat(3,minmax(0,1fr))}
+.collection-item{border:2px solid var(--ink);background:var(--paper);min-width:0}
+.collection-item summary{cursor:pointer;list-style:none;padding:14px;display:grid;grid-template-columns:1fr auto;gap:7px;align-items:start}
+.collection-item summary::-webkit-details-marker{display:none}
+.collection-item summary img{grid-column:1/-1;width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid var(--line);background:#ddd}
+.collection-name{font:800 1.15rem 'Space Grotesk',sans-serif}.collection-expand{font-size:1.3rem}.collection-item[open] .collection-expand{transform:rotate(45deg)}
+.collection-description{grid-column:1/-1;font-size:.9rem;color:var(--muted);line-height:1.4}
+.collection-body{padding:0 14px 18px;border-top:1px solid var(--line)}.collection-body .content-block{white-space:pre-line;margin-top:14px}
+.summary-jump{margin-top:14px;padding:10px 14px;background:var(--ink);color:var(--paper);border:0;cursor:pointer;font-weight:800}
+@media(max-width:720px){.collection-grid.creature{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:430px){.collection-grid{grid-template-columns:1fr}.collection-grid.creature{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.concert-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0 26px}
+.concert-poster{display:flex;flex-direction:column;text-align:left;border:1.5px solid var(--ink);background:#e6e4da;color:var(--ink);padding:0;cursor:pointer;font:inherit}
+.concert-poster img{width:100%;aspect-ratio:16/10;object-fit:contain;background:#151515;display:block}
+.concert-poster span{padding:12px 14px;font-weight:700}
+.concert-poster:hover,.concert-poster:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media(max-width:580px){.concert-gallery{grid-template-columns:1fr}}
+
+.ssm-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin:24px 0}
+.ssm-gallery-item{background:var(--paper);border:1px solid var(--ink);padding:0;cursor:pointer;text-align:left;color:var(--ink);font:700 12px 'DM Mono',monospace}
+.ssm-gallery-item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.ssm-gallery-item span{display:block;padding:11px}
+.ssm-gallery-item:hover{outline:3px solid var(--accent)}
 </style>
 </head>
+
 <body>
-<header>
-<strong>CLOCKED <span style="font-weight:400">/ NUMBER LINE</span></strong>
-<a href="/math">☰ MATH TOOLS</a>
+
+<header class="top">
+  <div class="brand">JAX'S WORLD<span>↗</span></div>
+  <small>AN OPEN ARCHIVE / GRADE 8 ELA</small>
+
+  <nav class="nav">
+    <button data-page="home" class="active">Explore</button>
+    <button data-page="summary">World Summary</button>
+    
+    <button data-page="guide">The Project</button>
+  </nav>
 </header>
+
 <main>
-<div class="panel">
-<div class="controls">
-<label class="field">Mode
-<select id="mode">
-<option value="count">Count / Integers</option>
-<option value="fraction">Fractions</option>
-<option value="groups">Multiply / Divide</option>
-</select>
-</label>
-<label class="field">Minimum
-<input type="number" id="min" value="-10" step="any">
-</label>
-<label class="field">Maximum
-<input type="number" id="max" value="10" step="any">
-</label>
-<label class="field">Major interval
-<select id="tick">
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="5">5</option>
-<option value="10">10</option>
-</select>
-</label>
-<label class="field">Subdivisions
-<input type="number" id="segments" value="1" min="1" max="100" step="1">
-</label>
-<label class="field">Labels
-<select id="labels">
-<option value="whole">Whole numbers</option>
-<option value="all">Every tick</option>
-<option value="decimal">Decimals</option>
-<option value="none">Hide labels</option>
-</select>
-</label>
-<button id="resetView">Reset view</button>
-</div>
+
+<!-- HOME -->
+
+<section id="home" class="page active">
+
+<div class="hero">
+
+<div>
+  <div class="eyebrow">
+    <span class="dot"></span>
+    ARCHIVE STATUS: UNDER CONSTRUCTION
+  </div>
+
+  <h1>JAX'S<br><em>WORLD</em></h1>
+
+  <p>
+    Explore the people, places, creatures, and stories created by our class. Search for something or choose a category below.
+  </p>
 </div>
 
-<div class="panel" id="numberPanel">
-<div class="line-head">
-<strong>NUMBER LINE</strong>
-<button id="fullscreenBtn" class="icon-btn" aria-label="Enter fullscreen" title="Fullscreen">
-<svg id="expandIcon" viewBox="0 0 24 24" fill="none"
- stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/>
-</svg>
+<div class="hero-aside">
+  <span class="mono">FIELD NOTE / 001</span>
+
+  <strong>
+    THIS WORLD IS NOT FINISHED.
+    THAT'S THE POINT.
+  </strong>
+
+  <button
+  class="button"
+  onclick="document.getElementById('archiveHead').scrollIntoView({behavior:'smooth'})">
+    Explore the world ↗
+  </button>
+</div>
+
+</div>
+
+<div class="quick-links"><button type="button" data-quick-id="jax">Meet Jax ↗</button><button type="button" data-quick-id="nazareth">Explore Nazareth ↗</button><button type="button" data-quick-id="villains">The Dark Shadows ↗</button><button type="button" data-page="builders">Who’s Building What ↗</button></div>
+<div class="section-head" id="archiveHead">
+  <h2>THE ARCHIVE</h2>
+  <span id="count"></span>
+</div>
+
+<div class="filters" id="filters">
+  <button class="active" data-filter="all">All</button>
+  <button data-filter="people">People</button>
+  <button data-filter="places">Places</button>
+  <button data-filter="sports">Sports</button>
+  <button data-filter="society">Society</button>
+  <button data-filter="nature">Nature</button>
+  <button data-filter="stories">Stories & Media</button>
+
+  <input
+  id="search"
+  class="search"
+  placeholder="Search the archive...">
+</div>
+
+<div id="cards" class="cards"></div>
+
+</section>
+
+
+<!-- SUMMARY -->
+
+<section id="summary" class="page">
+
+<div class="section-head">
+  <h2>WORLD SUMMARY</h2>
+  <span>QUICK REFERENCE / CURRENT CANON</span>
+</div>
+
+<div class="summary-actions">
+
+  <p class="summary-intro">
+    Everything currently established about Jax’s World in one place.
+    This page will keep changing as the class develops the world.
+  </p>
+
+  <button class="button" onclick="window.print()">
+    Print / Save PDF
+  </button>
+
+</div>
+
+<div id="summaryContent"></div>
+
+</section>
+
+
+<!-- BUILDERS -->
+
+<section id="builders" class="page">
+
+<div class="section-head">
+  <h2>WHO’S BUILDING WHAT</h2>
+  <span>FIND PEOPLE / MAKE CONNECTIONS</span>
+</div>
+
+<p class="summary-intro">
+  If your idea connects to something another person is developing,
+  talk to them. Ask questions, compare ideas, and get permission before
+  changing or incorporating someone else’s creation.
+</p>
+
+<div class="builder-grid">
+
+<div class="builder-card">
+<span class="mono">SPORTS</span>
+<h3>Isaiah</h3>
+<p>Basketball</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">PEOPLE / PLACES</span>
+<h3>Aneleigh / Josie</h3>
+<p>Girlfriend, family, friends, coffee shop</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">SPORTS / STORY</span>
+<h3>Zander</h3>
+<p>Basketball team and football team’s ally</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">PEOPLE</span>
+<h3>Elliot</h3>
+<p>Bad guys backstory</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">PEOPLE / MEDIA</span>
+<h3>Hannah</h3>
+<p>Character profiles, drawings and newscast</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">PLACES</span>
+<h3>Arianna</h3>
+<p>Map</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">SOCIETY</span>
+<h3>Sienna</h3>
+<p>Transportation</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">STORIES / MEDIA</span>
+<h3>Ivy</h3>
+<p>Graphic novel and newscast</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">SOCIETY</span>
+<h3>Ethne</h3>
+<p>Laws and rules</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">SPORTS</span>
+<h3>Marrex / Max</h3>
+<p>Football team and league</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">SOCIETY</span>
+<h3>Bella</h3>
+<p>Fashion design</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">WORLD</span>
+<h3>Norah / Jordyn</h3>
+<p>Planet Nazareth</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">MEDIA</span>
+<h3>Berkeley</h3>
+<p>Newspaper article</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">PLACES</span>
+<h3>Finley / Cohen</h3>
+<p>Milsamolex city planning</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">PLACES / MEDIA</span>
+<h3>Harper</h3>
+<p>Vala Cafe and newspaper</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">NATURE</span>
+<h3>Crosby / Brent</h3>
+<p>Animal kingdom</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">SOCIETY</span>
+<h3>Bristol</h3>
+<p>Country and fantasy-world rules</p>
+</div>
+
+<div class="builder-card">
+<span class="mono">STORY</span>
+<h3>Alexandra / Josie</h3>
+<p>Backstory</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- PROJECT -->
+
+<section id="guide" class="page">
+
+<div class="section-head">
+  <h2>THE PROJECT</h2>
+  <span>WORLD BUILDING / GRADE 8 ELA</span>
+</div>
+
+<p class="summary-intro">
+  Create something that expands Jax’s World. Write, draw, design,
+  explain, research, or combine approaches.
+</p>
+
+<div class="guide-grid">
+
+<div class="guide-box">
+<span class="mono">01 / ORIGINAL</span>
+<h3>ADD SOMETHING</h3>
+<p>Add something the world does not already fully explain.</p>
+</div>
+
+<div class="guide-box">
+<span class="mono">02 / CONNECTED</span>
+<h3>MAKE IT BELONG</h3>
+<p>Connect your contribution to the story or another part of the shared world.</p>
+</div>
+
+<div class="guide-box">
+<span class="mono">03 / DEVELOPED</span>
+<h3>PUSH IT FURTHER</h3>
+<p>Add enough detail that other people can understand how your idea works.</p>
+</div>
+
+<div class="guide-box">
+<span class="mono">04 / PURPOSEFUL</span>
+<h3>MAKE CHOICES</h3>
+<p>Use your format intentionally and be able to explain your choices.</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- DETAIL -->
+
+<section id="detail" class="page">
+
+<div class="detail">
+
+<button class="back" id="back">
+← Back to archive
 </button>
-</div>
-<div class="canvas">
-<svg id="line" viewBox="0 0 1200 320"
- preserveAspectRatio="xMidYMid meet"
- role="img" aria-label="Interactive number line"></svg>
-</div>
-<div class="hint">
-Click the number line to set a starting point. Fractions display as mixed numbers after each whole.
-</div>
-<div class="fs-toolbar">
-<button id="fsBack">← Jump</button>
-<button id="fsForward" class="primary">Jump →</button>
-<button id="fsUndo">Undo</button>
-<button id="fsClear">Clear</button>
-<button id="fsZoomIn">Zoom +</button>
-<button id="fsZoomOut">Zoom −</button>
-<strong id="fsResult" style="margin-left:14px;font-size:20px">0</strong>
-</div>
+
+<div class="meta" id="detailMeta"></div>
+
+<h1 id="detailTitle"></h1>
+
+<p class="lead" id="detailLead"></p>
+
+<div id="detailContent"></div>
+
+<div class="detail-body">
+
+<div id="detailInfo"></div>
+
+<div>
+
+<span class="mono">CONNECTED RECORDS</span>
+
+<div
+class="connections"
+id="connections"
+style="margin-top:15px">
 </div>
 
-<div class="panel">
-<div class="controls">
-<label class="field">Starting point
-<input type="number" id="start" value="0" step="any">
-</label>
-<label class="field">Jump size
-<input type="number" id="step" value="1" step="any">
-</label>
-<label class="field">Number of jumps
-<input type="number" id="jumps" value="1" min="1" max="100">
-</label>
-<button class="primary" id="forward">Jump →</button>
-<button id="backward">← Jump</button>
-<button id="all">Show all jumps</button>
-<button id="undo">Undo</button>
-<button id="clear">Clear</button>
-<button id="zoomIn">Zoom +</button>
-<button id="zoomOut">Zoom −</button>
-<div class="stat" id="result">0</div>
 </div>
+
 </div>
+
+</div>
+
+</section>
+
+
+<footer>
+<span>JAX'S WORLD / CLASS ARCHIVE</span>
+<span>BUILD → CONNECT → EXPAND</span>
+</footer>
+
 </main>
-<footer>CLOCKED | MATH TOOLS</footer>
+
+
+<!-- SCROLLABLE IMAGE POPUP -->
+
+<div
+id="imagePopup"
+class="image-popup"
+aria-hidden="true">
+
+<div class="image-popup-window">
+
+<div class="image-popup-header">
+
+<span
+id="imagePopupTitle"
+class="image-popup-title">
+IMAGE
+</span>
+
+<button
+id="imagePopupClose"
+class="image-popup-close"
+aria-label="Close image">
+×
+</button>
+
+</div>
+
+<div
+id="imagePopupScroll"
+class="image-popup-scroll">
+
+<img
+id="imagePopupImg"
+src=""
+alt="">
+
+</div>
+
+</div>
+
+</div>
+
 
 <script>
-const $=id=>document.getElementById(id);
-const svg=$('line');
-const NS='http://www.w3.org/2000/svg';
-const MATH='#7AE0FF';
-let path=[],current=0;
 
-function el(tag,attrs={},text){
- const n=document.createElementNS(NS,tag);
- Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));
- if(text!==undefined)n.textContent=text;
- svg.append(n);
- return n;
+/* ======================================================
+   ARCHIVE DATA
+====================================================== */
+
+const entries = [
+
+/* ======================================================
+   PEOPLE
+====================================================== */
+
+{
+id:'jax',
+title:'Jax King',
+category:'people',
+type:'Character',
+description:'A 15-year-old football player at the centre of our world.',
+workingOn:'Hannah / Alexandra / Josie',
+
+profile:{
+photo:'',
+
+sections:[
+
+{
+title:'PROFILE',
+items:[
+['Name','Jax King'],
+['Age','15'],
+['Name Meaning','God is gracious'],
+['Birthday','May 17'],
+['Zodiac','Taurus'],
+['Height',"5’10’’"],
+['Weight','150 lb'],
+['Physical Traits','Blond hair with a blue streak; buff (apparently)']
+]
+},
+
+{
+title:'FAVOURITES',
+items:[
+['Food','Cakepop'],
+['Drink','Rainbow lemonade'],
+['Colour','Blue'],
+['Weather','Sunny'],
+['Item','Signed football']
+]
+},
+
+{
+title:'PERSONALITY',
+items:[
+['Personality','Introverted'],
+['Hobbies','Football, baking'],
+['Special Skills','Football'],
+['Pet Peeve','Being late or cancelling last minute'],
+['Bad At','Singing and dancing'],
+['Biggest Fear','FOMO']
+]
+},
+
+{
+title:'MOTIVATION',
+items:[
+['Goal','Become a football player'],
+['Would Die For','Football'],
+['Would Kill For','Football']
+]
+},
+
+{
+title:'KNOWN HISTORY',
+wide:true,
+items:[
+['Football','Jax started playing football at age 12.'],
+['Football Camp','He missed football camp because he was sick with appendicitis.'],
+['Job',"He works at Luingunii’s Pizzeria around the bend."],
+['Daily Routine','Jax goes to Vala Cafe every day.'],
+['Cafe Order','Rainbow lemonade with blueberry, raspberry and pineapple, plus a birthday-cake-flavoured volleyball cakepop.'],
+['Social Life','Jax is not popular because he is an introvert.']
+]
+},
+
+{
+title:'RELATIONSHIPS',
+wide:true,
+items:[
+['Ashlee','His girlfriend. She plans both of their next day hour for hour.'],
+['Mia',"His little sister. Jax stays a bit away because she bombards him with hugs and he doesn't know what is going on in her head."],
+['Parents','He loves them but gives them alone time.'],
+['Leo',"His closest friend ever. They don't like being separated."],
+['Noodles','His calm female Siamese cat.']
+]
 }
-const val=id=>Number($(id).value);
-const subdivisions=()=>Math.max(1,Math.min(100,Math.floor(val('segments')||1)));
-const interval=()=>val('tick');
-const minorStep=()=>interval()/subdivisions();
 
-function gcd(a,b){
- a=Math.abs(a);b=Math.abs(b);
- while(b){const t=b;b=a%b;a=t}
- return a||1;
+]
+},
+
+connections:[
+'ashlee',
+'leo',
+'mia',
+'lauren',
+'paul',
+'noodles',
+'vala',
+'pizzeria',
+'lightning',
+'milsamolex',
+'laws',
+'newspaper'
+]
+},
+
+{
+id:'ashlee',
+title:'Ashly Eirvalon',
+category:'people',
+type:'Character',
+description:'Jax’s girlfriend. Kind, funny, protective and calm; she works at the library.',
+profile:{
+photo:'',
+sections:[
+{title:'PROFILE',items:[
+['Name','Ashly Eirvalon'],['Age','15'],['Name Meaning','Meadow of ash trees'],
+['Birthday','May 5'],['Zodiac','None'],['Height','5 ft 3.8 in (161.8 cm)'],
+['Weight','117–125 lb (about 53–57 kg)'],
+['Physical Traits','Brown eyes, short shaggy blackish-brown hair, light skin']
+]},
+{title:'FAVOURITES',items:[
+['Food','Spicy sushi'],['Drink','Raspberry lemonade'],['Colours','Red and black'],
+['Weather','Summer'],['Item','Her grandma’s clock']
+]},
+{title:'PERSONALITY & SKILLS',items:[
+['Personality','Kind, funny, protective, calm, interfered (student wording)'],
+['Hobbies','Cooking/baking, reading, drawing'],['Special Skills','Whistling, voices'],
+['Pet Peeve','Dirty hair'],['Bad At','Making friends'],
+['Biggest Fear','Her loved ones dying']
+]},
+{title:'GOALS & LIFE',items:[
+['Goal','Make a change in the world'],['Would Die For','Jax'],
+['Would Kill For','Her parents'],['Job','Works at the library'],
+['Social Life','Not popular']
+]},
+{title:'DAILY ROUTINE',wide:true,items:[
+['Routine','Wake up, brush teeth, get dressed, do hair, meet Jax at the cafe for lemonade, go to work, have three hours of free time, go home, get ready for bed, and repeat.']
+]},
+{title:'RELATIONSHIPS',wide:true,items:[
+['Jax','Boyfriend; she loves being with him and feels calm around him.'],
+['Mother','Nurse'],['Father','Science teacher']
+]}
+]
+},
+connections:['jax','fashion','vala']
+},
+
+{
+id:'leo',
+title:'Leo Smith',
+category:'people',
+type:'Character',
+
+description:
+'Jax’s best friend: funny, sarcastic, and a great chef.',
+
+content:
+`ESTABLISHED:
+
+Leo Smith is Jax’s best friend.
+
+He is funny and sarcastic.
+
+He has black curly hair and green eyes.
+
+Leo is a great chef.
+
+Jax considers Leo his closest friend ever.
+
+They do not like being separated.`,
+
+connections:['jax']
+},
+
+{
+id:'mia',
+title:'Mia King',
+category:'people',
+type:'Character',
+description:'Jax’s six-year-old sister. Sweet, cheeky, and passionate about cheerleading.',
+profile:{
+photo:'',
+sections:[
+{title:'PROFILE',items:[
+['Name','Mia'],['Age','6'],['Name Meaning','Beloved'],
+['Birthday','June 12'],['Height',"3’"],['Weight','44.7 lb'],
+['Physical Traits','Blonde hair, blue eyes (previously described as curly blonde hair)']
+]},
+{title:'FAVOURITES',items:[
+['Food','Homemade cinnamon buns'],['Drink','Hot chocolate'],
+['Colour','Green'],['Weather','Fall'],['Item','Bunny stuffy']
+]},
+{title:'PERSONALITY',items:[
+['Personality','Sweet and cheeky'],['Hobbies','Cheerleading'],
+['Special Skills','Cheerleading'],['Pet Peeve',"When others don’t listen"],
+['Bad At','Listening'],['Biggest Fear','Being alone']
+]},
+{title:'MOTIVATION',items:[
+['Goal','Become a cheerleader'],['Would Die For','Cheerleading'],
+['Would Kill For','Cheerleading']
+]},
+{title:'RELATIONSHIPS',wide:true,items:[
+['Jax','Older brother; she often bombards him with hugs.'],
+['Parents','Lauren and Paul'],
+['Cheerleading','Junior member of the Milsamolex Monarchs']
+]}
+]
+},
+connections:['jax','lauren','paul','monarchs']
+},
+
+{
+id:'lauren',
+title:'Lauren',
+category:'people',
+type:'Character',
+
+description:'Jax and Mia’s mom, and captain of the Milsamolex Monarchs cheer team.',
+
+content:
+`ESTABLISHED:
+
+Lauren is Jax and Mia’s mom.
+
+She has curly blonde hair.
+
+She wears glasses.
+
+She is generally calm, but becomes serious about cheerleading.
+
+Lauren is captain of the Milsamolex Monarchs cheer team. Mia is on the junior team.
+
+Jax loves his parents but gives them alone time.`,
+
+connections:['jax','mia','paul','monarchs']
+},
+
+{
+id:'paul',
+title:'Paul',
+category:'people',
+type:'Character / Coach',
+description:'Jax and Mia’s father, an intense football coach who hates losing.',
+profile:{
+photo:'',
+sections:[
+{title:'PROFILE',items:[
+['Name','Paul'],['Age','40'],['Name Meaning','Humble'],
+['Birthday','February 29'],['Height',"5’11”"],['Weight','160 lb'],
+['Physical Traits','Bald, blue eyes (updated from earlier balding black hair and brown eyes)']
+]},
+{title:'FAVOURITES',items:[
+['Food','Chicken'],['Drink','Coke'],['Colour','Red'],
+['Weather','Sunny'],['Item','Hairbrush']
+]},
+{title:'PERSONALITY',items:[
+['Personality','Intense'],['Hobbies','Coaching, family time, football'],
+['Special Skills','Coaching'],['Pet Peeve','Losing games'],
+['Bad At','Winning'],['Biggest Fear','Cheese']
+]},
+{title:'MOTIVATION',items:[
+['Goal','Win every game'],
+['Would Die For','Meeting his favourite football player'],
+['Would Kill For','Playing on the same team as his favourite player']
+]},
+{title:'RELATIONSHIPS',wide:true,items:[
+['Jax','Son; Paul coaches football.'],
+['Mia','Daughter'],['Lauren','Family']
+]}
+]
+},
+connections:['jax','lauren','mia','lightning']
+},
+
+{
+id:'jeremiah',
+title:'Jeremiah Smith',
+category:'people',
+type:'Character / Athlete',
+
+description:
+'A 6-foot-3, 221-pound athlete with a major five-year contract.',
+
+content:
+`ESTABLISHED:
+
+Jeremiah Smith is 6'3".
+
+He weighs 221 pounds.
+
+He runs a 4.31.
+
+CONTRACT:
+
+• 5 years
+• $18.74 million per year
+• $93.7 million total
+• $50 million guaranteed
+
+IN DEVELOPMENT:
+
+Jeremiah's exact role, team and relationship to the other characters have not yet been established.`,
+
+connections:['lightning']
+},
+
+{
+id:'noodles',
+title:'Noodles',
+category:'nature',
+type:'Pet',
+
+description:
+'Jax’s calm female Siamese cat.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Noodles is a female Siamese cat.
+
+She is calm.
+
+She belongs to Jax.`,
+
+connections:['jax','animals']
+},
+
+
+/* ======================================================
+   WORLD / PLACES
+====================================================== */
+
+{
+id:'nazareth',
+workingOn:'Norah / Jordyn',
+title:'Nazareth',
+category:'places',
+type:'Planet',
+worldMap:true,
+image:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/map.jpg',
+
+description:
+'A yellow planet with unstable gravity, temporary volcanic regions and a moon named Harry.',
+
+content:
+`PLANET:
+
+Nazareth is the planet where Jax’s World takes place.
+
+GRAVITY:
+
+Gravity normally acts like gravity on Earth.
+
+Occasionally everyone and everything that is loose begins to hover or float.
+
+Eventually gravity returns to normal.
+
+VOLCANIC EVENTS:
+
+Volcanic and obsidian areas can randomly appear for a while.
+
+Eventually the areas return to normal.
+
+ATMOSPHERE:
+
+Nazareth has normal Earth-like air and oxygen.
+
+MOON:
+
+The moon is named Harry.
+
+Harry is based on Jordyn's eraser.
+
+Ask Jordyn or Norah for information about what Harry looks like.
+
+SPACE:
+
+Lava rocks float around in space, mostly around Nazareth.
+
+COLOURS:
+
+The planet’s main colour is yellow.
+
+Some areas can temporarily become dark brown, black and orange because of the volcanic regions.
+
+Water is a normal blue colour.
+
+WATER:
+
+The water all connects to the middle of the planet.
+
+SEASONS:
+
+Nazareth has the same normal seasons as Earth.
+
+VISUAL DESIGN:
+
+Ask Norah for information about what the planet looks like.`,
+
+connections:[
+'soultara',
+'embrea',
+'galea',
+'petrary',
+'aquarea',
+'falder',
+'animals',
+'map',
+'worldrules',
+'harry'
+]
+},
+
+{
+id:'harry',
+title:'Harry',
+category:'nature',
+type:'Moon',
+
+description:
+'The moon orbiting Nazareth.',
+
+content:
+`ESTABLISHED:
+
+Nazareth's moon is named Harry.
+
+Harry is based on Jordyn's eraser.
+
+For details about Harry's appearance, ask Jordyn or Norah.`,
+
+connections:['nazareth']
+},
+
+{
+id:'soultara',
+workingOn:'Bristol / Norah / Jordyn',
+title:'Soultara',
+category:'places',
+type:'Country',
+
+description:
+'The country containing the city of Milsamolex.',
+
+image:
+'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/Soultara-Flag-1.jpg',
+
+content:
+`ESTABLISHED:
+
+Soultara is a country on the planet Nazareth.
+
+Milsamolex is a city in Soultara.
+
+The class has created a flag for Soultara.
+
+There are no cars in Soultara.
+
+People travel by dragon.
+
+Soultara is ruled by a king and queen.
+
+If someone breaks the rules, the king and queen decide the punishment based on what the person did.
+
+Any of the king and queen's children can become the next king or queen.
+
+The next ruler does not have to be the oldest child.`,
+
+connections:[
+'nazareth',
+'map',
+'embrea',
+'galea',
+'petrary',
+'aquarea',
+'milsamolex',
+'laws',
+'worldrules',
+'tenebrae',
+'transport',
+'dragons'
+]
+},
+
+{
+id:'milsamolex',
+workingOn:'Finley / Cohen',
+title:'Milsamolex',
+category:'places',
+type:'City / City Planning',
+
+description:
+'The city where much of Jax’s known life takes place.',
+
+content:
+`ESTABLISHED:
+
+Milsamolex is a city in Soultara.
+
+The Milsamolex Lightning football team is based here.
+
+The Milsamolex Flames basketball team is based here.
+
+Jax works at Luingunii’s Pizzeria.
+
+Jax visits Vala Cafe every day.
+
+IN DEVELOPMENT:
+
+Finley and Cohen are developing the city itself, including its layout, neighbourhoods, streets, landmarks and important locations.`,
+
+connections:[
+'soultara',
+'lightning',
+'flames',
+'pizzeria',
+'vala',
+'transport',
+'map',
+'newspaper'
+]
+},
+
+{
+id:'tenebrae',
+title:'Tenebrae Forest',
+category:'places',
+type:'Forbidden Place',
+
+description:
+'A forbidden forest where entering means becoming lost and never returning.',
+
+content:
+`ESTABLISHED:
+
+The Tenebrae Forest exists.
+
+People are not allowed to enter it.
+
+Immediately after entering the forest, a person becomes lost.
+
+Anyone who enters never comes out.`,
+
+connections:['soultara','laws','worldrules']
+},
+
+{
+id:'pizzeria',
+workingOn:'Aneleigh / Josie',
+title:'Luingunii’s Pizzeria',
+category:'places',
+type:'Business',
+
+description:
+'The pizzeria where Jax works.',
+
+content:
+`ESTABLISHED:
+
+Jax works at Luingunii’s Pizzeria.
+
+It is described as being "around the bend."
+
+Soultara law says people must have the same job as their parents by the time they become adults.`,
+
+connections:['jax','milsamolex','laws']
+},
+
+{
+id:'vala',
+workingOn:'Aneleigh / Josie / Harper',
+title:'Vala Cafe',
+category:'places',
+type:'Business / Cafe',
+
+description:
+'A cafe Jax visits every day and a pickup location for Nova News.',
+
+popupImage:{
+  label:'View Vala Cafe Menu ↗',
+  url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/vala-cafe-1.jpg'
+},
+
+content:
+`ESTABLISHED:
+
+Jax goes to Vala Cafe every day.
+
+His usual order is a rainbow lemonade made with:
+
+• blueberry
+• raspberry
+• pineapple
+
+He also gets a volleyball cakepop.
+
+The cakepop is birthday-cake flavour.
+
+NOVA NEWS:
+
+Nova News identifies Harper Petkau as the owner of Vala Cafe.
+
+The newspaper reports that physical copies of Nova News can be picked up at the cafe.`,
+
+connections:['jax','milsamolex','newspaper']
+},
+
+{
+id:'map',
+workingOn:'Arianna / Bristol',
+title:'Map of Nazareth',
+category:'places',
+type:'World Map',
+description:'Explore Soultara and the surrounding countries of Nazareth.',
+worldMap:true,
+image:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/map.jpg',
+content:`ESTABLISHED GEOGRAPHY:
+
+Soultara is the central, warm region, containing Milsamolex, the castle and Tenebrae Forest.
+
+Embrea is a desert region with multiple oases near the centre.
+
+Galea is a snowy tundra with frequent snowstorms.
+
+Petrary is a mountainous country.
+
+Aquarea is a damp country with many lakes, rivers and streams.
+
+The Falder Sea is labelled between Soultara and the southern regions.`,
+connections:['nazareth','soultara','embrea','galea','petrary','aquarea','falder','milsamolex','tenebrae']
+},
+{
+id:'embrea',title:'Embrea',category:'places',type:'Country',workingOn:'Bristol / Arianna',
+description:'A desert region with multiple oases near the centre.',
+content:`ESTABLISHED:
+
+Embrea is a desert region.
+
+There are multiple oases near the centre.
+
+The map places Embrea northwest of Soultara.`,
+connections:['map','nazareth','soultara']
+},
+{
+id:'galea',title:'Galea',category:'places',type:'Country',workingOn:'Bristol / Arianna',
+description:'A snowy tundra with frequent snowstorms.',
+content:`ESTABLISHED:
+
+Galea is a snowy tundra.
+
+There are many snowstorms.
+
+The map places Galea northeast of Soultara.`,
+connections:['map','nazareth','soultara']
+},
+{
+id:'petrary',title:'Petrary',category:'places',type:'Country',workingOn:'Bristol / Arianna',
+description:'A mountainous country.',
+content:`ESTABLISHED:
+
+Petrary is a mountainous country.
+
+The map places Petrary southwest of Soultara.`,
+connections:['map','nazareth','soultara','falder']
+},
+{
+id:'aquarea',title:'Aquarea',category:'places',type:'Country',workingOn:'Bristol / Arianna',
+description:'A damp country with many lakes, rivers and streams.',
+content:`ESTABLISHED:
+
+Aquarea is a damp country.
+
+It has many lakes, rivers and streams.
+
+The map places Aquarea southeast of Soultara.`,
+connections:['map','nazareth','soultara','falder']
+},
+{
+id:'falder',title:'Falder Sea',category:'places',type:'Sea',workingOn:'Arianna',
+description:'A body of water labelled on the map of Nazareth.',
+content:`ESTABLISHED:
+
+The Falder Sea is labelled on the map between Soultara and the southern regions.
+
+Additional information about the sea has not yet been established.`,
+connections:['map','soultara','petrary','aquarea']
+},
+
+/* ======================================================
+   SPORTS
+====================================================== */
+
+{
+id:'lightning',
+workingOn:'Marrex / Max',
+title:'Milsamolex Lightning',
+category:'sports',
+type:'Football Team',
+
+description:
+'The football team of Milsamolex.',
+
+resource:{
+label:'View the league website ↗',
+url:'https://buhlerbuhler.github.io/worldbuilding/football-league.html'
+},
+
+content:
+`ESTABLISHED:
+
+The football team is called the Milsamolex Lightning.
+
+Paul is the football coach.
+
+Normally, players can only start football at age 12.
+
+Extremely talented players can be allowed to start earlier.
+
+The earliest anyone can join is age 10.
+
+Jax started playing football at age 12.
+
+The team has jersey designs linked above.`,
+
+connections:[
+'jax',
+'paul',
+'jeremiah',
+'milsamolex',
+'laws',
+'newspaper'
+]
+},
+
+{
+id:'flames',
+workingOn:'Isaiah / Zander',
+title:'Milsamolex Flames',
+category:'sports',
+type:'Basketball Team',
+
+description:
+'The basketball team of Milsamolex.',
+
+content:
+`ESTABLISHED:
+
+The basketball team is called the Milsamolex Flames.
+
+IN DEVELOPMENT:
+
+Players, league information, history, rivals and other team details are still being developed.`,
+
+connections:['milsamolex']
+},
+
+
+{
+id:'monarchs',
+title:'Milsamolex Monarchs',
+category:'sports',
+type:'Cheer Team',
+description:'Milsamolex cheerleading team, captained by Lauren; Mia is on the junior team.',
+content:`ESTABLISHED:
+
+The Milsamolex Monarchs are a cheerleading team.
+
+Lauren is the captain.
+
+Mia belongs to the junior team.
+
+IN DEVELOPMENT:
+
+Uniforms, competitions and other members have not yet been described.`,
+connections:['lauren','mia','milsamolex']
+},
+
+/* ======================================================
+   SOCIETY
+====================================================== */
+
+{
+id:'laws',
+workingOn:'Ethne',
+title:'Life in Soultara',
+category:'society',
+type:'Law',
+
+description:
+'Laws, education, transportation, government and security in Soultara.',
+
+content:
+`CURRENT LAWS:
+
+01 / FOOTBALL
+
+You can normally only start football at age 12.
+
+Extremely talented players can be allowed to start earlier.
+
+The earliest anyone can join is age 10.
+
+02 / JOBS
+
+You must have the same job as your parents by the time you become an adult.
+
+03 / ADULTHOOD
+
+You become an adult when you turn 20.
+
+04 / DRAGONS
+
+Everyone gets a pet dragon on their 20th birthday.
+
+The kind of dragon depends on the person.
+
+Examples include:
+
+• Water dragon
+• Ice dragon
+• Plant dragon
+• Storm dragon
+
+05 / TENEBRAE FOREST
+
+You cannot go into the Tenebrae Forest.
+
+Immediately after entering, you get lost and never come out.
+
+06 / MAGIC
+
+You can only use magic if you have a permit.
+
+If you use magic without a permit, the amount of magic used determines the punishment.
+
+A small amount of magic results in a smaller punishment.
+
+A large amount of magic results in a larger punishment.
+
+07 / RAISING THE DEAD
+
+You cannot raise the dead.
+
+If you raise the dead, you will die.
+
+08 / TRANSPORTATION
+
+Cars are rare in Soultara, and only very wealthy people have them.
+
+Most people get around by dragon.
+
+If you are under 20, you travel with someone who is over 20.
+
+09 / PUNISHMENT
+
+If someone breaks the rules, the king and queen decide the punishment based on what the person did.
+
+10 / ROYAL SUCCESSION
+
+Any of the king and queen's children can become king or queen.
+
+The next ruler does not have to be the oldest child.
+
+11 / EDUCATION
+
+Children start school at age 1 and finish at age 15.
+
+The school day runs from 9:00 AM to 2:00 PM (five hours).
+
+12 / SECURITY
+
+Soultara has police and an army.
+
+The Soultarian Space Marines (SSM) are a secretive military organization. Members cannot reveal their identities, and little is publicly known about them.
+
+The SSM are described as the only people on Nazareth allowed to use vehicles. This conflicts with the law allowing wealthy residents to own cars; the class has not yet resolved how these rules fit together.
+
+SSM EQUIPMENT
+
+The students have designed a soldier, a tank, a large ship, a smaller aircraft and a jeep. See the gallery below.`,
+
+gallery:[
+{label:'SSM soldier',url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/ssm-soldier.jpg'},
+{label:'SSM tank',url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/ssm-tank.jpg'},
+{label:'SSM ship',url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/ssm-ship.jpg'},
+{label:'SSM aircraft',url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/ssm-aircraft.jpg'},
+{label:'SSM jeep',url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/ssm-jeep.jpg'}
+],
+connections:[
+'soultara',
+'jax',
+'lightning',
+'tenebrae',
+'dragons',
+'worldrules',
+'transport'
+]
+},
+
+{
+id:'worldrules',
+workingOn:'Bristol',
+title:'World Rules',
+category:'society',
+type:'Worldbuilding',
+
+description:
+'Magic, planetary behaviour and the larger rules that shape life on Nazareth.',
+
+content:
+`KNOWN WORLD RULES:
+
+Magic exists.
+
+Using magic requires a permit.
+
+Raising the dead is possible enough that a law specifically forbids it.
+
+Nazareth occasionally experiences gravity changes that cause people and loose objects to float.
+
+Volcanic and obsidian regions can temporarily appear.
+
+People become adults at age 20.
+
+Everyone receives a pet dragon on their 20th birthday.
+
+Different people can receive different kinds of dragons.
+
+The Tenebrae Forest causes anyone who enters to become lost and never return.
+
+Cars are rare in Soultara; most people travel by dragon. The SSM are a secretive military group.
+
+The king and queen decide punishments for broken laws.
+
+Royal succession does not automatically go to the oldest child.`,
+
+connections:[
+'nazareth',
+'soultara',
+'laws',
+'tenebrae',
+'dragons',
+'transport'
+]
+},
+
+{
+id:'transport',
+workingOn:'Sienna',
+title:'Transportation',
+category:'society',
+type:'World System',
+
+description:
+'Cars are rare in Soultara; most people travel by dragon. The SSM are a secretive military group. Dragons are the main established form of transportation.',
+
+content:
+`ESTABLISHED:
+
+There are no cars in Soultara.
+
+People get around by dragon.
+
+Everyone receives their own pet dragon when they turn 20.
+
+People under the age of 20 travel with someone who is over 20.
+
+IN DEVELOPMENT:
+
+More details about routes, long-distance travel and transportation systems can still be developed.`,
+
+connections:[
+'milsamolex',
+'soultara',
+'nazareth',
+'dragons',
+'laws'
+]
+},
+
+{
+id:'fashion',
+workingOn:'Bella',
+title:'Fashion',
+category:'society',
+type:'Design / In Development',
+
+description:
+'Clothing and style in Jax’s World.',
+
+content:
+`ESTABLISHED:
+
+Ashlee Eirvalon loves cargo pants.
+
+IN DEVELOPMENT:
+
+Bella is developing fashion for the world.
+
+Fashion can connect to characters, climate, culture, jobs, sports and everyday life.`,
+
+connections:['ashlee','milsamolex','soultara','chilio']
+},
+
+
+/* ======================================================
+   NATURE
+====================================================== */
+
+{
+id:'animals',
+workingOn:'Crosby / Brent',
+title:'Animals of Nazareth',
+category:'nature',
+type:'Wildlife',
+
+description:
+'A field guide to the strange, dangerous, useful and sometimes extremely cute creatures of Nazareth.',
+
+content:
+`KNOWN CREATURES:
+
+• Shiger
+• Pogle
+• Celephant
+• Cantalop
+• Sharpie Bot
+• Deadly Long Arms
+• Thing1
+• Monkey
+• Bird
+• Dog
+• Mosquito
+• Gerd
+• Dragons
+• Familiar animals such as Siamese cats
+
+The animal kingdom of Nazareth includes wild animals, pets, endangered species and unusual creatures with special abilities.`,
+
+connections:[
+'nazareth',
+'shiger',
+'pogle',
+'celephant',
+'cantalop',
+'sharpiebot',
+'deadlylongarms',
+'thing1',
+'monkey',
+'bird',
+'dog',
+'mosquito',
+'gerd',
+'dragons',
+'noodles'
+]
+},
+
+{
+id:'shiger',
+workingOn:'Crosby / Brent',
+title:'Shiger',
+category:'nature',
+type:'Creature',
+
+description:
+'A rare amphibious creature hunted for its extremely valuable fur.',
+
+animalPhoto:true,
+
+image:
+'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/Shiger.png',
+
+content:
+`ESTABLISHED:
+
+Shigers can go underwater and walk on land.
+
+Shigers are almost extinct, with only a couple hundred left.
+
+Most remaining Shigers live in zoos.
+
+They were hunted because their fur was extremely valuable and they were very rare.
+
+FEMALES:
+
+Females can grow from about 4.5 to 6.4 metres.
+
+They can weigh between about 2,200 and 4,200 pounds.
+
+Some females can grow larger than 6.4 metres.
+
+MALES:
+
+Males can grow from about 3.4 to 4.0 metres.
+
+They can weigh between about 1,500 and 2,200 pounds.`,
+
+connections:['animals','nazareth']
+},
+
+{
+id:'pogle',
+workingOn:'Crosby / Brent',
+title:'Pogle',
+category:'nature',
+type:'Creature',
+
+description:
+'A rare creature with only a few thousand remaining.',
+
+animalPhoto:true,
+
+image:
+'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/Pogle.png',
+
+content:
+`ESTABLISHED:
+
+Pogles are nearly extinct.
+
+Only a couple thousand Pogles remain.
+
+The other Pogle species died out because of climate change.
+
+FEMALES:
+
+Females can grow from about 1 to 1.5 metres.
+
+They weigh about 150 to 290 kilograms.
+
+MALES:
+
+Males can grow from about 1 to 1.5 metres.
+
+They weigh about 150 to 290 kilograms.
+
+The current notes describe males as heavier than females.`,
+
+connections:['animals','nazareth']
+},
+
+{
+id:'celephant',
+workingOn:'Crosby / Brent',
+title:'Celephant',
+category:'nature',
+type:'Creature / Pet',
+
+description:
+'A huge, peaceful animal that can be kept as a pet.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Celephants are peaceful animals.
+
+They can be kept as pets.
+
+Celephants are very big and dirty, so be careful when wearing white clothes around them.
+
+FEMALES:
+
+Females can grow from about 2.4 to 2.9 metres.
+
+They can weigh from about 2,700 to 3,600 kilograms.
+
+MALES:
+
+Males can grow from about 3 to 4 metres.
+
+They can weigh about 5,000 kilograms.`,
+
+connections:['animals','cantalop','nazareth']
+},
+
+{
+id:'cantalop',
+workingOn:'Crosby / Brent',
+title:'Cantalop',
+category:'nature',
+type:'Creature / Pet',
+
+description:
+'A small, peaceful relative of the Celephant that can be kept as a pet.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+The Cantalop is another species of the Celephant, but it is very different.
+
+Like the Celephant, it is very peaceful.
+
+Cantalops can be kept as pets.
+
+Make sure you are nice to them.
+
+FEMALES:
+
+Females can grow from about 8 to 9 inches.
+
+They weigh from about 3.2 to 4.5 kilograms.
+
+MALES:
+
+Males can grow from about 10 to 11 inches.
+
+They weigh from about 4.5 to 6.4 kilograms.`,
+
+connections:['animals','celephant','nazareth']
+},
+
+{
+id:'sharpiebot',
+workingOn:'Crosby / Brent',
+title:'Sharpie Bot',
+category:'nature',
+type:'Creature',
+
+description:
+'A helpful wild creature that can talk and help people who are lost.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Sharpie Bot is a helpful animal.
+
+It can be found in the wild.
+
+Sharpie Bot can help with everything.
+
+If you become lost in the wild, finding a Sharpie Bot can help you.
+
+Sharpie Bot can talk to people.
+
+SIZE:
+
+Females can grow up to 5.38 inches long and weigh 9 grams.
+
+Males are the same size and weight.`,
+
+connections:['animals','nazareth']
+},
+
+{
+id:'deadlylongarms',
+workingOn:'Crosby / Brent',
+title:'Deadly Long Arms',
+category:'nature',
+type:'Dangerous Creature',
+
+description:
+'A dangerous nocturnal animal.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Deadly Long Arms is a dangerous animal.
+
+It only comes out at night.
+
+Be careful if you encounter one.
+
+IN DEVELOPMENT:
+
+More information about Deadly Long Arms has not yet been established.`,
+
+connections:['animals','nazareth']
+},
+
+{
+id:'thing1',
+workingOn:'Crosby / Brent',
+title:'Thing1',
+category:'nature',
+type:'Creature',
+
+description:
+'A small creature that can do almost anything for you.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Thing1 is a small creature.
+
+It can do anything for you.
+
+Be careful that it does not get out of hand because it will literally do anything.
+
+IN DEVELOPMENT:
+
+More information about Thing1 has not yet been established.`,
+
+connections:['animals','nazareth']
+},
+
+{
+id:'monkey',
+workingOn:'Crosby / Brent',
+title:'Monkey',
+category:'nature',
+type:'Creature',
+
+description:
+'A peaceful and cute animal that can attack when provoked.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+The monkey is a peaceful animal.
+
+If provoked, it can attack.
+
+Be careful not to provoke it.
+
+It is also really cute.`,
+
+connections:['animals','nazareth','gerd']
+},
+
+{
+id:'bird',
+workingOn:'Crosby / Brent',
+title:'Bird',
+category:'nature',
+type:'Creature / Pet',
+
+description:
+'A small, peaceful and harmless bird that can also be kept as a pet.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+This bird is small, peaceful and harmless.
+
+It can be eaten.
+
+It can also make a good pet if you like birds.`,
+
+connections:['animals','nazareth']
+},
+
+{
+id:'dog',
+workingOn:'Crosby / Brent',
+title:'Dog',
+category:'nature',
+type:'Pet',
+
+description:
+'A loyal and highly trainable pet.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Dogs are great, awesome and super loyal pets.
+
+They can do tons of things with training.
+
+The current animal notes declare them better than cats.
+
+They are really great animals.`,
+
+connections:['animals','nazareth','noodles']
+},
+
+{
+id:'mosquito',
+workingOn:'Crosby / Brent',
+title:'Mosquito',
+category:'nature',
+type:'Creature',
+
+description:
+'An annoying blood-sucking creature with a dangerous family response.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Mosquitoes annoy everyone close to them.
+
+They suck blood.
+
+Their bites make skin itchy.
+
+When a mosquito is killed, it can call all of its family to get you.`,
+
+connections:['animals','nazareth']
+},
+
+{
+id:'gerd',
+workingOn:'Crosby / Brent',
+title:'Gerd',
+category:'nature',
+type:'Creature / Pet',
+
+description:
+'A gigantic, dangerous creature that may attack if approached.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Gerd is 10 metres tall.
+
+Gerd weighs 500 pounds.
+
+Gerd can be dangerous and may attack if you get too close. Keep your distance.`,
+
+connections:['animals','nazareth','monkey']
+},
+
+{
+id:'dragons',
+title:'Pet Dragons',
+category:'nature',
+type:'Creature / Transportation',
+
+description:
+'Every person receives their own type of dragon when they turn 20.',
+
+animalPhoto:true,
+image:'',
+
+content:
+`ESTABLISHED:
+
+Dragons exist on Nazareth.
+
+Everyone gets a pet dragon on their 20th birthday.
+
+The kind of dragon depends on the person.
+
+Known examples include:
+
+• Water dragon
+• Ice dragon
+• Plant dragon
+• Storm dragon
+
+Age 20 is also when a person becomes an adult.
+
+TRANSPORTATION:
+
+There are no cars in Soultara.
+
+People travel by dragon.
+
+People under 20 travel with someone who is over 20.`,
+
+connections:[
+'animals',
+'laws',
+'worldrules',
+'nazareth',
+'transport'
+]
+},
+
+
+/* ======================================================
+   STORIES / MEDIA
+====================================================== */
+
+{
+id:'villains',
+workingOn:'Elliot',
+title:'The Dark Shadows',
+category:'stories',
+type:'Elemental beings / Football rivals',
+description:'The Shadows challenge the Lightning in a semifinal that ends 27–20. The Soultarian Space Marines intervene after the game.',
+shadowGallery:true,
+content:"ORIGIN STORY / ELLIOT\n\nThe Dark Shadows\n\nSomewhere out in a forest nearby Milsa Molex the ground burst open in a fiery explosion and oozed a pile of lava and rock that reformed into something that resembled the form of a human. This creature was called the fire shadow, one of four elemental beings: fire, earth, water, and air, their queen. As the fire shadows stumbled out of its molten hole in search of its brothers and sisters, it noticed a town and thought to itself this is an easy attack so it went to notify the rest of its species. As it walked it found a puddle that was moving very strangely and it lurched up at him he realized it was the water shadow and they went in search to find more. They found a small breeze swirling around in a spiral of dust and rocks and it transformed into their queen and as the three of them walked back to the city that the fire shadow found earlier (milsa molex) they found an oddly shaped tree that turned out to be the earth shadow. The air shadow summoned more of each species except hers because she was the only one of her kind and they morphed into humans and one by one moved into the city. As they walked they ran into a college football stadium. They decided to sign up as a new football team called the shadows and after they played a game (win or lose) they would capture the opposing teams players and hold them in the forest that the fire shadow came up into. However, it was only the fire and water shadows playing because they were big and strong although the earth shadows were also strong they needed to protect the queen in the forest while the games went on. They repeated this cycle for quite a few games until they reached the semi final game and the other team was the Lightning (Jax's team.) The first three quarters flew by and somehow the dark shadows with super human abilities were losing. The game was tied 20 to 20 and if the lightning could score one more touchdown plus the  conversion before the clock ran out they could secure the win and move on to the finals and maybe even win the season but right now Jax had to focus on this game. Jax’s team mate Jeremiah Smith threw the ball with immense force towards Jax but suddenly the ball burst into blue hot flames! Jax then looked in front of him and saw that the opposing team had morphed into dark shadowy creatures! The field around them turned into rough volcanic rock and the bleachers into cold purple shards of obsidian! Jax caught the ball and the blue flames immediately went out! Jax jumped with superb strength over one of the creatures and slid through the next one's legs! He burst into a sprint and threw the ball against the cold hard rock scoring a touchdown but before the monsters could catch them he ran back a few yards and and punted the ball threw the uprights scoring the 27th point and winning the game and moving his team onto the finals! At that moment the monsters rushed towards Jax but then the SCC ( Soultarian Space Marines) of their continent slid down from the ceiling on wires and vacuumed up the souls of the shadows with vacuum powered extraction guns! Jax and the rest of his team rushed into the changing room and back to their houses. That night Jax had a lot going through his mind but all he could think of was that he had made it to the finals and he would be playing a week from now which is all that he dreamed about.",
+connections:['fireshadow','watershadow','airshadow','earthshadow','lightning','jax','milsamolex','tenebrae','jeremiah','laws']
+},
+{
+id:'fireshadow',workingOn:'Elliot',title:'Fire Shadow',category:'people',type:'Elemental Shadow',
+image:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/fireshadow.jpg',
+description:'A being formed from lava and rock; the first Shadow to discover Milsamolex.',
+content:`The Fire Shadow emerges from a fiery opening in the ground in a forest near Milsamolex. It identifies the city as an easy target, finds the Water Shadow, and helps assemble the elemental group. Fire Shadows play on the Shadows football team.`,
+connections:['villains','watershadow','airshadow','earthshadow','milsamolex']
+},
+{
+id:'watershadow',workingOn:'Elliot',title:'Water Shadow',category:'people',type:'Elemental Shadow',
+image:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/watershadow.jpg',
+description:'An elemental being that rises from an unusually moving puddle.',
+content:`The Water Shadow first appears as a strangely moving puddle before rising to meet the Fire Shadow. Water Shadows play on the Shadows football team and help capture opposing players.`,
+connections:['villains','fireshadow','airshadow','earthshadow']
+},
+{
+id:'airshadow',workingOn:'Elliot',title:'Air Shadow — The Queen',category:'people',type:'Elemental Shadow / Queen',
+image:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/airshadow.jpg',
+description:'The only Air Shadow, queen of the elemental Shadows.',
+content:`The Air Shadow appears from a small swirling breeze of dust and rocks. She is the only one of her kind and can summon additional Fire, Water, and Earth Shadows. Earth Shadows protect her in the forest while the others play football.`,
+connections:['villains','fireshadow','watershadow','earthshadow']
+},
+{
+id:'earthshadow',workingOn:'Elliot',title:'Earth Shadow',category:'people',type:'Elemental Shadow',
+image:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/earthshadow.jpg',
+description:'A powerful Shadow first encountered in the form of an unusual tree.',
+content:`The Earth Shadow is discovered disguised as an oddly shaped tree. Although Earth Shadows are strong, they remain in the forest to protect the Air Shadow queen while Fire and Water Shadows play football.`,
+connections:['villains','fireshadow','watershadow','airshadow']
+},
+
+{
+id:'characters',
+workingOn:'Hannah',
+title:'Character Profiles',
+category:'people',
+type:'Illustration / In Development',
+
+description:
+'Characters are being developed through profiles and drawings.',
+
+content:
+`IN DEVELOPMENT:
+
+Character drawings and profiles will be added here as they become part of the shared world.`,
+
+connections:[
+'jax',
+'ashlee',
+'leo',
+'mia',
+'lauren',
+'paul',
+'jeremiah'
+]
+},
+
+{
+id:'newscast',
+workingOn:'Hannah / Ivy',
+title:'Milsamolex Newscast',
+category:'stories',
+type:'Broadcast',
+videoId:'cjouAs6B-VE',
+
+description:
+'News reported from inside Jax’s World.',
+
+content:
+`WATCH THE NEWS STORY:
+
+The Milsamolex news story can be played directly above.
+
+Hannah and Ivy are developing newscasts from within Jax’s World.`,
+
+connections:['milsamolex','jax','laws','newspaper']
+},
+
+{
+id:'graphicnovel',
+workingOn:'Ivy',
+title:'Graphic Novel',
+category:'stories',
+type:'Visual Story / In Development',
+
+description:
+'A part of the world told through sequential art.',
+
+content:
+`IN DEVELOPMENT:
+
+Ivy is developing a graphic novel set in Jax’s World.`,
+
+connections:['jax']
+},
+
+{
+id:'chilio',
+title:'CHILIO',
+category:'stories',
+type:'Concert / Live Event',
+description:'A live band playing a Saturday concert in downtown Milsamolex. Explore the concert poster and setlist.',
+concertImages:[
+ {label:'Concert poster',url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/chilio.jpg'},
+ {label:'Live performance & setlist',url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/chilio-setlist.jpg'}
+],
+content:`CHILIO — LIVE IN MILSAMOLEX
+
+Location: Downtown Milsamolex.
+Day: Saturday (exact date not yet established).
+Doors open: 7 PM.
+Show ends: 10 PM.
+Tickets: $25. All ages.
+
+SETLIST (FROM THE SECOND POSTER)
+
+1. Song!
+2. Aromatherapy
+3. All I C
+4. Diamond Cutter
+5. Home
+6. Wallflower
+7. Buried Alive
+8. Only Way Out Is Through
+
+The second poster also includes a QR code for tickets.`,
+connections:['milsamolex','newspaper','fashion']
+},
+
+{
+id:'newspaper',
+workingOn:'Berkeley / Harper',
+title:'Nova News',
+category:'stories',
+type:'Newspaper / News',
+
+description:
+'The newspaper reporting on events throughout Jax’s World.',
+
+popupImage:{
+  label:'Read Nova News ↗',
+  url:'https://raw.githubusercontent.com/Buhlerbuhler/worldbuilding/refs/heads/main/newspaper.jpg'
+},
+
+content:
+`ESTABLISHED:
+
+The newspaper is called Nova News.
+
+FRIDAY NIGHT FOOTBALL:
+
+Nova News reports on the strange events during the Friday night football game.
+
+Earlier in the game, a green ray appeared from the sky over the field.
+
+A football was levitating in the middle of the ray.
+
+Fans initially thought it was some kind of halftime show.
+
+The teams later lined up at the 40-yard line.
+
+With four seconds left and five points down, Jax caught the snap.
+
+The football violently burst into crackling blue fire.
+
+The stadium lights went out.
+
+The chalk lines became burning golden runes.
+
+The grass transformed into jagged volcanic stone.
+
+The bleachers became dark obsidian cliffs.
+
+The opposing linebackers transformed into towering shadow-beasts.
+
+The blazing football levitated out of Jax's hands and unleashed a power that shook the earth beneath his cleats.
+
+INVESTIGATION:
+
+Scientists believe the strange football may have been connected to a UFO, supernatural powers, or another species from another planet or solar system.
+
+Police are investigating whether the event was some type of prank.
+
+Nova News plans to conduct its own investigation.
+
+VALA CAFE:
+
+Nova News reports that physical newspapers are no longer being dropped off.
+
+People can pick up their daily copy from Vala Cafe.
+
+The newspaper describes Vala Cafe as a place for studying, catching up with friends, or buying a drink.
+
+The cafe's opening was announced for 1:00.
+
+Harper Petkau is identified as the owner of Vala Cafe.`,
+
+connections:[
+'jax',
+'lightning',
+'vala',
+'milsamolex',
+'worldrules',
+'newscast',
+'chilio'
+]
+},
+
+{
+id:'newsroom',
+workingOn:'Hannah / Ivy / Berkeley / Harper',
+title:'News & Media',
+category:'stories',
+type:'Newsroom / Video & Newspaper',
+description:'Watch the Milsamolex newscast and read the Nova News newspaper in one place.',
+content:'Two student-created ways of reporting what is happening around Milsamolex.',
+connections:['jax','milsamolex','vala','lightning']
+},
+
+{
+id:'backstories',
+workingOn:'Alexandra / Josie',
+title:'Backstories',
+category:'stories',
+type:'Story / In Development',
+
+description:
+'The past is being filled in through characters, events and histories.',
+
+content:
+`IN DEVELOPMENT:
+
+Alexandra and Josie are developing backstories that can deepen characters and explain how parts of this world came to be.`,
+
+connections:['jax','villains','leo','ashlee']
 }
 
-function fractionString(n){
- if(Math.abs(n)<1e-8)return '0';
- const den=subdivisions();
- const base=interval();
- const sign=n<0?'-':'';
- const positive=Math.abs(n);
+];
 
- // Express positions as whole numbers plus a fraction
- // of the next unit. Numerators reset at every whole.
- const whole=Math.floor(positive+1e-8);
- const remainder=positive-whole;
- if(remainder<1e-8)return sign+whole;
 
- // Snap fractional part to the selected subdivision
- // whenever the major interval is one.
- let numerator,denominator;
- if(base===1){
-  numerator=Math.round(remainder*den);
-  denominator=den;
- }else{
-  // For larger intervals, find a rational approximation.
-  denominator=den*base;
-  numerator=Math.round(remainder*denominator);
- }
+/* ======================================================
+   NAVIGATION
+====================================================== */
 
- if(numerator===0)return sign+whole;
- if(numerator>=denominator)return sign+(whole+1);
- const divisor=gcd(numerator,denominator);
- numerator/=divisor;
- denominator/=divisor;
+const pages =
+[...document.querySelectorAll('.page')];
 
- const part=numerator+'/'+denominator;
- return sign+(whole>0?whole+' ':'')+part;
+const nav =
+[...document.querySelectorAll('.nav button')];
+
+let filter = 'all';
+const HIDDEN_ARCHIVE_IDS = new Set(["map", "soultara", "embrea", "galea", "petrary", "aquarea", "falder", "worldrules", "transport", "shiger", "pogle", "celephant", "cantalop", "sharpiebot", "deadlylongarms", "thing1", "monkey", "bird", "dog", "mosquito", "gerd", "dragons", "fireshadow", "watershadow", "airshadow", "earthshadow", "characters", "backstories", "newscast", "newspaper", "harry"]);
+const archiveEntries = entries.filter(e=>!HIDDEN_ARCHIVE_IDS.has(e.id));
+
+
+function show(page){
+
+  pages.forEach(p =>
+    p.classList.toggle(
+      'active',
+      p.id===page
+    )
+  );
+
+  nav.forEach(b =>
+    b.classList.toggle(
+      'active',
+      b.dataset.page===page
+    )
+  );
+
+  window.scrollTo(0,0);
 }
-function fmt(n){
- if(Math.abs(n)<1e-8)n=0;
- if($('mode').value==='fraction'||
-   ($('labels').value==='all'&&subdivisions()>1)){
-  const rounded=Math.round(n/minorStep())*minorStep();
-  if(Math.abs(n-rounded)<1e-6)
-   return fractionString(n);
- }
- return String(Number(n.toFixed(5)));
+
+
+document
+.querySelectorAll('[data-page]')
+.forEach(b =>
+
+  b.addEventListener(
+    'click',
+    ()=>show(b.dataset.page)
+  )
+
+);
+
+
+/* ======================================================
+   WORLD SUMMARY
+====================================================== */
+
+function renderSummary(){
+const highlights=[
+ ['THE WORLD','Nazareth is a yellow planet with occasional gravity shifts, volcanic events, five mapped countries, and a moon called Harry.','nazareth'],
+ ['THE STORY','Jax King is a 15-year-old football player. During a game, his football bursts into blue fire and the stadium transforms.','jax'],
+ ['PLACES','Milsamolex is a city in Soultara, home to Vala Cafe and the Milsamolex Lightning.','milsamolex'],
+ ['SOCIETY','Magic requires a permit. People become adults at 20 and receive a dragon. Cars are rare in Soultara; most people travel by dragon. The SSM are a secretive military group.','laws'],
+ ['WILDLIFE','Nazareth is home to Shigers, Pogles, Celephants, Cantalops, dragons and many more creatures.','animals'],
+ ['THE DARK SHADOWS','The Lightning defeat the Shadows 27–20 in the semifinal. Soultarian Space Marines intervene, and Jax advances to the finals.','villains']
+];
+document.getElementById('summaryContent').innerHTML=`<div class="summary-grid">${highlights.map(([title,description,id])=>`<div class="summary-box"><span class="mono">AT A GLANCE</span><h3>${title}</h3><p>${description}</p><button class="summary-jump" data-id="${id}">EXPLORE ↗</button></div>`).join('')}<div class="summary-box wide"><h3>Still growing</h3><p>These are established highlights, not the entire world. Open the archive to explore the student-created details and work in progress.</p></div></div>`;
+document.querySelectorAll('.summary-jump').forEach(b=>b.addEventListener('click',()=>openEntry(b.dataset.id)));
 }
+
+/* ======================================================
+   ARCHIVE
+====================================================== */
+
 function render(){
- const lo=val('min'),hi=val('max');
- const major=interval(),segments=subdivisions();
- const tick=minorStep();
- if(!(hi>lo)||!(tick>0)||!Number.isFinite(hi-lo))return;
- svg.replaceChildren();
 
- const x=n=>70+(n-lo)/(hi-lo)*1060;
- const y=155;
+const q =
+document
+.getElementById('search')
+.value
+.trim()
+.toLowerCase();
 
- el('line',{x1:50,y1:y,x2:1150,y2:y,
-  stroke:'#111','stroke-width':5});
- el('path',{
-  d:'M50 155 L65 146 L65 164 Z M1150 155 L1135 146 L1135 164 Z',
-  fill:'#111'
- });
 
- const total=(hi-lo)/tick;
- const stride=Math.max(1,Math.ceil(total/500));
- const first=Math.ceil((lo-1e-9)/tick);
- const labels=$('labels').value;
- const every=labels==='all'||labels==='decimal';
- let lastLabel=-Infinity;
+const found =
+entries.filter(e =>
 
- for(let i=first;i*tick<=hi+1e-8;i+=stride){
-  const n=i*tick;
-  if(n<lo-1e-8)continue;
-  const isMajor=i%segments===0;
-  const isWhole=Math.abs(n-Math.round(n))<1e-7;
-  const boldTick=isMajor||isWhole;
+  !HIDDEN_ARCHIVE_IDS.has(e.id) &&
+  (filter==='all' || e.category===filter)
 
-  el('line',{
-   x1:x(n),y1:y-(boldTick?17:10),
-   x2:x(n),y2:y+(boldTick?17:10),
-   stroke:'#111','stroke-width':boldTick?3:1.5
-  });
+  &&
 
-  const show=every||(labels==='whole'&&isWhole);
-  const textValue=labels==='decimal'
-   ?String(Number(n.toFixed(5))):fmt(n);
+  [
+    e.title,
+    e.description,
+    e.type,
+    e.category,
+    e.workingOn || '',
+    e.content || ''
+  ]
+  .join(' ')
+  .toLowerCase()
+  .includes(q)
 
-  const minSpace=(textValue.length*9+14)/1060*(hi-lo);
+);
 
-  if(show&&n-lastLabel>=minSpace){
-   el('text',{
-    x:x(n),y:195,
-    'text-anchor':'middle',
-    'font-size':isWhole?19:15,
-    'font-weight':isWhole?800:500
-   },textValue);
-   lastLabel=n;
+
+document
+.getElementById('count')
+.textContent =
+found.length + ' shown / ' + archiveEntries.length + ' main entries';
+
+
+document
+.getElementById('cards')
+.innerHTML =
+
+found.map(e =>
+
+`<button
+class="entry"
+data-id="${e.id}">
+
+<span class="num">
+RECORD / ${String(entries.indexOf(e)+1).padStart(3,'0')}
+</span>
+
+<h3>${e.title}</h3>
+
+<p>${e.description}</p>
+
+${e.workingOn
+
+? `<div class="creator">
+WORKING ON / ${e.workingOn}
+</div>`
+
+: ''
+
+}
+
+<div class="bottom">
+
+<span class="tag">
+${e.type}
+</span>
+
+<span class="arrow">
+↗
+</span>
+
+</div>
+
+</button>`
+
+).join('')
+
+||
+
+'<p class="empty">No entries match your search.</p>';
+
+
+document
+.querySelectorAll('.entry')
+.forEach(b =>
+
+  b.addEventListener(
+    'click',
+    ()=>openEntry(b.dataset.id)
+  )
+
+);
+
+}
+
+
+document.querySelectorAll('[data-quick-id]').forEach(button=>{
+ button.addEventListener('click',()=>openEntry(button.dataset.quickId));
+});
+
+/* ======================================================
+   CHARACTER PROFILE
+====================================================== */
+
+function characterProfileHTML(e){
+
+if(!e.profile) return '';
+
+
+const photo =
+e.profile.photo
+
+?
+
+`<img
+src="${e.profile.photo}"
+alt="Portrait of ${e.title}">`
+
+:
+
+`<div>
+
+<span class="mono">
+CHARACTER IMAGE
+</span>
+
+<br><br>
+
+<strong>
+NOT YET ADDED
+</strong>
+
+</div>`;
+
+
+const sections =
+e.profile.sections.map(sec =>
+
+`<div
+class="profile-box ${sec.wide?'wide':''}">
+
+<span class="mono">
+CHARACTER FILE
+</span>
+
+<h3>${sec.title}</h3>
+
+<div class="profile-list">
+
+${sec.items.map(([k,v]) =>
+
+`<strong>${k}</strong>
+<span>${v}</span>`
+
+).join('')}
+
+</div>
+
+</div>`
+
+).join('');
+
+
+return `
+
+<div class="character-profile">
+
+<div class="character-photo">
+${photo}
+</div>
+
+<div class="profile-sections">
+${sections}
+</div>
+
+</div>`;
+
+}
+
+
+/* ======================================================
+   OPEN ENTRY
+====================================================== */
+
+function collectionHTML(heading,ids,kind){
+ const items=ids.map(id=>entries.find(e=>e.id===id)).filter(Boolean);
+ return `<section class="collection"><h2 class="collection-title">${heading}</h2><div class="collection-grid ${kind}">
+ ${items.map(item=>`<details class="collection-item"><summary>
+ ${item.image?`<img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'">`:''}
+ <span class="collection-name">${item.title}</span><span class="collection-expand">＋</span>
+ <span class="collection-description">${item.description||''}</span></summary>
+ <div class="collection-body">
+ ${item.videoId?`<div class="video-frame"><iframe src="https://www.youtube-nocookie.com/embed/${item.videoId}" title="${item.title}" loading="lazy" allowfullscreen></iframe></div>`:''}
+ ${item.popupImage?`<button type="button" class="popup-image-button" data-popup-image="${item.popupImage.url}" data-popup-title="${item.title}">${item.popupImage.label}</button>`:''}
+ <div class="content-block">${item.content||''}</div>
+ ${item.workingOn?`<p class="mono">CREATED BY / ${item.workingOn}</p>`:''}
+ </div></details>`).join('')}</div></section>`;
+}
+
+function openEntry(id){
+
+const e =
+entries.find(x=>x.id===id);
+
+if(!e) return;
+
+
+document
+.getElementById('detailMeta')
+.textContent =
+e.category + ' / ' + e.type;
+
+
+document
+.getElementById('detailTitle')
+.textContent =
+e.title;
+
+
+document
+.getElementById('detailLead')
+.textContent =
+e.description;
+
+
+document
+.getElementById('detailInfo')
+.innerHTML =
+
+(e.workingOn
+
+? '<strong>WORKING ON / ' +
+  e.workingOn +
+  '</strong><br><br>'
+
+: ''
+
+)
+
++
+
+`This record is part of the shared Jax’s World archive.`;
+
+
+
+if(e.profile){
+
+document
+.getElementById('detailContent')
+.innerHTML =
+characterProfileHTML(e);
+
+}
+
+else{
+
+let media = '';
+
+
+/* ANIMAL IMAGE */
+
+if(e.animalPhoto){
+
+media +=
+
+`<div class="animal-photo">
+
+${e.image
+
+? `<img
+src="${e.image}"
+alt="${e.title}">`
+
+: `<div class="animal-photo-placeholder">
+
+<span class="mono">
+CREATURE IMAGE
+</span>
+
+<strong>
+${e.title}
+</strong>
+
+</div>`
+
+}
+
+</div>`;
+
+}
+
+
+/* NAZARETH MAP AND COUNTRIES IN ONE PLACE */
+if(e.worldMap){
+  const regionIds=['soultara','embrea','galea','petrary','aquarea','falder'];
+  const regionCards=regionIds.map(id=>{
+    const region=entries.find(x=>x.id===id);
+    return `<details class="country-section" id="region-${id}"><summary><strong>${region.title}</strong><span>${region.description}</span><span class="country-chevron">＋</span></summary><div class="country-body">${region.image ? `<img class="country-flag" src="${region.image}" alt="${region.title} flag">` : ''}<div class="content-block">${region.content || ''}</div><small class="mono">WORKING ON / ${region.workingOn || 'CLASS'}</small></div></details>`;
+  }).join('');
+  media+=`<div class="map-panel"><div class="map-panel-head"><strong>MAP OF NAZARETH</strong><span class="mono">COUNTRIES & REGIONS ↓</span></div><img src="${e.image}" alt="Student-created map of Nazareth"><div class="country-list">${regionCards}</div></div>`;
+}
+
+/* STANDARD IMAGE */
+
+else if(e.image){
+
+media +=
+
+`<img
+src="${e.image}"
+alt="${e.title}"
+class="world-image">`;
+
+}
+
+
+/* RELATED CONTENT GROUPED ON ITS MAIN PAGE */
+if(e.id==='animals'){
+  const ids=['shiger','pogle','celephant','cantalop','sharpiebot','deadlylongarms','thing1','monkey','bird','dog','mosquito','gerd','dragons'];
+  media+=collectionHTML('CREATURE FIELD GUIDE',ids,'creature');
+}
+if(e.id==='villains'){
+  media+=collectionHTML('THE FOUR ELEMENTS',['fireshadow','watershadow','airshadow','earthshadow'],'shadow');
+}
+if(e.id==='laws'){
+  media+=collectionHTML('MORE ABOUT DAILY LIFE',['worldrules','transport'],'society');
+}
+if(e.id==='newsroom'){
+  media+=collectionHTML('REPORTS',['newspaper','newscast'],'media');
+}
+/* CONCERT POSTERS — one archive entry, two full-size images */
+if(e.concertImages){
+  media+=`<div class="concert-gallery">${e.concertImages.map(photo=>`
+    <button type="button" class="concert-poster" data-popup-image="${photo.url}" data-popup-title="CHILIO — ${photo.label}">
+      <img src="${photo.url}" alt="CHILIO ${photo.label}" loading="lazy">
+      <span>${photo.label} ↗</span>
+    </button>`).join('')}</div>`;
+}
+/* EMBEDDED VIDEO */
+if(e.videoId){
+media += `<div class="video-frame"><iframe
+src="https://www.youtube-nocookie.com/embed/${e.videoId}"
+title="${e.title} video"
+loading="lazy"
+referrerpolicy="strict-origin-when-cross-origin"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+allowfullscreen></iframe></div>`;
+}
+
+/* EXTERNAL RESOURCE */
+
+if(e.resource){
+
+media +=
+
+`<a
+class="resource-link"
+href="${e.resource.url}"
+target="_blank"
+rel="noopener">
+
+${e.resource.label}
+
+</a>`;
+
+}
+
+
+/* SCROLLABLE IMAGE RESOURCE */
+
+if(e.gallery && e.gallery.length){
+ media+=`<div class="ssm-gallery">${e.gallery.map(photo=>`<button type="button" class="ssm-gallery-item" data-popup-image="${photo.url}" data-popup-title="${photo.label}"><img src="${photo.url}" alt="${photo.label}" loading="lazy"><span>${photo.label} ↗</span></button>`).join('')}</div>`;
+}
+
+if(e.popupImage){
+
+media +=
+
+`<button
+class="popup-image-button"
+data-popup-image="${e.popupImage.url}"
+data-popup-title="${e.title}">
+
+${e.popupImage.label}
+
+</button>`;
+
+}
+
+
+document
+.getElementById('detailContent')
+.innerHTML =
+
+media +
+
+(e.id==='animals' || e.id==='newsroom' ? '' : `<div class="content-block">
+${e.content || ''}
+</div>`);
+
+
+
+document.querySelectorAll('[data-shadow-id]').forEach(b=>b.addEventListener('click',()=>openEntry(b.dataset.shadowId)));
+
+
+
+document
+.querySelectorAll('[data-popup-image]')
+.forEach(button => {
+
+  button.addEventListener(
+    'click',
+    () => {
+
+      openImagePopup(
+        button.dataset.popupImage,
+        button.dataset.popupTitle
+      );
+
+    }
+  );
+
+});
+
+}
+
+
+/* CONNECTIONS */
+
+const related =
+
+(e.connections || [])
+
+.map(id=>{const parent={map:'nazareth',soultara:'nazareth',embrea:'nazareth',galea:'nazareth',petrary:'nazareth',aquarea:'nazareth',falder:'nazareth',worldrules:'laws',transport:'laws',shiger:'animals',pogle:'animals',celephant:'animals',cantalop:'animals',sharpiebot:'animals',deadlylongarms:'animals',thing1:'animals',monkey:'animals',bird:'animals',dog:'animals',mosquito:'animals',gerd:'animals',dragons:'animals',fireshadow:'villains',watershadow:'villains',airshadow:'villains',earthshadow:'villains',newscast:'newsroom',newspaper:'newsroom',characters:'jax',backstories:'jax',harry:'nazareth'};return parent[id]||id;})
+.filter((id,index,array)=>array.indexOf(id)===index && id!==e.id)
+.map(id =>
+  entries.find(x=>x.id===id)
+)
+
+.filter(Boolean);
+
+
+document
+.getElementById('connections')
+.innerHTML =
+
+related.length
+
+?
+
+related.map(x =>
+
+`<button data-id="${x.id}">
+${x.title} ↗
+</button>`
+
+).join('')
+
+:
+
+'<p>No connections yet.</p>';
+
+
+document
+.querySelectorAll('#connections button')
+.forEach(b =>
+
+  b.addEventListener(
+    'click',
+    ()=>openEntry(b.dataset.id)
+  )
+
+);
+
+
+show('detail');
+
+}
+
+
+/* ======================================================
+   IMAGE / DOCUMENT POPUP
+====================================================== */
+
+const imagePopup =
+document.getElementById('imagePopup');
+
+const imagePopupImg =
+document.getElementById('imagePopupImg');
+
+const imagePopupClose =
+document.getElementById('imagePopupClose');
+
+const imagePopupTitle =
+document.getElementById('imagePopupTitle');
+
+const imagePopupScroll =
+document.getElementById('imagePopupScroll');
+
+
+function openImagePopup(src,title){
+
+  imagePopupImg.src = src;
+
+  imagePopupImg.alt =
+  title || 'Image';
+
+  imagePopupTitle.textContent =
+  title || 'IMAGE';
+
+  imagePopup.classList.add('open');
+
+  imagePopup.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+
+  document.body.style.overflow =
+  'hidden';
+
+  imagePopupScroll.scrollTop = 0;
+}
+
+
+function closeImagePopup(){
+
+  imagePopup.classList.remove('open');
+
+  imagePopup.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+  imagePopupImg.src = '';
+
+  document.body.style.overflow = '';
+}
+
+
+imagePopupClose
+.addEventListener(
+  'click',
+  closeImagePopup
+);
+
+
+imagePopup
+.addEventListener(
+  'click',
+  e => {
+
+    if(e.target === imagePopup){
+      closeImagePopup();
+    }
+
   }
- }
+);
 
- path.slice(-100).forEach(([a,b],i)=>{
-  const xa=x(a),xb=x(b);
-  if(Math.max(xa,xb)<45||Math.min(xa,xb)>1155)return;
-  const offset=38+(i%4)*25;
-  const color=i%2?'#129BC3':'#087DA3';
 
-  el('path',{
-   d:`M${xa} ${y-5} Q${(xa+xb)/2} ${y-offset-40} ${xb} ${y-5}`,
-   fill:'none',stroke:color,'stroke-width':4,
-   'stroke-linecap':'round'
-  });
-  if(Math.abs(xb-xa)>2)
-   el('path',{
-    d:`M${xb-7*Math.sign(b-a)} ${y-12} L${xb} ${y-5} L${xb-10*Math.sign(b-a)} ${y-1}`,
-    fill:'none',stroke:color,'stroke-width':3
-   });
- });
+document
+.addEventListener(
+  'keydown',
+  e => {
 
- if(current>=lo&&current<=hi){
-  el('circle',{
-   cx:x(current),cy:y,r:10,
-   fill:MATH,stroke:'#111','stroke-width':3
-  });
-  el('text',{
-   x:x(current),y:240,
-   'text-anchor':'middle',
-   'font-size':27,'font-weight':900
-  },fmt(current));
- }
- $('result').textContent='Position: '+fmt(current);
- $('fsResult').textContent='Position: '+fmt(current);
-}
+    if(
+      e.key === 'Escape'
+      &&
+      imagePopup.classList.contains('open')
+    ){
+      closeImagePopup();
+    }
 
-function setStart(){
- current=val('start');
- path=[];
- render();
-}
-function jump(direction,n=1){
- const amount=val('step')*direction;
- if(!Number.isFinite(amount)||amount===0)return;
- for(let i=0;i<n;i++){
-  const next=Number((current+amount).toFixed(10));
-  path.push([current,next]);
-  current=next;
- }
- render();
-}
-function undo(){
- if(path.length){
-  current=path.pop()[0];
+  }
+);
+
+
+/* ======================================================
+   FILTERS
+====================================================== */
+
+document
+.getElementById('back')
+.addEventListener(
+  'click',
+  ()=>show('home')
+);
+
+
+document
+.querySelectorAll('#filters button')
+.forEach(b =>
+
+b.addEventListener(
+'click',
+()=>{
+
+  filter =
+  b.dataset.filter;
+
+  document
+  .querySelectorAll('#filters button')
+  .forEach(x =>
+
+    x.classList.toggle(
+      'active',
+      x===b
+    )
+
+  );
+
   render();
- }
-}
-function zoom(f){
- const lo=val('min'),hi=val('max');
- const mid=(lo+hi)/2,half=(hi-lo)*f/2;
- $('min').value=Number((mid-half).toFixed(8));
- $('max').value=Number((mid+half).toFixed(8));
- render();
-}
-svg.addEventListener('click',e=>{
- const matrix=svg.getScreenCTM();
- if(!matrix)return;
- const pt=svg.createSVGPoint();
- pt.x=e.clientX;pt.y=e.clientY;
- const p=pt.matrixTransform(matrix.inverse());
- if(p.x<65||p.x>1135)return;
- const lo=val('min'),hi=val('max');
- const t=minorStep();
- const raw=lo+(p.x-70)/1060*(hi-lo);
- current=Number((Math.round(raw/t)*t).toFixed(10));
- $('start').value=current;
- path=[];
- render();
-});
 
-$('forward').onclick=()=>jump(1);
-$('backward').onclick=()=>jump(-1);
-$('all').onclick=()=>{
- setStart();
- jump(1,Math.min(100,Math.max(1,Math.floor(val('jumps')||1))));
-};
-$('undo').onclick=undo;
-$('clear').onclick=setStart;
-$('start').onchange=setStart;
-$('zoomIn').onclick=()=>zoom(.5);
-$('zoomOut').onclick=()=>zoom(2);
-$('fsForward').onclick=()=>jump(1);
-$('fsBack').onclick=()=>jump(-1);
-$('fsUndo').onclick=undo;
-$('fsClear').onclick=setStart;
-$('fsZoomIn').onclick=()=>zoom(.5);
-$('fsZoomOut').onclick=()=>zoom(2);
+})
 
-['min','max','tick','segments','labels','mode'].forEach(id=>{
- $(id).onchange=()=>{
-  if(id==='mode'){
-   if($('mode').value==='fraction'){
-    $('min').value=-2;
-    $('max').value=2;
-    $('tick').value=1;
-    $('segments').value=4;
-    $('labels').value='all';
-    $('step').value=.25;
-   }else if($('mode').value==='groups'){
-    $('min').value=-20;
-    $('max').value=20;
-    $('tick').value=1;
-    $('segments').value=1;
-    $('labels').value='whole';
-    $('step').value=3;
-   }else{
-    $('min').value=-10;
-    $('max').value=10;
-    $('tick').value=1;
-    $('segments').value=1;
-    $('labels').value='whole';
-    $('step').value=1;
-   }
-   setStart();
-  }
-  if(id==='segments'){
-   $('segments').value=subdivisions();
-   if($('mode').value==='fraction')
-    $('step').value=Number(minorStep().toFixed(10));
-  }
-  render();
- };
-});
-$('resetView').onclick=()=>{
- $('min').value=-10;
- $('max').value=10;
- $('tick').value=1;
- $('segments').value=1;
- render();
-};
+);
 
-const panel=$('numberPanel');
-const fsBtn=$('fullscreenBtn');
-fsBtn.onclick=async()=>{
- if(document.fullscreenElement){
-  await document.exitFullscreen();
- }else if(panel.requestFullscreen){
-  try{await panel.requestFullscreen();}
-  catch(err){console.warn('Fullscreen unavailable.',err);}
- }
-};
-document.addEventListener('fullscreenchange',()=>{
- const isFull=document.fullscreenElement===panel;
- fsBtn.setAttribute('aria-label',isFull?'Exit fullscreen':'Enter fullscreen');
- fsBtn.title=isFull?'Exit fullscreen':'Fullscreen';
- $('expandIcon').innerHTML=isFull
-  ?'<path d="M8 3v5H3M16 3v5h5M3 16h5v5M21 16h-5v5"/>'
-  :'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 1-2 2h-3"/>';
-});
+
+document
+.getElementById('search')
+.addEventListener(
+  'input',
+  render
+);
+
+
+/* ======================================================
+   START
+====================================================== */
+
 render();
+renderSummary();
+
 </script>
+
 </body>
 </html>

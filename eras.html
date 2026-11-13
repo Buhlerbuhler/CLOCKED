@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WHEN / WHERE | CLOCKED</title>
+<title>WHEN / WHERE | CLOCKED | Acropolis</title>
 
 <!-- 360 VIEWER -->
 <link rel="stylesheet"
@@ -17,9 +16,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-/* ==========================
-   COLOURS
-========================== */
 :root {
   --yellow: #FED500;
   --black: #101010;
@@ -72,9 +68,7 @@ button:disabled {
   display: none !important;
 }
 
-/* ==========================
-   HEADER
-========================== */
+/* HEADER */
 header {
   height: 60px;
   background: #000;
@@ -106,9 +100,7 @@ header {
   letter-spacing: 1px;
 }
 
-/* ==========================
-   MAIN LAYOUT
-========================== */
+/* MAIN LAYOUT */
 main {
   height: calc(100dvh - 60px);
   display: grid;
@@ -118,9 +110,7 @@ main {
   min-height: 0;
 }
 
-/* ==========================
-   360 SCENE
-========================== */
+/* 360 SCENE */
 .scene {
   position: relative;
   min-width: 0;
@@ -140,7 +130,7 @@ main {
   z-index: 5;
   top: 16px;
   left: 16px;
-  max-width: 270px;
+  max-width: 290px;
   padding: 13px 16px;
   background: rgba(0,0,0,.8);
   border-radius: 6px;
@@ -161,9 +151,7 @@ main {
   line-height: 1.5;
 }
 
-/* ==========================
-   RIGHT PANEL
-========================== */
+/* RIGHT PANEL */
 .sidebar {
   min-height: 0;
   display: flex;
@@ -205,9 +193,7 @@ main {
   letter-spacing: .6px;
 }
 
-/* ==========================
-   MAP
-========================== */
+/* MAP */
 #map {
   flex: 1;
   min-height: 100px;
@@ -223,9 +209,7 @@ main {
   min-height: 15px;
 }
 
-/* ==========================
-   TIMELINE
-========================== */
+/* TIMELINE */
 .timeline {
   border-top: 1px solid var(--line);
   padding-top: 12px;
@@ -274,9 +258,7 @@ input[type="range"] {
   min-height: 44px;
 }
 
-/* ==========================
-   RESULTS
-========================== */
+/* RESULTS */
 .results {
   display: flex;
   flex-direction: column;
@@ -334,9 +316,7 @@ input[type="range"] {
   font-size: 10px;
 }
 
-/* ==========================
-   SMALL SCREENS
-========================== */
+/* SMALL SCREENS */
 @media (max-width: 800px) {
   html, body {
     height: auto;
@@ -390,7 +370,6 @@ input[type="range"] {
 
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="brand">
     WHEN<span> / </span>WHERE
@@ -406,7 +385,6 @@ input[type="range"] {
 
 <main>
 
-  <!-- 360 DEGREE VIEWER -->
   <section class="scene">
     <div id="panorama"></div>
 
@@ -414,13 +392,12 @@ input[type="range"] {
       <strong>SCENE 01</strong>
       <p>
         Drag to look around. Study the surroundings
-        and look for clues about when and where
+        and look for clues about where and when
         you are.
       </p>
     </div>
   </section>
 
-  <!-- GUESSING PANEL -->
   <aside class="sidebar">
 
     <div class="panel-top">
@@ -443,13 +420,12 @@ input[type="range"] {
       Click the map to place your guess.
     </div>
 
-    <!-- YEAR SELECTOR -->
     <div class="timeline" id="timeline">
 
       <div class="timeline-heading">
         <div class="label">02 / WHEN?</div>
         <div class="year-display" id="yearDisplay">
-          1000 BCE
+          500 BCE
         </div>
       </div>
 
@@ -458,13 +434,13 @@ input[type="range"] {
         type="range"
         min="-3999"
         max="2000"
-        value="-999"
+        value="-499"
         step="1"
       >
 
       <div class="timeline-labels">
         <span>4000 BCE</span>
-        <span>1000 BCE</span>
+        <span>500 BCE</span>
         <span>2000 CE</span>
       </div>
 
@@ -493,7 +469,6 @@ input[type="range"] {
       SUBMIT GUESS
     </button>
 
-    <!-- RESULTS -->
     <div id="results" class="results hidden">
 
       <div>
@@ -526,28 +501,29 @@ input[type="range"] {
       </div>
 
       <div class="explanation">
-        <h3>The Pyramids of Giza</h3>
+        <h3>The Acropolis of Athens</h3>
 
         <p>
-          <strong>Location:</strong> Giza, Egypt<br>
-          <strong>Time:</strong> Approximately 2550 BCE
+          <strong>Location:</strong> Athens, Greece<br>
+          <strong>Time:</strong> Approximately 430 BCE
         </p>
 
         <p>
-          The Great Pyramid was built during the reign
-          of Pharaoh Khufu in Egypt's Old Kingdom.
+          The Acropolis was the religious and symbolic
+          high point of ancient Athens. It included famous
+          structures such as the Parthenon, built during
+          the Classical period.
         </p>
 
         <p>
-          The pyramids were royal tombs. Their construction
-          required skilled workers, careful organization,
-          and enormous resources.
+          This period is often associated with Athenian
+          democracy, philosophy, theatre, and artistic
+          achievement.
         </p>
 
         <p>
-          This AI-generated scene is an interpretation
-          of the past. Some details and construction
-          techniques remain uncertain.
+          This AI-generated scene is a historical
+          interpretation rather than an exact reconstruction.
         </p>
       </div>
 
@@ -561,55 +537,43 @@ input[type="range"] {
 </main>
 
 <script>
-
 /* ==================================
    1. SCENE SETTINGS
-
-   Change these for future scenes.
 ================================== */
 
 const SCENE = {
-  name: "Pyramids of Giza",
+  name: "Acropolis of Athens",
 
-  latitude: 29.9792,
-  longitude: 31.1342,
+  latitude: 37.9715,
+  longitude: 23.7267,
 
-  // -2549 means 2550 BCE.
-  year: -2549,
+  // -429 = 430 BCE
+  year: -429,
 
-  panorama:
-    "https://raw.githubusercontent.com/Buhlerbuhler/CLOCKED/refs/heads/main/giza1.jpg"
+  panorama: "acropolis1.jpg"
 };
 
 /* ==================================
-   2. INITIALIZE THE 360 VIEWER
+   2. 360 VIEWER
 ================================== */
 
 const viewer = pannellum.viewer("panorama", {
   type: "equirectangular",
-
   panorama: SCENE.panorama,
-
   autoLoad: true,
 
-  // Where the viewer starts looking
-  yaw: -55,
+  yaw: 0,
   pitch: 0,
 
-  // Viewing angle
   hfov: 95,
   minHfov: 40,
   maxHfov: 120,
 
   showZoomCtrl: true,
   showFullscreenCtrl: true,
-
   mouseZoom: true,
   draggable: true,
-
   compass: false,
-
-  // Don't rotate automatically
   autoRotate: 0
 });
 
@@ -623,17 +587,11 @@ let answerMarker = null;
 let answerLine = null;
 let submitted = false;
 
-const slider =
-  document.getElementById("yearSlider");
-
-const yearDisplay =
-  document.getElementById("yearDisplay");
+const slider = document.getElementById("yearSlider");
+const yearDisplay = document.getElementById("yearDisplay");
 
 /* ==================================
-   4. INTERACTIVE MAP
-
-   Uses OpenStreetMap.
-   No API key required.
+   4. MAP
 ================================== */
 
 const map = L.map("map", {
@@ -643,7 +601,6 @@ const map = L.map("map", {
   zoomControl: true
 }).setView([20, 15], 2);
 
-// Standard free OpenStreetMap tiles.
 L.tileLayer(
   "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
   {
@@ -652,7 +609,6 @@ L.tileLayer(
   }
 ).addTo(map);
 
-// Allow students to click anywhere.
 map.on("click", event => {
   if (submitted) return;
 
@@ -680,22 +636,15 @@ map.on("click", event => {
    5. TIMELINE
 ================================== */
 
-// Astronomical year numbering:
-//  0 = 1 BCE
-// -1 = 2 BCE
-//  1 = 1 CE
-
 function formatYear(year) {
   if (year <= 0) {
     return `${1 - year} BCE`;
   }
-
   return `${year} CE`;
 }
 
 function updateYear() {
-  yearDisplay.textContent =
-    formatYear(Number(slider.value));
+  yearDisplay.textContent = formatYear(Number(slider.value));
 }
 
 function changeYear(amount) {
@@ -713,7 +662,7 @@ slider.addEventListener("input", updateYear);
 updateYear();
 
 /* ==================================
-   6. DISTANCE CALCULATION
+   6. DISTANCE
 ================================== */
 
 function distanceKm(lat1, lng1, lat2, lng2) {
@@ -729,32 +678,23 @@ function distanceKm(lat1, lng1, lat2, lng2) {
     Math.cos(lat2 * rad) *
     Math.sin(dLng / 2) ** 2;
 
-  return 2 * R * Math.asin(
-    Math.sqrt(Math.min(1, a))
-  );
+  return 2 * R * Math.asin(Math.sqrt(Math.min(1, a)));
 }
 
 /* ==================================
    7. SCORING
-
-   5000 points for location.
-   5000 points for time.
 ================================== */
 
 function locationPoints(km) {
-  return Math.round(
-    5000 * Math.exp(-km / 2000)
-  );
+  return Math.round(5000 * Math.exp(-km / 2000));
 }
 
 function timePoints(years) {
-  return Math.round(
-    5000 * Math.exp(-years / 500)
-  );
+  return Math.round(5000 * Math.exp(-years / 500));
 }
 
 /* ==================================
-   8. SUBMIT GUESS
+   8. SUBMIT
 ================================== */
 
 function submitGuess() {
@@ -771,14 +711,12 @@ function submitGuess() {
     SCENE.longitude
   );
 
-  const yearDifference =
-    Math.abs(guessedYear - SCENE.year);
+  const yearDifference = Math.abs(guessedYear - SCENE.year);
 
   const placeScore = locationPoints(km);
   const timeScore = timePoints(yearDifference);
   const total = placeScore + timeScore;
 
-  // Show points and accuracy.
   document.getElementById("totalScore").textContent =
     `${total.toLocaleString()} / 10,000`;
 
@@ -794,7 +732,6 @@ function submitGuess() {
   document.getElementById("yearResult").textContent =
     `${yearDifference.toLocaleString()} years`;
 
-  // Show correct map location.
   answerMarker = L.circleMarker(
     [SCENE.latitude, SCENE.longitude],
     {
@@ -806,7 +743,6 @@ function submitGuess() {
     }
   ).addTo(map);
 
-  // Line between guess and correct location.
   answerLine = L.polyline(
     [
       locationGuess,
@@ -828,18 +764,10 @@ function submitGuess() {
     maxZoom: 7
   });
 
-  // Show results instead of timeline.
-  document.getElementById("instructions")
-    .classList.add("hidden");
-
-  document.getElementById("timeline")
-    .classList.add("hidden");
-
-  document.getElementById("submitButton")
-    .classList.add("hidden");
-
-  document.getElementById("results")
-    .classList.remove("hidden");
+  document.getElementById("instructions").classList.add("hidden");
+  document.getElementById("timeline").classList.add("hidden");
+  document.getElementById("submitButton").classList.add("hidden");
+  document.getElementById("results").classList.remove("hidden");
 
   document.getElementById("mapHeading").textContent =
     "YOUR GUESS VS. ACTUAL LOCATION";
@@ -854,7 +782,7 @@ function submitGuess() {
 }
 
 /* ==================================
-   9. RESET GAME
+   9. RESET
 ================================== */
 
 function resetGame() {
@@ -869,7 +797,7 @@ function resetGame() {
   answerMarker = null;
   answerLine = null;
 
-  slider.value = -999;
+  slider.value = -499;
   updateYear();
 
   document.getElementById("locationStatus").textContent =
@@ -877,28 +805,17 @@ function resetGame() {
 
   document.getElementById("submitButton").disabled = true;
 
-  document.getElementById("instructions")
-    .classList.remove("hidden");
+  document.getElementById("instructions").classList.remove("hidden");
+  document.getElementById("timeline").classList.remove("hidden");
+  document.getElementById("submitButton").classList.remove("hidden");
+  document.getElementById("results").classList.add("hidden");
 
-  document.getElementById("timeline")
-    .classList.remove("hidden");
-
-  document.getElementById("submitButton")
-    .classList.remove("hidden");
-
-  document.getElementById("results")
-    .classList.add("hidden");
-
-  document.getElementById("mapHeading").textContent =
-    "01 / WHERE?";
-
-  document.getElementById("panelTitle").textContent =
-    "Make your guess";
+  document.getElementById("mapHeading").textContent = "01 / WHERE?";
+  document.getElementById("panelTitle").textContent = "Make your guess";
 
   map.setView([20, 15], 2);
 
-  // Return the 360 viewer to its starting direction.
-  viewer.setYaw(-55);
+  viewer.setYaw(0);
   viewer.setPitch(0);
   viewer.setHfov(95);
 
@@ -906,14 +823,13 @@ function resetGame() {
 }
 
 /* ==================================
-   10. SCREEN RESIZING
+   10. RESIZE
 ================================== */
 
 window.addEventListener("resize", () => {
   map.invalidateSize();
   viewer.resize();
 });
-
 </script>
 </body>
 </html>

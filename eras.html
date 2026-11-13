@@ -6,25 +6,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WHEN / WHERE | CLOCKED</title>
 
-<!-- Leaflet: interactive map -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<!-- 360 VIEWER -->
+<link rel="stylesheet"
+ href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+<!-- INTERACTIVE MAP -->
+<link rel="stylesheet"
+ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-
-/* ===================================
+/* ==========================
    COLOURS
-=================================== */
+========================== */
 :root {
   --yellow: #FED500;
   --black: #101010;
-  --panel: #1c1c1c;
-  --line: #373737;
+  --panel: #1d1d1d;
+  --line: #383838;
   --white: #f5f5f5;
   --grey: #aaa;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   width: 100%;
@@ -47,11 +54,13 @@ button {
   cursor: pointer;
 }
 
-button:hover { filter: brightness(1.1); }
-
 button.secondary {
   background: #343434;
   color: white;
+}
+
+button:hover {
+  filter: brightness(1.1);
 }
 
 button:disabled {
@@ -59,19 +68,21 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
-/* ===================================
+/* ==========================
    HEADER
-=================================== */
+========================== */
 header {
-  height: 62px;
+  height: 60px;
+  background: #000;
+  border-bottom: 2px solid var(--yellow);
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  background: #000;
-  border-bottom: 2px solid var(--yellow);
 }
 
 .brand {
@@ -80,12 +91,14 @@ header {
   letter-spacing: -1px;
 }
 
-.brand span { color: var(--yellow); }
+.brand span {
+  color: var(--yellow);
+}
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .header-right small {
@@ -93,21 +106,21 @@ header {
   letter-spacing: 1px;
 }
 
-/* ===================================
+/* ==========================
    MAIN LAYOUT
-=================================== */
+========================== */
 main {
-  height: calc(100dvh - 62px);
+  height: calc(100dvh - 60px);
   display: grid;
-  grid-template-columns: minmax(0,1fr) 380px;
+  grid-template-columns: minmax(0, 1fr) 385px;
   gap: 10px;
   padding: 10px;
   min-height: 0;
 }
 
-/* ===================================
-   HISTORICAL SCENE
-=================================== */
+/* ==========================
+   360 SCENE
+========================== */
 .scene {
   position: relative;
   min-width: 0;
@@ -117,81 +130,56 @@ main {
   background: #222;
 }
 
-.scene img {
+#panorama {
   width: 100%;
   height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: center;
 }
 
 .scene-info {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  max-width: 290px;
-  padding: 14px 16px;
+  z-index: 5;
+  top: 16px;
+  left: 16px;
+  max-width: 270px;
+  padding: 13px 16px;
+  background: rgba(0,0,0,.8);
   border-radius: 6px;
-  background: rgba(0,0,0,.83);
+  pointer-events: none;
 }
 
 .scene-info strong {
   display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
+  font-size: 13px;
   letter-spacing: 1px;
+  margin-bottom: 5px;
 }
 
 .scene-info p {
   margin: 0;
   color: #ddd;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
-.scene-controls {
-  position: absolute;
-  bottom: 18px;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.scene-controls button {
-  background: rgba(0,0,0,.85);
-  color: white;
-  border: 1px solid #777;
-}
-
-.scene-controls span {
-  font-size: 12px;
-  padding: 9px 12px;
-  border-radius: 5px;
-  background: rgba(0,0,0,.75);
-}
-
-/* ===================================
+/* ==========================
    RIGHT PANEL
-=================================== */
+========================== */
 .sidebar {
   min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 15px;
-  border-radius: 8px;
   background: var(--panel);
   border: 1px solid var(--line);
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .panel-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 .panel-top h2 {
@@ -211,52 +199,33 @@ main {
   line-height: 1.5;
 }
 
-.section-label {
+.label {
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .6px;
 }
 
-/* ===================================
+/* ==========================
    MAP
-=================================== */
+========================== */
 #map {
   flex: 1;
-  min-height: 90px;
-  border-radius: 6px;
-  overflow: hidden;
+  min-height: 100px;
   border: 1px solid #444;
-  background: #dce4e8;
+  border-radius: 6px;
+  background: #ddd;
   z-index: 0;
 }
 
-/* English map labels */
-.country-label {
-  background: transparent;
-  border: none;
-}
-
-.country-label div {
-  font: bold 11px Arial, sans-serif;
-  color: #404040;
-  text-align: center;
-  white-space: nowrap;
-  text-shadow:
-    1px 1px 2px white,
-    -1px -1px 2px white,
-    0 0 4px white;
-  pointer-events: none;
-}
-
 .location-status {
-  min-height: 16px;
-  font-size: 11px;
   color: var(--grey);
+  font-size: 11px;
+  min-height: 15px;
 }
 
-/* ===================================
+/* ==========================
    TIMELINE
-=================================== */
+========================== */
 .timeline {
   border-top: 1px solid var(--line);
   padding-top: 12px;
@@ -264,21 +233,21 @@ main {
 
 .timeline-heading {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
 .year-display {
   font-size: 25px;
-  font-weight: 900;
   color: var(--yellow);
+  font-weight: 900;
 }
 
 input[type="range"] {
   width: 100%;
   margin: 16px 0 8px;
-  cursor: pointer;
   accent-color: var(--yellow);
+  cursor: pointer;
 }
 
 .timeline-labels {
@@ -296,33 +265,29 @@ input[type="range"] {
 
 .year-buttons button {
   flex: 1;
-  padding: 8px 4px;
+  padding: 8px 3px;
   font-size: 12px;
 }
 
-/* ===================================
-   SUBMIT
-=================================== */
 .submit-button {
   width: 100%;
   min-height: 44px;
-  font-size: 14px;
 }
 
-/* ===================================
+/* ==========================
    RESULTS
-=================================== */
+========================== */
 .results {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 11px;
   min-height: 0;
 }
 
 .total-score {
-  color: var(--yellow);
   font-size: 34px;
   font-weight: 900;
+  color: var(--yellow);
 }
 
 .score-grid {
@@ -333,43 +298,45 @@ input[type="range"] {
 
 .score-box {
   background: #111;
-  padding: 12px;
   border: 1px solid var(--line);
   border-radius: 6px;
+  padding: 11px;
 }
 
 .score-box small {
   display: block;
-  margin-bottom: 5px;
   color: var(--grey);
+  margin-bottom: 5px;
 }
 
-.score-box strong { font-size: 18px; }
+.score-box strong {
+  font-size: 17px;
+}
 
 .explanation {
   overflow: auto;
   min-height: 0;
-  color: #ddd;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.5;
+  color: #ddd;
 }
 
 .explanation h3 {
   margin: 0 0 8px;
-  font-size: 17px;
   color: white;
+  font-size: 17px;
 }
 
 .footer {
   margin-top: auto;
-  font-size: 10px;
-  color: #888;
   text-align: right;
+  color: #888;
+  font-size: 10px;
 }
 
-/* ===================================
-   SMALL SCREEN
-=================================== */
+/* ==========================
+   SMALL SCREENS
+========================== */
 @media (max-width: 800px) {
   html, body {
     height: auto;
@@ -377,38 +344,53 @@ input[type="range"] {
   }
 
   main {
+    height: auto;
     display: flex;
     flex-direction: column;
-    height: auto;
   }
 
   .scene {
-    height: 42dvh;
-    min-height: 250px;
+    height: 45dvh;
+    min-height: 260px;
   }
 
-  .sidebar { min-height: 570px; }
+  .sidebar {
+    min-height: 570px;
+  }
 
-  #map { min-height: 220px; }
+  #map {
+    min-height: 240px;
+  }
 
-  .header-right small { display: none; }
+  .header-right small {
+    display: none;
+  }
 }
 
 @media (max-height: 650px) and (min-width: 801px) {
-  .sidebar { gap: 6px; padding: 10px; }
-  .year-buttons { margin-top: 5px; }
-  .year-buttons button { padding: 5px; }
-  .year-display { font-size: 21px; }
-}
+  .sidebar {
+    padding: 10px;
+    gap: 6px;
+  }
 
+  .year-display {
+    font-size: 21px;
+  }
+
+  .year-buttons {
+    margin-top: 5px;
+  }
+
+  .year-buttons button {
+    padding: 5px;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<!-- ===================================
-     HEADER
-=================================== -->
+<!-- HEADER -->
 <header>
   <div class="brand">
     WHEN<span> / </span>WHERE
@@ -424,36 +406,21 @@ input[type="range"] {
 
 <main>
 
-  <!-- ===================================
-       HISTORICAL SCENE
-  =================================== -->
+  <!-- 360 DEGREE VIEWER -->
   <section class="scene">
-
-    <img
-      id="sceneImage"
-      src="https://raw.githubusercontent.com/Buhlerbuhler/CLOCKED/refs/heads/main/giza1.jpg"
-      alt="Historical reconstruction"
-    >
+    <div id="panorama"></div>
 
     <div class="scene-info">
       <strong>SCENE 01</strong>
       <p>
-        Study your surroundings. Look for clues
-        about the location and time period.
+        Drag to look around. Study the surroundings
+        and look for clues about when and where
+        you are.
       </p>
     </div>
-
-    <div class="scene-controls" id="sceneControls">
-      <button onclick="turnScene(-1)">←</button>
-      <span id="viewLabel">VIEW 1 / 1</span>
-      <button onclick="turnScene(1)">→</button>
-    </div>
-
   </section>
 
-  <!-- ===================================
-       GUESSING PANEL
-  =================================== -->
+  <!-- GUESSING PANEL -->
   <aside class="sidebar">
 
     <div class="panel-top">
@@ -461,15 +428,12 @@ input[type="range"] {
       <small>ROUND 01</small>
     </div>
 
-    <!-- GUESS CONTROLS -->
-    <div id="guessIntro">
-      <p class="instructions">
-        Explore the scene, then choose where
-        and when you think it happened.
-      </p>
-    </div>
+    <p class="instructions" id="instructions">
+      Explore the scene, then choose a location
+      on the map and a year on the timeline.
+    </p>
 
-    <div id="locationHeading" class="section-label">
+    <div class="label" id="mapHeading">
       01 / WHERE?
     </div>
 
@@ -479,11 +443,11 @@ input[type="range"] {
       Click the map to place your guess.
     </div>
 
-    <!-- TIMELINE -->
+    <!-- YEAR SELECTOR -->
     <div class="timeline" id="timeline">
 
       <div class="timeline-heading">
-        <div class="section-label">02 / WHEN?</div>
+        <div class="label">02 / WHEN?</div>
         <div class="year-display" id="yearDisplay">
           1000 BCE
         </div>
@@ -522,8 +486,8 @@ input[type="range"] {
     </div>
 
     <button
-      id="submitButton"
       class="submit-button"
+      id="submitButton"
       onclick="submitGuess()"
       disabled>
       SUBMIT GUESS
@@ -533,14 +497,13 @@ input[type="range"] {
     <div id="results" class="results hidden">
 
       <div>
-        <div class="section-label">TOTAL SCORE</div>
+        <div class="label">TOTAL SCORE</div>
         <div class="total-score" id="totalScore">
           0 / 10,000
         </div>
       </div>
 
       <div class="score-grid">
-
         <div class="score-box">
           <small>Location</small>
           <strong id="locationScore">--</strong>
@@ -560,7 +523,6 @@ input[type="range"] {
           <small>Years away</small>
           <strong id="yearResult">--</strong>
         </div>
-
       </div>
 
       <div class="explanation">
@@ -572,44 +534,39 @@ input[type="range"] {
         </p>
 
         <p>
-          The Great Pyramid of Giza was built during
-          the reign of Pharaoh Khufu in Egypt's
-          Old Kingdom.
+          The Great Pyramid was built during the reign
+          of Pharaoh Khufu in Egypt's Old Kingdom.
         </p>
 
         <p>
-          The pyramids were royal tombs. Their
-          construction required skilled workers,
-          extensive planning, and enormous resources.
+          The pyramids were royal tombs. Their construction
+          required skilled workers, careful organization,
+          and enormous resources.
         </p>
 
         <p>
-          This AI-generated scene is a historical
-          interpretation rather than an exact
-          reconstruction.
+          This AI-generated scene is an interpretation
+          of the past. Some details and construction
+          techniques remain uncertain.
         </p>
       </div>
 
-      <button onclick="resetGame()">
-        TRY AGAIN
-      </button>
+      <button onclick="resetGame()">TRY AGAIN</button>
 
     </div>
 
     <div class="footer">CLOCKED | classtools</div>
 
   </aside>
-
 </main>
 
 <script>
 
-/* ===================================
+/* ==================================
    1. SCENE SETTINGS
 
-   This is where you change the
-   historical location, year and images.
-=================================== */
+   Change these for future scenes.
+================================== */
 
 const SCENE = {
   name: "Pyramids of Giza",
@@ -617,115 +574,85 @@ const SCENE = {
   latitude: 29.9792,
   longitude: 31.1342,
 
-  // Astronomical numbering:
-  // -2549 represents 2550 BCE.
+  // -2549 means 2550 BCE.
   year: -2549,
 
-  images: [
+  panorama:
     "https://raw.githubusercontent.com/Buhlerbuhler/CLOCKED/refs/heads/main/giza1.jpg"
-
-    // Add a second image here later:
-    // ,"https://raw.githubusercontent.com/Buhlerbuhler/CLOCKED/refs/heads/main/giza2.jpg"
-  ]
 };
 
-/* ===================================
-   2. GAME VARIABLES
-=================================== */
+/* ==================================
+   2. INITIALIZE THE 360 VIEWER
+================================== */
 
-let imageIndex = 0;
+const viewer = pannellum.viewer("panorama", {
+  type: "equirectangular",
+
+  panorama: SCENE.panorama,
+
+  autoLoad: true,
+
+  // Where the viewer starts looking
+  yaw: -55,
+  pitch: 0,
+
+  // Viewing angle
+  hfov: 95,
+  minHfov: 40,
+  maxHfov: 120,
+
+  showZoomCtrl: true,
+  showFullscreenCtrl: true,
+
+  mouseZoom: true,
+  draggable: true,
+
+  compass: false,
+
+  // Don't rotate automatically
+  autoRotate: 0
+});
+
+/* ==================================
+   3. GAME VARIABLES
+================================== */
+
 let locationGuess = null;
 let guessMarker = null;
 let answerMarker = null;
 let answerLine = null;
 let submitted = false;
 
-const slider = document.getElementById("yearSlider");
-const yearDisplay = document.getElementById("yearDisplay");
+const slider =
+  document.getElementById("yearSlider");
 
-/* ===================================
-   3. IMAGE VIEWER
-=================================== */
+const yearDisplay =
+  document.getElementById("yearDisplay");
 
-function turnScene(direction) {
-  imageIndex =
-    (imageIndex + direction + SCENE.images.length)
-    % SCENE.images.length;
-
-  document.getElementById("sceneImage").src =
-    SCENE.images[imageIndex];
-
-  document.getElementById("viewLabel").textContent =
-    `VIEW ${imageIndex + 1} / ${SCENE.images.length}`;
-}
-
-// Hide navigation until more than one image exists.
-if (SCENE.images.length < 2) {
-  document.getElementById("sceneControls")
-    .classList.add("hidden");
-}
-
-/* ===================================
+/* ==================================
    4. INTERACTIVE MAP
-=================================== */
+
+   Uses OpenStreetMap.
+   No API key required.
+================================== */
 
 const map = L.map("map", {
   minZoom: 2,
   maxZoom: 12,
-  worldCopyJump: true
+  worldCopyJump: true,
+  zoomControl: true
 }).setView([20, 15], 2);
 
-// Map without labels, so we can use English.
+// Standard free OpenStreetMap tiles.
 L.tileLayer(
-  "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
   {
-    attribution: "&copy; OpenStreetMap &copy; CARTO",
-    subdomains: "abcd",
-    maxZoom: 18
+    attribution: "&copy; OpenStreetMap contributors",
+    maxZoom: 19
   }
 ).addTo(map);
 
-// English country labels
-const countries = [
-  ["Canada", 58, -105],
-  ["United States", 39, -99],
-  ["Mexico", 24, -102],
-  ["Brazil", -11, -52],
-  ["Argentina", -38, -64],
-  ["United Kingdom", 54, -2],
-  ["France", 47, 2],
-  ["Spain", 40, -4],
-  ["Italy", 43, 12],
-  ["Germany", 51, 10],
-  ["Egypt", 27, 30],
-  ["Libya", 27, 17],
-  ["Sudan", 15, 30],
-  ["Algeria", 28, 3],
-  ["Nigeria", 9, 8],
-  ["South Africa", -29, 24],
-  ["Saudi Arabia", 24, 45],
-  ["Türkiye", 39, 35],
-  ["Iran", 32, 54],
-  ["India", 22, 79],
-  ["China", 35, 104],
-  ["Russia", 61, 95],
-  ["Japan", 37, 138],
-  ["Australia", -25, 134]
-];
-
-countries.forEach(([name, lat, lng]) => {
-  L.marker([lat, lng], {
-    interactive: false,
-    icon: L.divIcon({
-      className: "country-label",
-      html: `<div>${name}</div>`,
-      iconSize: [100, 20],
-      iconAnchor: [50, 10]
-    })
-  }).addTo(map);
-});
-
-// Place a guess marker when the student clicks.
+// Allow students to click anywhere.
 map.on("click", event => {
   if (submitted) return;
 
@@ -749,19 +676,20 @@ map.on("click", event => {
   document.getElementById("submitButton").disabled = false;
 });
 
-/* ===================================
+/* ==================================
    5. TIMELINE
-=================================== */
+================================== */
 
-// The slider uses astronomical year numbering.
-// Year 0 = 1 BCE
-// Year -1 = 2 BCE
-// Year 1 = 1 CE
+// Astronomical year numbering:
+//  0 = 1 BCE
+// -1 = 2 BCE
+//  1 = 1 CE
 
 function formatYear(year) {
   if (year <= 0) {
     return `${1 - year} BCE`;
   }
+
   return `${year} CE`;
 }
 
@@ -784,11 +712,10 @@ function changeYear(amount) {
 slider.addEventListener("input", updateYear);
 updateYear();
 
-/* ===================================
-   6. DISTANCE & SCORING
-=================================== */
+/* ==================================
+   6. DISTANCE CALCULATION
+================================== */
 
-// Calculate distance in kilometres.
 function distanceKm(lat1, lng1, lat2, lng2) {
   const rad = Math.PI / 180;
   const R = 6371;
@@ -807,23 +734,28 @@ function distanceKm(lat1, lng1, lat2, lng2) {
   );
 }
 
-// Maximum 5000 location points.
+/* ==================================
+   7. SCORING
+
+   5000 points for location.
+   5000 points for time.
+================================== */
+
 function locationPoints(km) {
   return Math.round(
     5000 * Math.exp(-km / 2000)
   );
 }
 
-// Maximum 5000 time points.
 function timePoints(years) {
   return Math.round(
     5000 * Math.exp(-years / 500)
   );
 }
 
-/* ===================================
-   7. SUBMIT GUESS
-=================================== */
+/* ==================================
+   8. SUBMIT GUESS
+================================== */
 
 function submitGuess() {
   if (!locationGuess || submitted) return;
@@ -846,7 +778,7 @@ function submitGuess() {
   const timeScore = timePoints(yearDifference);
   const total = placeScore + timeScore;
 
-  // Display results.
+  // Show points and accuracy.
   document.getElementById("totalScore").textContent =
     `${total.toLocaleString()} / 10,000`;
 
@@ -862,7 +794,7 @@ function submitGuess() {
   document.getElementById("yearResult").textContent =
     `${yearDifference.toLocaleString()} years`;
 
-  // Mark the correct location.
+  // Show correct map location.
   answerMarker = L.circleMarker(
     [SCENE.latitude, SCENE.longitude],
     {
@@ -874,7 +806,7 @@ function submitGuess() {
     }
   ).addTo(map);
 
-  // Draw a line from the guess to the answer.
+  // Line between guess and correct location.
   answerLine = L.polyline(
     [
       locationGuess,
@@ -887,7 +819,6 @@ function submitGuess() {
     }
   ).addTo(map);
 
-  // Zoom out enough to see both locations.
   const bounds = L.latLngBounds([
     locationGuess,
     [SCENE.latitude, SCENE.longitude]
@@ -897,8 +828,8 @@ function submitGuess() {
     maxZoom: 7
   });
 
-  // Switch from guessing to results.
-  document.getElementById("guessIntro")
+  // Show results instead of timeline.
+  document.getElementById("instructions")
     .classList.add("hidden");
 
   document.getElementById("timeline")
@@ -907,14 +838,14 @@ function submitGuess() {
   document.getElementById("submitButton")
     .classList.add("hidden");
 
-  document.getElementById("locationHeading").textContent =
+  document.getElementById("results")
+    .classList.remove("hidden");
+
+  document.getElementById("mapHeading").textContent =
     "YOUR GUESS VS. ACTUAL LOCATION";
 
   document.getElementById("locationStatus").textContent =
     "Yellow = your guess. Green = actual location.";
-
-  document.getElementById("results")
-    .classList.remove("hidden");
 
   document.getElementById("panelTitle").textContent =
     "Your results";
@@ -922,9 +853,9 @@ function submitGuess() {
   setTimeout(() => map.invalidateSize(), 50);
 }
 
-/* ===================================
-   8. RESET GAME
-=================================== */
+/* ==================================
+   9. RESET GAME
+================================== */
 
 function resetGame() {
   submitted = false;
@@ -946,7 +877,7 @@ function resetGame() {
 
   document.getElementById("submitButton").disabled = true;
 
-  document.getElementById("guessIntro")
+  document.getElementById("instructions")
     .classList.remove("hidden");
 
   document.getElementById("timeline")
@@ -958,7 +889,7 @@ function resetGame() {
   document.getElementById("results")
     .classList.add("hidden");
 
-  document.getElementById("locationHeading").textContent =
+  document.getElementById("mapHeading").textContent =
     "01 / WHERE?";
 
   document.getElementById("panelTitle").textContent =
@@ -966,12 +897,21 @@ function resetGame() {
 
   map.setView([20, 15], 2);
 
+  // Return the 360 viewer to its starting direction.
+  viewer.setYaw(-55);
+  viewer.setPitch(0);
+  viewer.setHfov(95);
+
   setTimeout(() => map.invalidateSize(), 50);
 }
 
-// Make sure Leaflet measures its container correctly.
+/* ==================================
+   10. SCREEN RESIZING
+================================== */
+
 window.addEventListener("resize", () => {
   map.invalidateSize();
+  viewer.resize();
 });
 
 </script>

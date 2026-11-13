@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WHEN / WHERE | Giza Prototype</title>
+
+  <!-- Pannellum -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root{
+      --bg:#0e0e0e;
+      --panel:#171717;
+      --panel2:#202020;
+      --text:#f2f2f2;
+      --muted:#bdbdbd;
+      --accent:#fed500;
+      --accent-dark:#c9a900;
+      --good:#4caf50;
+      --bad:#e53935;
+      --border:#303030;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Arial, Helvetica, sans-serif;
+      height:100%;
+    }
+
+    body{
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    header{
+      background:#000;
+      border-bottom:2px solid var(--accent);
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+    }
+
+    .brand-top{
+      font-size:0.85rem;
+      color:var(--accent);
+      font-weight:700;
+      letter-spacing:1.2px;
+    }
+
+    .brand-main{
+      font-size:1.6rem;
+      font-weight:800;
+      letter-spacing:1px;
+    }
+
+    .subhead{
+      color:var(--muted);
+      font-size:0.95rem;
+    }
+
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:none;
+      background:var(--accent);
+      color:#000;
+      font-weight:700;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      transition:0.15s ease;
+      font-size:0.95rem;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      background:#ffe14a;
+    }
+
+    button.secondary{
+      background:#2b2b2b;
+      color:var(--text);
+      border:1px solid #444;
+    }
+
+    button.secondary:hover{
+      background:#383838;
+    }
+
+    .main{
+      display:grid;
+      grid-template-columns: 1.55fr 0.9fr;
+      gap:14px;
+      padding:14px;
+      flex:1;
+      min-height:0;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      min-height:0;
+    }
+
+    .viewer-panel{
+      display:flex;
+      flex-direction:column;
+      min-height:680px;
+    }
+
+    .viewer-title{
+      padding:14px 16px;
+      background:var(--panel2);
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .viewer-title h2{
+      margin:0;
+      font-size:1.15rem;
+    }
+
+    .viewer-title .meta{
+      color:var(--muted);
+      font-size:0.92rem;
+    }
+
+    #panorama{
+      flex:1;
+      min-height:540px;
+      background:#111;
+    }
+
+    .sidebar{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+    }
+
+    .card h3{
+      margin:0 0 10px 0;
+      font-size:1.05rem;
+    }
+
+    .card p{
+      margin:0 0 10px 0;
+      color:#d9d9d9;
+      line-height:1.45;
+    }
+
+    .small{
+      color:var(--muted);
+      font-size:0.9rem;
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .pill{
+      background:#262626;
+      border:1px solid #3a3a3a;
+      color:#f1f1f1;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:0.88rem;
+    }
+
+    .pill.active{
+      background:#3a3200;
+      border-color:#7b6800;
+      color:#ffe98a;
+    }
+
+    #map{
+      width:100%;
+      height:300px;
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      margin-top:10px;
+    }
+
+    .guess-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      margin-top:10px;
+      align-items:center;
+    }
+
+    .coords-box{
+      background:#111;
+      border:1px solid #333;
+      border-radius:12px;
+      padding:10px 12px;
+      color:#ddd;
+      min-height:44px;
+      display:flex;
+      align-items:center;
+    }
+
+    .year-wrap{
+      margin-top:12px;
+    }
+
+    .year-display{
+      font-size:1.5rem;
+      font-weight:800;
+      margin-bottom:10px;
+      color:var(--accent);
+    }
+
+    input[type="range"]{
+      width:100%;
+      cursor:pointer;
+    }
+
+    .timeline-scale{
+      display:flex;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:0.85rem;
+      margin-top:8px;
+      gap:12px;
+    }
+
+    .score-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .score-box{
+      background:#111;
+      border:1px solid #333;
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .score-box .label{
+      color:var(--muted);
+      font-size:0.85rem;
+      margin-bottom:5px;
+    }
+
+    .score-box .value{
+      font-size:1.35rem;
+      font-weight:800;
+    }
+
+    .result{
+      margin-top:12px;
+      background:#111;
+      border:1px solid #333;
+      border-radius:14px;
+      padding:14px;
+      line-height:1.5;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    .footer-note{
+      margin-top:auto;
+      color:#8f8f8f;
+      font-size:0.82rem;
+    }
+
+    @media (max-width: 1050px){
+      .main{
+        grid-template-columns:1fr;
+      }
+      .viewer-panel{
+        min-height:auto;
+      }
+      #panorama{
+        min-height:420px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-top">CLOCKED | SOCIAL STUDIES</div>
+      <div class="brand-main">WHEN / WHERE</div>
+    </div>
+
+    <div class="subhead">Prototype Scene: Pyramids of Giza</div>
+
+    <div class="top-actions">
+      <button onclick="toggleFullscreen()">Fullscreen Viewer</button>
+      <button class="secondary" onclick="resetRound()">Reset Round</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <section class="panel viewer-panel">
+      <div class="viewer-title">
+        <div>
+          <h2>Explore the Scene</h2>
+          <div class="meta">Look around for clues before guessing the location and year.</div>
+        </div>
+      </div>
+      <div id="panorama"></div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="card">
+        <h3>Mission</h3>
+        <p>
+          You are looking at a reconstructed historical scene. Study the geography, architecture,
+          materials, and environment. Then guess:
+        </p>
+        <div class="pill-row">
+          <div class="pill">1. Where is it?</div>
+          <div class="pill">2. When is it?</div>
+        </div>
+        <p class="small">
+          Teacher idea: students can also explain which clues led them to their answer.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Clues You Might Notice</h3>
+        <div class="pill-row">
+          <div id="clue1" class="pill">Desert environment</div>
+          <div id="clue2" class="pill">Monumental stone pyramids</div>
+          <div id="clue3" class="pill">Ancient funerary architecture</div>
+          <div id="clue4" class="pill">North African setting</div>
+        </div>
+        <p class="small" style="margin-top:10px;">
+          In a future version, these could be discovered by clicking hotspots.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>1. Guess the Location</h3>
+        <p>Click on the map to drop your guess.</p>
+        <div id="map"></div>
+        <div class="guess-row">
+          <div class="coords-box" id="coordsBox">No location chosen yet.</div>
+          <button onclick="submitLocationGuess()">Lock Location</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2. Guess the Year</h3>
+        <p>Scroll the timeline and choose the year you think best fits the scene.</p>
+
+        <div class="year-wrap">
+          <div class="year-display" id="yearDisplay">2500 BCE</div>
+          <input id="yearSlider" type="range" min="-3000" max="2025" step="25" value="-2500" />
+          <div class="timeline-scale">
+            <span>3000 BCE</span>
+            <span>0</span>
+            <span>2025 CE</span>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <button onclick="submitYearGuess()">Lock Year</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Submit + Results</h3>
+        <p>Once you’ve locked both guesses, calculate your score.</p>
+
+        <div class="pill-row" style="margin-bottom:12px;">
+          <div class="pill" id="locStatus">Location: not locked</div>
+          <div class="pill" id="yearStatus">Year: not locked</div>
+        </div>
+
+        <button onclick="scoreRound()">Score My Guess</button>
+
+        <div class="score-grid" id="scoreGrid">
+          <div class="score-box">
+            <div class="label">Location Score</div>
+            <div class="value" id="locationScore">--</div>
+          </div>
+          <div class="score-box">
+            <div class="label">Time Score</div>
+            <div class="value" id="timeScore">--</div>
+          </div>
+          <div class="score-box">
+            <div class="label">Distance Away</div>
+            <div class="value" id="distanceAway">--</div>
+          </div>
+          <div class="score-box">
+            <div class="label">Year Difference</div>
+            <div class="value" id="yearDiff">--</div>
+          </div>
+        </div>
+
+        <div class="result hidden" id="resultBox"></div>
+
+        <div class="footer-note">
+          Correct answer in this prototype: Giza Plateau, Egypt, around 2550 BCE.
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // =========================
+    // CONFIG
+    // =========================
+
+    // Replace this with your own equirectangular 360 panorama later.
+    // It must be a true panorama image for the best result.
+    const PANORAMA_URL = "https://pannellum.org/images/alma.jpg";
+
+    // Correct answer: Giza Plateau near Cairo
+    const ANSWER = {
+      lat: 29.9792,
+      lng: 31.1342,
+      year: -2550,
+      title: "Pyramids of Giza",
+      explanation: `
+        This scene represents the Pyramids of Giza in ancient Egypt, around 2550 BCE during the Old Kingdom.
+        Clues include the desert environment, the massive stone pyramids, and the monumental funerary architecture.
+        The pyramids were royal tombs and remain one of the most recognizable achievements of ancient Egyptian civilization.
+      `
+    };
+
+    // =========================
+    // STATE
+    // =========================
+    let map;
+    let marker = null;
+    let guessLatLng = null;
+    let lockedLocation = false;
+    let lockedYear = false;
+    let guessedYear = -2500;
+
+    // =========================
+    // INIT PANORAMA
+    // =========================
+    const viewer = pannellum.viewer('panorama', {
+      type: 'equirectangular',
+      panorama: PANORAMA_URL,
+      autoLoad: true,
+      showZoomCtrl: true,
+      compass: false,
+      hfov: 100,
+      pitch: 0,
+      yaw: 0,
+      hotSpots: [
+        {
+          pitch: -2,
+          yaw: 10,
+          type: 'info',
+          text: 'Clue: Monumental stone construction'
+        },
+        {
+          pitch: -5,
+          yaw: -28,
+          type: 'info',
+          text: 'Clue: Dry desert environment'
+        },
+        {
+          pitch: 4,
+          yaw: 45,
+          type: 'info',
+          text: 'Clue: Ancient ceremonial or funerary purpose'
+        }
+      ]
+    });
+
+    // =========================
+    // INIT MAP
+    // =========================
+    function initMap(){
+      map = L.map('map', {
+        worldCopyJump: true
+      }).setView([20, 10], 2);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      map.on('click', function(e){
+        if (lockedLocation) return;
+        guessLatLng = e.latlng;
+
+        if(marker){
+          marker.setLatLng(e.latlng);
+        } else {
+          marker = L.marker(e.latlng).addTo(map);
+        }
+
+        document.getElementById('coordsBox').textContent =
+          `Guess: ${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}`;
+      });
+    }
+    initMap();
+
+    // =========================
+    // YEAR SLIDER
+    // =========================
+    const yearSlider = document.getElementById('yearSlider');
+    const yearDisplay = document.getElementById('yearDisplay');
+
+    yearSlider.addEventListener('input', () => {
+      guessedYear = parseInt(yearSlider.value, 10);
+      yearDisplay.textContent = formatYear(guessedYear);
+    });
+
+    function formatYear(year){
+      if(year < 0) return `${Math.abs(year)} BCE`;
+      if(year === 0) return "0";
+      return `${year} CE`;
+    }
+
+    // =========================
+    // UI ACTIONS
+    // =========================
+    function submitLocationGuess(){
+      if(!guessLatLng){
+        alert("Click on the map first to choose a location.");
+        return;
+      }
+      lockedLocation = true;
+      const el = document.getElementById('locStatus');
+      el.textContent = "Location: locked";
+      el.classList.add('active');
+    }
+
+    function submitYearGuess(){
+      lockedYear = true;
+      const el = document.getElementById('yearStatus');
+      el.textContent = `Year: locked (${formatYear(guessedYear)})`;
+      el.classList.add('active');
+    }
+
+    function scoreRound(){
+      if(!lockedLocation || !lockedYear){
+        alert("Please lock both your location and year guesses first.");
+        return;
+      }
+
+      const km = haversineKm(
+        guessLatLng.lat,
+        guessLatLng.lng,
+        ANSWER.lat,
+        ANSWER.lng
+      );
+
+      const yearDifference = Math.abs(guessedYear - ANSWER.year);
+
+      const locationPoints = scoreLocation(km);
+      const timePoints = scoreTime(yearDifference);
+
+      document.getElementById('locationScore').textContent = `${locationPoints}/5000`;
+      document.getElementById('timeScore').textContent = `${timePoints}/5000`;
+      document.getElementById('distanceAway').textContent = `${Math.round(km)} km`;
+      document.getElementById('yearDiff').textContent = `${yearDifference} years`;
+
+      // Show answer marker/circle
+      L.circleMarker([ANSWER.lat, ANSWER.lng], {
+        radius: 8
+      }).addTo(map).bindPopup("Correct Location: Giza Plateau").openPopup();
+
+      L.polyline([
+        [guessLatLng.lat, guessLatLng.lng],
+        [ANSWER.lat, ANSWER.lng]
+      ], {
+        weight: 3,
+        opacity: 0.7
+      }).addTo(map);
+
+      const total = locationPoints + timePoints;
+      const resultBox = document.getElementById('resultBox');
+      resultBox.classList.remove('hidden');
+      resultBox.innerHTML = `
+        <strong>Total Score: ${total}/10000</strong><br><br>
+        <strong>Correct Place:</strong> Giza Plateau, Egypt<br>
+        <strong>Correct Time:</strong> ${formatYear(ANSWER.year)}<br><br>
+        <strong>Explanation:</strong><br>
+        ${ANSWER.explanation}
+      `;
+    }
+
+    function resetRound(){
+      lockedLocation = false;
+      lockedYear = false;
+      guessedYear = -2500;
+      yearSlider.value = guessedYear;
+      yearDisplay.textContent = formatYear(guessedYear);
+
+      document.getElementById('coordsBox').textContent = "No location chosen yet.";
+      document.getElementById('locStatus').textContent = "Location: not locked";
+      document.getElementById('locStatus').classList.remove('active');
+      document.getElementById('yearStatus').textContent = "Year: not locked";
+      document.getElementById('yearStatus').classList.remove('active');
+
+      document.getElementById('locationScore').textContent = "--";
+      document.getElementById('timeScore').textContent = "--";
+      document.getElementById('distanceAway').textContent = "--";
+      document.getElementById('yearDiff').textContent = "--";
+
+      const resultBox = document.getElementById('resultBox');
+      resultBox.classList.add('hidden');
+      resultBox.innerHTML = "";
+
+      if(marker){
+        map.removeLayer(marker);
+        marker = null;
+      }
+
+      guessLatLng = null;
+
+      map.eachLayer((layer) => {
+        if(layer instanceof L.Marker || layer instanceof L.CircleMarker || layer instanceof L.Polyline){
+          if(layer !== marker){
+            try { map.removeLayer(layer); } catch(e){}
+          }
+        }
+      });
+
+      map.setView([20, 10], 2);
+    }
+
+    function toggleFullscreen(){
+      const el = document.querySelector('.viewer-panel');
+      if (!document.fullscreenElement){
+        el.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    }
+
+    // =========================
+    // SCORING
+    // =========================
+    function scoreLocation(km){
+      // Similar spirit to GeoGuessr-style decreasing score
+      if (km <= 25) return 5000;
+      if (km <= 100) return 4500;
+      if (km <= 250) return 4000;
+      if (km <= 500) return 3300;
+      if (km <= 1000) return 2600;
+      if (km <= 2000) return 1800;
+      if (km <= 4000) return 1000;
+      if (km <= 7000) return 500;
+      return 100;
+    }
+
+    function scoreTime(diff){
+      if (diff <= 25) return 5000;
+      if (diff <= 100) return 4500;
+      if (diff <= 250) return 3800;
+      if (diff <= 500) return 3000;
+      if (diff <= 1000) return 2000;
+      if (diff <= 2000) return 1000;
+      return 250;
+    }
+
+    // =========================
+    // DISTANCE
+    // =========================
+    function haversineKm(lat1, lon1, lat2, lon2){
+      const R = 6371;
+      const dLat = deg2rad(lat2-lat1);
+      const dLon = deg2rad(lon2-lon1);
+      const a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function deg2rad(deg){
+      return deg * (Math.PI / 180);
+    }
+  </script>
+</body>
+</html>

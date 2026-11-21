@@ -15,7 +15,25 @@
  background:var(--paper);
 }
 *{box-sizing:border-box}
-body{margin:0}
+body{
+ margin:0;
+ min-height:100dvh;
+ display:grid;
+ grid-template-rows:auto 1fr auto
+}
+.math-panel.number-tool{
+ display:grid;
+ grid-template-rows:auto auto minmax(min-content,1fr) auto;
+ gap:clamp(6px,1.3dvh,12px);
+ padding:clamp(10px,2dvh,20px)
+}
+.number-tool .math-panel__heading{margin:0}
+.number-tool .panel{margin:0;padding:clamp(8px,1.5dvh,16px)}
+.controls input,.controls select,.controls button{padding:clamp(5px,1dvh,10px)}
+#numberPanel{display:flex;flex-direction:column}
+.number-tool .canvas{flex:1;min-height:125px}
+.number-tool .controls{gap:clamp(6px,1.3dvh,12px)}
+.number-tool .hint{margin:0}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
 .field{
  display:flex;flex-direction:column;gap:5px;
@@ -43,7 +61,7 @@ button:hover{background:#edfaff}
 }
 .icon-btn:hover{color:#111;background:#edfaff}
 .icon-btn svg{width:19px;height:19px}
-.canvas{height:330px;position:relative;touch-action:pan-y}
+.canvas{position:relative;touch-action:pan-y}
 .canvas svg{width:100%;height:100%;display:block}
 .hint{color:#555;font-size:13px;margin-top:4px}
 .stat{font-size:24px;font-weight:900;margin-left:auto}
@@ -67,7 +85,6 @@ footer{
 }
 @media(max-width:700px){
  .panel{padding:12px}
- .canvas{height:260px}
  .stat{width:100%}
  #numberPanel:fullscreen{padding:10px}
  #numberPanel:fullscreen .fs-toolbar button{padding:8px}
@@ -88,7 +105,7 @@ footer{
     <clocked-menu></clocked-menu>
   </div>
 </header>
-<main class="math-panel">
+<main class="math-panel number-tool">
   <div class="math-panel__heading"><h1 class="math-panel__title">Number Line</h1></div>
 
 <div class="panel">
@@ -140,7 +157,7 @@ footer{
 </button>
 </div>
 <div class="canvas">
-<svg id="line" viewBox="0 0 1200 320"
+<svg id="line" viewBox="0 64 1200 188"
  preserveAspectRatio="xMidYMid meet"
  role="img" aria-label="Interactive number line"></svg>
 </div>

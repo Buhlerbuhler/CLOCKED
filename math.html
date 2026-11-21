@@ -170,9 +170,12 @@
     .dialog-open .tool-view { pointer-events: none; }
 
     /* MATH TOOL */
-    .tool-view {
-      --math-panel-border: var(--line);
-      --math-panel-bg: color-mix(in srgb, var(--bg) 96%, var(--text));
+    .tool-view.math-panel {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      margin-top: 0;
+      padding-block: .6rem 0;
     }
 
     .balanced-actions {
@@ -182,17 +185,7 @@
       gap: .25rem;
     }
 
-    .balanced-top {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: .4rem;
-      flex-wrap: wrap;
-      min-height: 2.25rem;
-      padding: 0 1rem;
-    }
-
-    .balanced-top button {
+    #working-button {
       border: none;
       background: var(--text);
       color: var(--bg);
@@ -208,7 +201,7 @@
       justify-content: center;
       align-items: center;
       gap: .45rem;
-      margin: 1rem auto 1.05rem;
+      margin: .3rem auto .6rem;
       width: min(560px, 92%);
     }
 
@@ -279,7 +272,7 @@
 
     #equation-display {
       text-align: center;
-      font-size: clamp(2.6rem, 7vw, 6.8rem);
+      font-size: clamp(2.2rem, min(7vw, 10dvh), 6.4rem);
       font-weight: 900;
       line-height: .95;
       letter-spacing: -.04em;
@@ -296,16 +289,18 @@
 
     .scale-stage {
       position: relative;
-      height: 290px;
-      margin-top: .4rem;
+      --scale-unit: clamp(.73px, .13dvh, 1px);
+      height: calc(300 * var(--scale-unit));
+      max-width: calc(1050 * var(--scale-unit));
+      margin: .4rem auto 0;
     }
 
     .beam {
       position: absolute;
       left: 7%;
       right: 7%;
-      top: 58px;
-      height: 9px;
+      top: calc(58 * var(--scale-unit));
+      height: calc(9 * var(--scale-unit));
       background: var(--text);
       transform-origin: center;
       transition: transform .38s ease;
@@ -315,21 +310,21 @@
     .pivot {
       position: absolute;
       left: 50%;
-      top: 66px;
+      top: calc(66 * var(--scale-unit));
       transform: translateX(-50%);
       width: 0;
       height: 0;
       border-left: 32px solid transparent;
       border-right: 32px solid transparent;
-      border-bottom: 128px solid var(--muted);
+      border-bottom: calc(128 * var(--scale-unit)) solid var(--muted);
       opacity: .9;
     }
 
     .rope {
       position: absolute;
-      top: 63px;
+      top: calc(63 * var(--scale-unit));
       width: 2px;
-      height: 72px;
+      height: calc(72 * var(--scale-unit));
       background: var(--text);
       transition: transform .38s ease;
       z-index: 2;
@@ -339,9 +334,9 @@
 
     .pan {
       position: absolute;
-      top: 131px;
+      top: calc(131 * var(--scale-unit));
       width: 39%;
-      min-height: 104px;
+      min-height: calc(104 * var(--scale-unit));
       border: 3px solid var(--text);
       border-top-width: 7px;
       background: var(--bg);
@@ -439,7 +434,7 @@
       border-left: 1px solid var(--line);
       padding-left: 1.1rem;
       min-width: 0;
-      max-height: 70vh;
+      max-height: max(12rem, calc(100dvh - 13rem));
       overflow-y: auto;
     }
 
@@ -527,15 +522,12 @@
 
     @media (max-width: 700px) {
       .utility-button { font-size:.68rem; padding:.18rem .32rem; }
-      .balanced-top { min-height:2rem; padding:0 .65rem; gap:.28rem; }
-      .balanced-top button { font-size:.66rem; padding:.18rem .32rem; }
-      .equation-builder { margin:.85rem auto .8rem; width:min(470px,94%); }
+      .equation-builder { margin:.3rem auto .65rem; width:min(470px,94%); }
       .equation-builder input { font-size:16px; min-height:44px; }
       .balanced-wrap { padding:.5rem 0; align-items:flex-start; }
       .balanced-layout.working-on { grid-template-columns:1fr; }
       .working-panel { border-left:0; border-top:1px solid var(--line); padding-left:0; padding-top:.85rem; max-height:32vh; }
-      .scale-stage { height:270px; }
-      #equation-display { font-size:clamp(2.2rem,11vw,4.8rem); }
+      #equation-display { font-size:clamp(1.75rem, min(9vw, 10dvh), 4.8rem); }
       .operations { grid-template-columns:1fr; gap:.7rem; }
       .pan { width:42%; }
       .rope.left { left:21%; }
@@ -551,7 +543,7 @@
 
     @media (pointer: coarse), (max-width: 700px) {
       .utility-button,
-      .balanced-top button,
+      #working-button,
       .balanced-top input,
       .operation-row input,
       .operation-row button,
@@ -603,6 +595,7 @@
     <div class="math-panel__heading">
       <h1 class="math-panel__title">Balanced</h1>
       <div class="balanced-actions">
+        <button id="working-button" type="button">WORKING</button>
         <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
         <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
         <div id="theme-panel" class="theme-panel hidden">
@@ -612,10 +605,6 @@
         </div>
       </div>
     </div>
-    <div class="balanced-top">
-      <button id="working-button" type="button">WORKING</button>
-    </div>
-
     <div class="balanced-wrap">
       <div id="balanced-layout" class="balanced-layout">
         <div class="scale-side">

@@ -182,6 +182,7 @@
       position: relative;
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: .25rem;
     }
 
@@ -592,17 +593,14 @@
   </div>
 
   <main id="balanced-tool" class="tool-view math-panel">
-    <div class="math-panel__heading">
-      <h1 class="math-panel__title">Balanced</h1>
-      <div class="balanced-actions">
-        <button id="working-button" type="button">WORKING</button>
-        <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
-        <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
-        <div id="theme-panel" class="theme-panel hidden">
-          <label for="theme-color">BACKGROUND</label>
-          <input id="theme-color" type="color" value="#7ae0ff" />
-          <button id="theme-reset">DEFAULT</button>
-        </div>
+    <div class="balanced-actions">
+      <button id="working-button" type="button">WORKING</button>
+      <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
+      <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
+      <div id="theme-panel" class="theme-panel hidden">
+        <label for="theme-color">BACKGROUND</label>
+        <input id="theme-color" type="color" value="#7ae0ff" />
+        <button id="theme-reset">DEFAULT</button>
       </div>
     </div>
     <div class="balanced-wrap">

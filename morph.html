@@ -11,6 +11,13 @@
 .stats{display:flex;gap:16px;margin:0;font-weight:750;font-variant-numeric:tabular-nums}.stats div{display:flex;gap:6px;align-items:center}.stats dd{margin:0;background:var(--accent);padding:3px 7px;border-radius:4px}.tile:disabled{opacity:1}
 [hidden]{display:none!important}.toolbar a{color:inherit;font-weight:750}#share-box{margin-bottom:14px}#share-url{width:100%;font:inherit;padding:6px;margin-top:4px}
 
+.morph-title {
+  margin: 0 0 .9rem;
+  font-size: clamp(1.85rem, 5vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -.045em;
+}
 .morph-header {
   display: flex;
   align-items: center;
@@ -80,6 +87,7 @@ footer { min-height: 44px; }
   <clocked-menu></clocked-menu>
 </header>
 <main>
+<h1 class="morph-title">MORPHEMES</h1>
 <div class="toolbar">
   <div><label for="round">Puzzle</label> <select id="round"></select></div>
   <a id="library-link">Puzzle library</a>

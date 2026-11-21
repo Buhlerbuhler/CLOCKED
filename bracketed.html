@@ -32,6 +32,8 @@
     @media print{body{background:white}.app{padding:0}.setup,header,.boardbar,footer,.fit-btn{display:none!important}.board{display:block!important;border:0}.bracket-scroll{overflow:visible;padding:0}.bracket{transform-origin:top left;gap:16px;min-width:100%;grid-template-columns:1fr 150px 1fr;min-height:500px}.bracket-side{gap:16px}.round{width:130px}.bracket-side.left .match:after{width:19px;right:-19px}.bracket-side.right .match:before{width:19px;left:-19px}.team{font-size:9px;min-height:29px;padding:5px}.round h3{font-size:8px}.champion{padding:9px}.champion .name{font-size:20px}}
 
 header .header-actions { display: flex; align-items: center; gap: 8px; }
+.how-to{white-space:nowrap;min-height:44px;padding:0 .375rem;border:0;background:transparent;color:inherit;font:800 .72rem/1 Inter,Arial,sans-serif;letter-spacing:.03em;cursor:pointer}
+.how-to:hover{text-decoration:underline}
 </style>
 <link rel="stylesheet" href="/assets/clocked-brand.css">
 <script defer src="/assets/clocked-menu.js"></script>
@@ -40,7 +42,7 @@ header .header-actions { display: flex; align-items: center; gap: 8px; }
 <main class="app">
   <header>
     <div class="brand"><div class="brand-main">BRACKETED</div><div class="by">BY CLOCKED</div></div>
-    <div class="header-actions"><button class="icon-btn" id="helpBtn" aria-label="Help">?</button><clocked-menu></clocked-menu></div>
+    <div class="header-actions"><button class="how-to" id="helpBtn" aria-haspopup="dialog" aria-controls="helpDialog">HOW TO</button><clocked-menu></clocked-menu></div>
   </header>
 
   <section class="setup" id="setup">
@@ -74,7 +76,7 @@ Option 6"></textarea>
   <footer><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div><div class="status" id="status">READY FOR A QUICK TOURNAMENT</div></footer>
 </main>
 
-<dialog id="helpDialog"><div class="modal"><h2>HOW IT WORKS</h2><ul><li>Add one entry per line and build the bracket.</li><li>Tap either name in a matchup to move it forward.</li><li>Tap the other name to change the winner; later results will clear automatically.</li><li>Odd-sized lists get automatic byes.</li><li>Edit the tournament title by clicking it.</li></ul><button class="secondary" id="closeHelp">GOT IT</button></div></dialog>
+<dialog id="helpDialog"><div class="modal"><h2>HOW TO</h2><ul><li>Add one entry per line and build the bracket.</li><li>Tap either name in a matchup to move it forward.</li><li>Tap the other name to change the winner; later results will clear automatically.</li><li>Odd-sized lists get automatic byes.</li><li>Edit the tournament title by clicking it.</li></ul><button class="secondary" id="closeHelp">GOT IT</button></div></dialog>
 
 <script>
 (()=>{

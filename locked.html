@@ -29,7 +29,9 @@
     dialog{border:4px solid var(--ink);border-radius:12px;background:var(--bg);color:var(--ink);width:min(520px,calc(100% - 28px));padding:25px;box-shadow:10px 10px 0 var(--ink)}dialog::backdrop{background:rgba(0,0,0,.66)}dialog h2{font-size:1.8rem;letter-spacing:-.05em;text-transform:uppercase;margin:0 0 12px}dialog p,dialog li{line-height:1.5;font-weight:600}dialog .close{float:right;margin:-10px -10px 0 10px}
     @media(max-width:760px){.app{padding-top:10px}header{align-items:flex-start}.tabs .tab{display:none}main{grid-template-columns:1fr;padding:12px 0 45px;gap:64px}.lesson{text-align:center;margin:auto;justify-self:center}.step-line,.combo-editor{justify-content:center}.direction{margin:auto}.progress{justify-content:center}.lock-area{min-height:auto;justify-self:center}.lock{width:min(350px,82vw);padding:40px}.shackle{border-width:23px}.keys{display:none}.step-title{font-size:2.25rem}.instruction{margin:12px auto}.feedback{top:12%}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
-  </style>
+  .how-to{white-space:nowrap;min-height:44px;padding:0 .375rem;border:0;background:transparent;color:inherit;font:800 .72rem/1 Inter,Arial,sans-serif;letter-spacing:.03em;cursor:pointer}
+.how-to:hover{text-decoration:underline}
+</style>
 <link rel="stylesheet" href="/assets/clocked-brand.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
@@ -37,7 +39,7 @@
 <div class="app">
   <header>
     <div class="brand">LOCKED <span>BY CLOCKED</span></div>
-    <nav class="tabs" aria-label="Tools"><button class="tab active">COMBINATION LOCK</button><button class="icon-btn" id="helpBtn" aria-label="Help">?</button><clocked-menu></clocked-menu></nav>
+    <nav class="tabs" aria-label="Tools"><button class="tab active">COMBINATION LOCK</button><button class="how-to" id="helpBtn" aria-haspopup="dialog" aria-controls="helpDialog">HOW TO</button><clocked-menu></clocked-menu></nav>
   </header>
   <main>
     <section class="lesson" aria-live="polite">
@@ -67,7 +69,7 @@
   <footer><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div><div class="keys">← → turn &nbsp; · &nbsp; R restart &nbsp; · &nbsp; D demo</div></footer>
 </div>
 <div class="feedback" id="feedback" role="status"></div>
-<dialog id="helpDialog"><button class="icon-btn close" id="closeHelp" aria-label="Close help">×</button><h2>How to use it</h2><p>Drag the dial in the direction shown. Hold each combination number still for one second to continue.</p><ol><li>Reset: turn right three full times. The trainer will return the dial to 0.</li><li>Turn right to the first number.</li><li>Turn left, pass the first number once, then stop at the second.</li><li>Turn right directly to the third number and pull the lock open.</li></ol><p>You can also use the arrow keys. Press <strong>D</strong> to watch a demonstration.</p></dialog>
+<dialog id="helpDialog"><button class="icon-btn close" id="closeHelp" aria-label="Close instructions">×</button><h2>HOW TO</h2><p>Drag the dial in the direction shown. Hold each combination number still for one second to continue.</p><ol><li>Reset: turn right three full times. The trainer will return the dial to 0.</li><li>Turn right to the first number.</li><li>Turn left, pass the first number once, then stop at the second.</li><li>Turn right directly to the third number and pull the lock open.</li></ol><p>You can also use the arrow keys. Press <strong>D</strong> to watch a demonstration.</p></dialog>
 <script>
   const dial=document.getElementById('dial'),wrap=document.getElementById('dialWrap'),numberEl=document.getElementById('currentNumber'),lock=document.getElementById('lock');
   const title=document.getElementById('stepTitle'),instruction=document.getElementById('instruction'),stepNum=document.getElementById('stepNum'),directionEl=document.getElementById('direction'),feedback=document.getElementById('feedback'),pips=[...document.querySelectorAll('.pip')];

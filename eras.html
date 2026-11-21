@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="icon" type="image/svg+xml" href="/assets/clocked-icon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WHEN / WHERE | CLOCKED | Acropolis</title>
@@ -68,35 +69,54 @@ button:disabled {
 }
 
 /* HEADER */
-header {
+.geo-header {
   height: 60px;
-  background: #000;
-  border-bottom: 2px solid var(--geo-green);
-  padding: 0 20px;
+  padding: 0 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: .25rem;
+  color: #0d0d0d;
+  font-family: Inter, Arial, sans-serif;
 }
 
-.brand {
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -1px;
+.geo-header__tab,
+.geo-header__reset {
+  padding: .2rem .38rem;
+  border-radius: 4px;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  white-space: nowrap;
 }
 
-.brand span {
+.geo-header__tab {
+  display: inline-block;
+  background: #0d0d0d;
   color: var(--geo-green);
+  text-decoration: none;
 }
 
-.header-right {
+.geo-header__actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: .25rem;
 }
 
-.header-right small {
-  color: var(--grey);
-  letter-spacing: 1px;
+.geo-header__reset {
+  background: transparent;
+  color: inherit;
+  text-transform: uppercase;
+  min-height: 44px;
+}
+
+.geo-header__reset:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .geo-header { padding-inline: .6rem; }
+  .geo-header__tab, .geo-header__reset { font-size: .68rem; padding-inline: .32rem; }
 }
 
 /* MAIN LAYOUT */
@@ -337,10 +357,6 @@ input[type="range"] {
   #map {
     min-height: 240px;
   }
-
-  .header-right small {
-    display: none;
-  }
 }
 
 @media (max-height: 650px) and (min-width: 801px) {
@@ -362,24 +378,20 @@ input[type="range"] {
   }
 }
 
-@media (max-width:420px) { header { padding-inline: 12px; } .header-right { gap: 8px; } .header-right small { display: none; } }
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap">
 <link rel="stylesheet" href="/assets/clocked-brand.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 
 <body>
 
-<header>
-  <div class="brand">
-    WHEN<span> / </span>WHERE
-  </div>
-
-  <div class="header-right">
-    <small>BY CLOCKED</small>
-    <button class="secondary" onclick="resetGame()">
-      Reset
-    </button>
+<header class="geo-header">
+  <nav aria-label="Geography tools">
+    <a class="geo-header__tab" href="/eras.html" aria-current="page">WHEN / WHERE</a>
+  </nav>
+  <div class="geo-header__actions">
+    <button class="geo-header__reset" type="button" onclick="resetGame()">Reset</button>
     <clocked-menu></clocked-menu>
   </div>
 </header>

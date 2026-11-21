@@ -95,6 +95,11 @@
   min-height: 2.5rem;
 }
 
+.math-footer .clocked-brand {
+  color: var(--text, #000);
+  font-size: 1rem;
+}
+
 @media (max-width: 700px) {
   .math-panel {
     width: calc(100% - 1.2rem);

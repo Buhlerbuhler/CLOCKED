@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
 <link rel="icon" type="image/svg+xml" href="/assets/clocked-icon.svg">
 <style>
-:root{--yellow:#fed500;--paper:#f6f4eb;--ink:#161616;--line:#c9c6ba}*{box-sizing:border-box}body{margin:0;background:var(--yellow);color:var(--ink);font:16px/1.45 Inter,Arial,sans-serif}main{width:min(1100px,calc(100% - 2rem));margin:1rem auto 0;padding:clamp(.75rem,2vw,1.5rem);background:var(--paper);border-radius:8px}.toolbar,.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.toolbar{justify-content:space-between;margin-bottom:14px}.toolbar label{font-weight:800}button,select{font:inherit;font-weight:750;color:inherit;background:white;border:1px solid var(--ink);border-radius:5px;padding:7px 11px;min-height:42px}button{cursor:pointer}button:disabled{cursor:default;opacity:.55}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #3154cc;outline-offset:3px}.primary,.part[aria-pressed=true]{background:var(--yellow);color:var(--ink)}.primary{border-width:2px}.board{border:1px solid var(--ink);background:white;border-radius:8px;overflow:hidden;padding:0 5px}.pyramid{position:relative;height:var(--height);max-width:900px;margin:auto}.links{position:absolute;width:100%;height:100%;inset:0;pointer-events:none}.links line{stroke:#b1afa4;stroke-width:2;vector-effect:non-scaling-stroke}.links .good{stroke:#197044;stroke-width:4}.links .bad{stroke:#ad2921;stroke-dasharray:4 4;stroke-width:3}.tile{position:absolute;z-index:1;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:min(var(--tile-width),108px);min-width:0;min-height:46px;padding:4px 0;background:var(--ink);color:white;font-size:clamp(.7rem,3vw,1.35rem);letter-spacing:-.025em;touch-action:manipulation}.tile[aria-pressed=true]{background:var(--yellow);color:var(--ink);outline:2px solid var(--ink);outline-offset:2px}.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:6px;padding:0;margin:0;list-style:none}.words li{border-bottom:1px solid var(--line);padding:4px}.words:empty{display:none}.actions{margin-top:15px}#status{min-height:1.5em;font-weight:750;margin:10px 0}
-.stats{display:flex;gap:16px;margin:0;font-weight:750;font-variant-numeric:tabular-nums}.stats div{display:flex;gap:6px;align-items:center}.stats dd{margin:0;background:var(--yellow);padding:3px 7px;border-radius:4px}.tile:disabled{opacity:1}
+:root{--ink:#171717;--paper:#f0eee7;--accent:#d8f347;--line:#b6b6aa;--muted:#5d5d58;--surface:#faf9f3}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 Inter,Arial,sans-serif}main{width:min(1100px,calc(100% - 2rem));margin:1rem auto 0;padding:clamp(.75rem,2vw,1.5rem);background:var(--surface);border-radius:8px}.toolbar,.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.toolbar{justify-content:space-between;margin-bottom:14px}.toolbar label{font-weight:800}button,select{font:inherit;font-weight:750;color:inherit;background:var(--surface);border:1px solid var(--ink);border-radius:5px;padding:7px 11px;min-height:42px}button{cursor:pointer}button:disabled{cursor:default;opacity:.55}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--ink);outline-offset:3px}.primary,.part[aria-pressed=true]{background:var(--accent);color:var(--ink)}.primary{border-width:2px}.board{border:1px solid var(--ink);background:var(--surface);border-radius:8px;overflow:hidden;padding:0 5px}.pyramid{position:relative;height:var(--height);max-width:900px;margin:auto}.links{position:absolute;width:100%;height:100%;inset:0;pointer-events:none}.links line{stroke:var(--line);stroke-width:2;vector-effect:non-scaling-stroke}.links .good{stroke:#197044;stroke-width:4}.links .bad{stroke:#ad2921;stroke-dasharray:4 4;stroke-width:3}.tile{position:absolute;z-index:1;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:min(var(--tile-width),108px);min-width:0;min-height:46px;padding:4px 0;background:var(--ink);color:white;font-size:clamp(.7rem,3vw,1.35rem);letter-spacing:-.025em;touch-action:manipulation}.tile[aria-pressed=true]{background:var(--accent);color:var(--ink);outline:2px solid var(--ink);outline-offset:2px}.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:6px;padding:0;margin:0;list-style:none}.words li{border-bottom:1px solid var(--line);padding:4px}.words:empty{display:none}.actions{margin-top:15px}#status{min-height:1.5em;font-weight:750;margin:10px 0}
+.stats{display:flex;gap:16px;margin:0;font-weight:750;font-variant-numeric:tabular-nums}.stats div{display:flex;gap:6px;align-items:center}.stats dd{margin:0;background:var(--accent);padding:3px 7px;border-radius:4px}.tile:disabled{opacity:1}
 [hidden]{display:none!important}.toolbar a{color:inherit;font-weight:750}#share-box{margin-bottom:14px}#share-url{width:100%;font:inherit;padding:6px;margin-top:4px}
 
 .morph-header {
@@ -17,18 +17,27 @@
   justify-content: space-between;
   padding: .5rem 1rem;
 }
+.morph-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+}
 .morph-tab {
   display: inline-block;
   padding: .2rem .38rem;
   border-radius: 4px;
-  background: var(--ink);
-  color: var(--yellow);
+  color: var(--ink);
   font-size: .72rem;
   font-weight: 800;
   letter-spacing: .03em;
   line-height: 1.2;
   text-decoration: none;
 }
+.morph-tab[aria-current="page"] {
+  background: var(--ink);
+  color: var(--accent);
+}
+.morph-tab:hover { text-decoration: underline; }
 .toolbar a {
   font-size: .8rem;
   font-weight: 800;
@@ -66,6 +75,7 @@ footer { min-height: 44px; }
 <header class="morph-header">
   <nav aria-label="ELA tools">
     <a class="morph-tab" href="/morph.html" aria-current="page">MORPHEMES</a>
+    <a class="morph-tab" href="/worldbuilder.html">WORLD BUILDER</a>
   </nav>
   <clocked-menu></clocked-menu>
 </header>

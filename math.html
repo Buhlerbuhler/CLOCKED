@@ -51,55 +51,6 @@
 
     .hidden { display: none !important; }
 
-    /* HEADER CONTROLS */
-    .utility-button {
-      border: 0;
-      background: transparent;
-      color: var(--text);
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .03em;
-      padding: .2rem .38rem;
-      border-radius: 4px;
-    }
-
-    .theme-panel {
-      position: absolute;
-      top: calc(100% + .4rem);
-      right: 0;
-      z-index: 6000;
-      display: flex;
-      align-items: center;
-      gap: .45rem;
-      padding: .4rem;
-      background: var(--text);
-      color: var(--bg);
-      border-radius: 5px;
-    }
-
-    .theme-panel label {
-      font-size: .68rem;
-      font-weight: 800;
-    }
-
-    #theme-color {
-      width: 26px;
-      height: 20px;
-      padding: 0;
-      border: none;
-      background: transparent;
-    }
-
-    #theme-reset {
-      border: none;
-      padding: .15rem .3rem;
-      background: var(--bg);
-      color: var(--text);
-      border-radius: 3px;
-      font-size: .66rem;
-      font-weight: 800;
-    }
-
     .overlay {
       position: fixed;
       inset: 0;
@@ -166,7 +117,6 @@
     }
 
     .dialog-open .math-header,
-    .dialog-open .theme-panel,
     .dialog-open .tool-view { pointer-events: none; }
 
     /* MATH TOOL */
@@ -179,7 +129,6 @@
     }
 
     .balanced-actions {
-      position: relative;
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -522,7 +471,6 @@
     #feedback { font-size:.72rem; font-weight:800; color:var(--muted); text-align:center; }
 
     @media (max-width: 700px) {
-      .utility-button { font-size:.68rem; padding:.18rem .32rem; }
       .equation-builder { margin:.3rem auto .65rem; width:min(470px,94%); }
       .equation-builder input { font-size:16px; min-height:44px; }
       .balanced-wrap { padding:.5rem 0; align-items:flex-start; }
@@ -537,26 +485,19 @@
       .overlay-card { width:100%; max-height:none; height:100%; border-radius:6px; padding:1rem; }
     }
 
-    @media (max-width: 420px) {
-
-      .utility-button { font-size:.64rem; padding:.16rem .27rem; }
-    }
-
     @media (pointer: coarse), (max-width: 700px) {
-      .utility-button,
       #working-button,
       .balanced-top input,
       .operation-row input,
       .operation-row button,
       .balanced-bottom button,
-      .overlay-close,
-      #theme-reset { min-height:42px; display:inline-flex; align-items:center; justify-content:center; }
-      #theme-color { min-height:42px; }
+      .overlay-close { min-height:42px; display:inline-flex; align-items:center; justify-content:center; }
     }
 
 </style>
 <link rel="stylesheet" href="/assets/clocked-brand.css">
 <link rel="stylesheet" href="/assets/clocked-math-header.css">
+<link rel="stylesheet" href="/assets/clocked-help.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
@@ -595,13 +536,6 @@
   <main id="balanced-tool" class="tool-view math-panel">
     <div class="balanced-actions">
       <button id="working-button" type="button">WORKING</button>
-      <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
-      <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
-      <div id="theme-panel" class="theme-panel hidden">
-        <label for="theme-color">BACKGROUND</label>
-        <input id="theme-color" type="color" value="#7ae0ff" />
-        <button id="theme-reset">DEFAULT</button>
-      </div>
     </div>
     <div class="balanced-wrap">
       <div id="balanced-layout" class="balanced-layout">
@@ -654,44 +588,16 @@
       <button id="reset-button" type="button">RESET</button>
     </div>
   </main>
-<footer class="math-footer"><div class="clocked-brand clocked-brand--fixed"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div></footer>
+<footer class="math-footer"><div class="clocked-brand clocked-brand--fixed"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div><button id="help-button" class="clocked-help" type="button" aria-haspopup="dialog" aria-controls="help-overlay">HELP</button></footer>
 
   <script>
-    const STORAGE = { theme: "clocked_math_theme" };
-
     const helpOverlay = document.getElementById("help-overlay");
     const helpButton = document.getElementById("help-button");
     const helpClose = document.getElementById("help-close");
-    const themeButton = document.getElementById("theme-button");
-    const themePanel = document.getElementById("theme-panel");
-    const themeColor = document.getElementById("theme-color");
-    const themeReset = document.getElementById("theme-reset");
-
     let dialogReturnFocus = null;
-
-    function getContrastColor(hex) {
-      const color = hex.replace("#","");
-      const r = parseInt(color.substring(0,2),16);
-      const g = parseInt(color.substring(2,4),16);
-      const b = parseInt(color.substring(4,6),16);
-      const brightness = (r*299 + g*587 + b*114)/1000;
-      return brightness > 150 ? "#000000" : "#ffffff";
-    }
-
-    function applyTheme(color) {
-      const text = getContrastColor(color);
-      document.documentElement.style.setProperty("--bg",color);
-      document.documentElement.style.setProperty("--text",text);
-      document.documentElement.style.setProperty("--muted",text === "#ffffff" ? "rgba(255,255,255,.6)" : "rgba(0,0,0,.6)");
-      document.documentElement.style.setProperty("--line",text === "#ffffff" ? "rgba(255,255,255,.35)" : "rgba(0,0,0,.35)");
-      document.documentElement.style.setProperty("--soft-line",text === "#ffffff" ? "rgba(255,255,255,.12)" : "rgba(0,0,0,.12)");
-      themeColor.value = color;
-      localStorage.setItem(STORAGE.theme,color);
-    }
 
     function openHelp() {
       dialogReturnFocus = document.activeElement;
-      themePanel.classList.add("hidden");
       helpOverlay.classList.remove("hidden");
       document.body.classList.add("dialog-open");
       helpClose.focus();
@@ -707,12 +613,14 @@
     helpButton.addEventListener("click",openHelp);
     helpClose.addEventListener("click",closeHelp);
     helpOverlay.addEventListener("click",e=>{ if(e.target===helpOverlay) closeHelp(); });
-    themeButton.addEventListener("click",()=>{ closeHelp(); themePanel.classList.toggle("hidden"); });
-    themeColor.addEventListener("input",()=>applyTheme(themeColor.value));
-    themeReset.addEventListener("click",()=>applyTheme("#7ae0ff"));
-    document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeHelp(); themePanel.classList.add("hidden"); } });
-    const savedTheme = localStorage.getItem(STORAGE.theme);
-    applyTheme(!savedTheme || savedTheme.toLowerCase() === "#00aee1" ? "#7ae0ff" : savedTheme);
+    document.addEventListener("keydown", (event) => {
+      if (helpOverlay.classList.contains("hidden")) return;
+      if (event.key === "Escape") closeHelp();
+      if (event.key === "Tab") {
+        event.preventDefault();
+        helpClose.focus();
+      }
+    });
 
     const equationInput = document.getElementById("equation-input");
     const buildButton = document.getElementById("build-button");

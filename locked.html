@@ -25,11 +25,12 @@
     .dial{position:absolute;inset:0;border-radius:50%;will-change:transform}.mark{position:absolute;inset:0;border-radius:50%;transform-origin:50% 50%}.mark i{display:block;position:absolute;left:50%;top:8px;width:2px;height:10px;background:#fff;transform:translateX(-50%)}.mark.major i{height:19px;width:4px}.mark b{display:block;position:absolute;top:31px;left:50%;transform:translateX(-50%) rotate(var(--unrotate));color:#fff;font-size:clamp(.9rem,2.5vw,1.22rem);line-height:1;font-style:normal;font-weight:900}
     .hub{width:42%;aspect-ratio:1;border-radius:50%;background:var(--ink);border:4px solid #666;display:grid;place-items:center;z-index:2;color:#fff;text-align:center}.hub strong{font-size:clamp(1.9rem,6vw,3.35rem);line-height:1}.hub small{display:block;font-size:.56rem;letter-spacing:.12em;color:#aaa;margin-top:2px}.turn-hint{position:absolute;inset:auto 0 -42px;text-align:center;font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
     .feedback{position:fixed;left:50%;top:18%;transform:translate(-50%,-10px);background:var(--paper);border:3px solid var(--ink);border-radius:8px;padding:12px 17px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;opacity:0;pointer-events:none;transition:.18s;z-index:10;box-shadow:5px 5px 0 var(--ink)}.feedback.show{opacity:1;transform:translate(-50%,0)}.feedback.bad{background:var(--bad);color:#fff}.feedback.good{background:var(--good);color:#fff}
-    footer{border-top:4px solid var(--ink);padding-top:10px;display:flex;align-items:end;justify-content:space-between;font-size:.68rem;letter-spacing:.09em;text-transform:uppercase}.footer-brand{font-weight:900;font-size:.82rem;letter-spacing:-.03em}.footer-brand span{font-weight:600}.keys{color:var(--muted)}
+    footer{border-top:4px solid var(--ink);padding-top:10px;display:flex;align-items:end;justify-content:space-between;font-size:.68rem;letter-spacing:.09em;text-transform:uppercase}.footer-brand span{font-weight:600}.keys{color:var(--muted)}
     dialog{border:4px solid var(--ink);border-radius:12px;background:var(--bg);color:var(--ink);width:min(520px,calc(100% - 28px));padding:25px;box-shadow:10px 10px 0 var(--ink)}dialog::backdrop{background:rgba(0,0,0,.66)}dialog h2{font-size:1.8rem;letter-spacing:-.05em;text-transform:uppercase;margin:0 0 12px}dialog p,dialog li{line-height:1.5;font-weight:600}dialog .close{float:right;margin:-10px -10px 0 10px}
     @media(max-width:760px){.app{padding-top:10px}header{align-items:flex-start}.tabs .tab{display:none}main{grid-template-columns:1fr;padding:12px 0 45px;gap:64px}.lesson{text-align:center;margin:auto;justify-self:center}.step-line,.combo-editor{justify-content:center}.direction{margin:auto}.progress{justify-content:center}.lock-area{min-height:auto;justify-self:center}.lock{width:min(350px,82vw);padding:40px}.shackle{border-width:23px}.keys{display:none}.step-title{font-size:2.25rem}.instruction{margin:12px auto}.feedback{top:12%}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
   </style>
+<link rel="stylesheet" href="/assets/clocked-brand.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
@@ -63,7 +64,7 @@
       </div>
     </section>
   </main>
-  <footer><div class="footer-brand">LOCKED <span>BY CLOCKED</span></div><div class="keys">← → turn &nbsp; · &nbsp; R restart &nbsp; · &nbsp; D demo</div></footer>
+  <footer><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div><div class="keys">← → turn &nbsp; · &nbsp; R restart &nbsp; · &nbsp; D demo</div></footer>
 </div>
 <div class="feedback" id="feedback" role="status"></div>
 <dialog id="helpDialog"><button class="icon-btn close" id="closeHelp" aria-label="Close help">×</button><h2>How to use it</h2><p>Drag the dial in the direction shown. Hold each combination number still for one second to continue.</p><ol><li>Reset: turn right three full times. The trainer will return the dial to 0.</li><li>Turn right to the first number.</li><li>Turn left, pass the first number once, then stop at the second.</li><li>Turn right directly to the third number and pull the lock open.</li></ol><p>You can also use the arrow keys. Press <strong>D</strong> to watch a demonstration.</p></dialog>

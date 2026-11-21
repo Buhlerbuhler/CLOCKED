@@ -9,6 +9,7 @@
 
 .page-tabs{display:flex;gap:8px;margin:0 0 20px;flex-wrap:wrap}.page-tabs .btn{font-size:14px;padding:12px 20px}.page[hidden]{display:none!important}.operation-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.frac-edit{display:flex;gap:9px;align-items:center;justify-content:center;margin:12px 0}.frac-edit .fields{display:flex;flex-direction:column;gap:6px;width:98px}.frac-edit input{width:100%;text-align:center;border:2px solid var(--line);border-radius:9px;padding:10px;font-size:25px;font-weight:850}.frac-edit .rule{height:4px;background:#152b38;border-radius:2px}.op-select{display:flex;gap:7px;justify-content:center;align-items:center}.op-select .btn{font-size:22px;min-width:58px}.step-card{border:1px solid var(--line);border-radius:12px;padding:15px;margin-top:13px;background:#fcfeff}.step-card h3{font-size:15px;margin:0 0 7px}.step-card p{color:#405d6b;line-height:1.55;font-size:14px;margin:5px 0 13px}.operation-model{margin-top:8px}.operation-model svg{display:block;width:100%;height:auto}.math-expression{text-align:center;font-size:clamp(24px,4vw,36px);font-weight:900;letter-spacing:-.035em;margin:9px 0}.answer-figure{font-size:clamp(24px,5vw,40px);font-weight:900;text-align:center;margin:5px auto 12px}.secondary-text{color:#576e7a}.step-number{display:inline-flex;background:#101820;color:#fff;border-radius:50%;width:25px;height:25px;align-items:center;justify-content:center;font-size:12px;margin-right:7px}.switches{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}.large-feedback{font-size:13px;color:#4d6975;line-height:1.5}.results-hide .answer-figure,.results-hide .answer-final,.results-hide .math-final{filter:blur(13px);user-select:none}.results-hide .answer-figure{pointer-events:none}.op-help{margin-top:12px}.mini-caption{font-size:11px;font-weight:800;color:#53717e;text-transform:uppercase;letter-spacing:.07em;margin:11px 0 5px}.operation-grid .panel{padding:17px}.step-card[hidden]{display:none}@media(max-width:650px){.operation-grid{grid-template-columns:1fr}.page-tabs .btn{flex:1}.frac-edit .fields{width:120px}}@media print{.page-tabs,.switches,.op-select button{display:none!important}.page[hidden]{display:none!important}.results-hide .answer-figure,.results-hide .answer-final,.results-hide .math-final{filter:none}}
 .eq-factor{display:flex;align-items:center;justify-content:center;gap:16px;margin:15px auto}.eq-factor strong{font-size:40px;font-weight:900;min-width:52px;text-align:center}.eq-factor .btn{min-width:44px}.modelheader strong{font-size:16px}</style>
+<link rel="stylesheet" href="/assets/clocked-brand.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
@@ -61,7 +62,7 @@
 <div class="info"><strong>Why does this work?</strong><p id="eqExplanation" aria-live="polite"></p><p id="eqSimplify"></p></div>
 </div>
 </main>
-<footer>CLOCKED | MATH TOOLS</footer>
+<footer><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div></footer>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id),ns='http://www.w3.org/2000/svg';

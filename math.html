@@ -95,28 +95,8 @@
       line-height: 1;
     }
 
-    .brand-mark {
-      position: fixed;
-      left: 1rem;
-      bottom: .8rem;
-      z-index: 4000;
-      pointer-events: none;
-      line-height: 1;
-    }
 
-    .brand-name {
-      font-size: .72rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-    }
 
-    .brand-url {
-      margin-top: .18rem;
-      font-size: .5rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      opacity: .45;
-    }
 
     .theme-panel {
       position: fixed;
@@ -223,8 +203,7 @@
     .dialog-open .tool-nav,
     .dialog-open .utility-nav,
     .dialog-open .theme-panel,
-    .dialog-open .tool-view,
-    .dialog-open .brand-mark { pointer-events: none; }
+    .dialog-open .tool-view { pointer-events: none; }
 
     /* MATH TOOL */
     .tool-view {
@@ -597,9 +576,6 @@
       .pan { width:42%; }
       .rope.left { left:21%; }
       .rope.right { right:21%; }
-      .brand-mark { left:.6rem; bottom:.5rem; }
-      .brand-name { font-size:.64rem; }
-      .brand-url { font-size:.44rem; }
       .overlay { padding:.4rem; align-items:stretch; }
       .overlay-card { width:100%; max-height:none; height:100%; border-radius:6px; padding:1rem; }
     }
@@ -626,13 +602,11 @@
 .utility-nav ~ .theme-panel { top: calc(1rem + 50px); }
 @media (max-width:700px) { .utility-nav ~ .theme-panel { top: calc(.6rem + 50px); } }
 </style>
+<link rel="stylesheet" href="/assets/clocked-brand.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
-  <div class="brand-mark">
-    <div class="brand-name">CLOCKED</div>
-    <div class="brand-url">MATHTOOLS</div>
-  </div>
+  <div class="clocked-brand clocked-brand--fixed"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div>
 
   <nav class="tool-nav">
     <button class="tool-tab active">BALANCED</button>

@@ -33,6 +33,7 @@
 
 header .header-actions { display: flex; align-items: center; gap: 8px; }
 </style>
+<link rel="stylesheet" href="/assets/clocked-brand.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
@@ -70,7 +71,7 @@ Option 6"></textarea>
     <button class="fit-btn" id="fitBtn" aria-label="Fit full bracket in window" title="Fit full bracket"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>
   </section>
 
-  <footer><div>CLOCKED | CLASSTOOLS</div><div class="status" id="status">READY FOR A QUICK TOURNAMENT</div></footer>
+  <footer><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div><div class="status" id="status">READY FOR A QUICK TOURNAMENT</div></footer>
 </main>
 
 <dialog id="helpDialog"><div class="modal"><h2>HOW IT WORKS</h2><ul><li>Add one entry per line and build the bracket.</li><li>Tap either name in a matchup to move it forward.</li><li>Tap the other name to change the winner; later results will clear automatically.</li><li>Odd-sized lists get automatic byes.</li><li>Edit the tournament title by clicking it.</li></ul><button class="secondary" id="closeHelp">GOT IT</button></div></dialog>

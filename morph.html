@@ -14,6 +14,7 @@
 <div class="toolbar">
   <div><label for="round">Puzzle</label> <select id="round"></select></div>
   <a id="library-link">Puzzle library</a>
+  <a id="expert-link">Expert puzzles</a>
   <dl class="stats">
     <div><dt>Time</dt><dd id="elapsed" role="timer">0:00</dd></div>
     <div><dt>Checks</dt><dd id="checks">0</dd></div>
@@ -68,7 +69,22 @@ const catalog = [
       "mat", "holder", "s", "d", "ness", "ly", "ie", "ed"] },
   { id: "forecast", name: "Forecast", level: "Challenging",
     answer: ["fore", "cast", "ground", "off", "iron", "work", "hog",
-      "side", "set", "clad", "ware", "shop", "place", "wash", "s"] }
+      "side", "set", "clad", "ware", "shop", "place", "wash", "s"] },
+  { id: "expert-01", name: "Puzzle 1", level: "Expert",
+    answer: ["inter", "lock", "play", "down", "smith", "ground", "back",
+      "cast", "pour", "ing", "y", "work", "swell", "lash", "log"] },
+  { id: "expert-02", name: "Puzzle 2", level: "Expert",
+    answer: ["cross", "fire", "over", "work", "power", "drive", "flow",
+      "shop", "load", "house", "ful", "way", "train", "chart", "ing"] },
+  { id: "expert-03", name: "Puzzle 3", level: "Expert",
+    answer: ["out", "run", "side", "way", "time", "walk", "line",
+      "ward", "farer", "keeper", "piece", "out", "over", "backer", "up"] },
+  { id: "expert-04", name: "Puzzle 4", level: "Expert",
+    answer: ["back", "ground", "hand", "work", "water", "book", "over",
+      "shop", "load", "fall", "proof", "mark", "case", "time", "turn"] },
+  { id: "expert-05", name: "Puzzle 5", level: "Expert",
+    answer: ["rain", "fall", "bow", "back", "out", "string", "man",
+      "stop", "track", "side", "look", "er", "s", "kind", "hood"] }
 ];
 // Add Monday packs in release order with the Winnipeg offset for each date.
 // Puzzle IDs keep assignment links stable.
@@ -81,19 +97,21 @@ const now = Date.now();
 const released = weeklyPacks.filter(pack => Date.parse(pack.opens) <= now);
 const latest = released.at(-1);
 const nextPack = weeklyPacks.find(pack => Date.parse(pack.opens) > now);
-const openIds = released.flatMap(pack => pack.ids);
+const expertIds = catalog.filter(puzzle => puzzle.level === "Expert").map(puzzle => puzzle.id);
+const openIds = [...released.flatMap(pack => pack.ids), ...expertIds];
 const assignment = catalog.find(puzzle => openIds.includes(puzzle.id) &&
   puzzle.id === page.searchParams.get("puzzle"));
-const libraryMode = !assignment && page.searchParams.get("library") === "1";
-const visibleIds = libraryMode ? openIds : latest?.ids ?? [];
+const expertMode = !assignment && page.searchParams.get("expert") === "1";
+const libraryMode = !assignment && !expertMode && page.searchParams.get("library") === "1";
+const visibleIds = expertMode ? expertIds : libraryMode ? openIds : latest?.ids ?? [];
 const puzzles = assignment ? [assignment] : visibleIds.map(id => catalog.find(puzzle => puzzle.id === id));
 const releaseNote = document.querySelector("#release-note");
 const dateLabel = date => new Intl.DateTimeFormat("en-CA", {
   timeZone: "UTC", month: "long", day: "numeric"
 }).format(new Date(date + "T00:00:00Z"));
 if (!assignment) {
-  const note = libraryMode ? "Released puzzles" : latest ? "Week of " + dateLabel(latest.opens.slice(0, 10)) : "";
-  const nextNote = nextPack ? "Next pack opens " + dateLabel(nextPack.opens.slice(0, 10)) + "." : "";
+  const note = expertMode ? "Expert puzzles" : libraryMode ? "Released puzzles" : latest ? "Week of " + dateLabel(latest.opens.slice(0, 10)) : "";
+  const nextNote = nextPack && !expertMode ? "Next pack opens " + dateLabel(nextPack.opens.slice(0, 10)) + "." : "";
   releaseNote.textContent = [note, nextNote].filter(Boolean).join(" · ");
 }
 const libraryLink = document.querySelector("#library-link");
@@ -120,6 +138,7 @@ function load() {
   if (libraryMode) {
     const link = new URL(page);
     link.searchParams.delete("library");
+    link.searchParams.delete("expert");
     link.searchParams.set("puzzle", puzzle.id);
     shareUrl.value = link.href;
   }
@@ -264,7 +283,15 @@ if (libraryMode) {
 } else {
   libraryUrl.searchParams.set("library", "1");
 }
+libraryUrl.searchParams.delete("expert");
 libraryLink.href = libraryUrl.href;
+const expertLink = document.querySelector("#expert-link");
+const expertUrl = new URL(page);
+expertUrl.searchParams.delete("library");
+expertUrl.searchParams.delete("puzzle");
+expertUrl.searchParams.set("expert", "1");
+expertLink.href = expertUrl.href;
+expertLink.hidden = expertMode || Boolean(assignment);
 round.addEventListener("change", load);
 if (puzzles.length) {
   load();

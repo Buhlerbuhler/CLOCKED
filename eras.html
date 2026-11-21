@@ -4,7 +4,7 @@
 <link rel="icon" type="image/svg+xml" href="/assets/clocked-icon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WHEN / WHERE | CLOCKED | Acropolis</title>
+<title>THEN | CLOCKED</title>
 
 <!-- 360 VIEWER -->
 <link rel="stylesheet"
@@ -387,6 +387,29 @@ input[type="range"] {
   }
 }
 
+/* THEN: immersive single-scene mode */
+main { position:relative;display:block;padding:10px; }
+.scene { width:100%;height:100%; }
+.scene-info { top:18px;left:18px;max-width:260px; }
+.scene-info strong { font-size:17px;letter-spacing:-.02em; }
+.open-guess { position:absolute;z-index:8;bottom:22px;right:22px;padding:14px 20px;background:var(--geo-green);color:#111;border-radius:7px;font-size:14px;letter-spacing:.03em;box-shadow:0 5px 20px rgba(0,0,0,.3); }
+.open-guess span { margin-left:12px; }
+.panel-backdrop { display:none;position:fixed;inset:60px 0 0;background:rgba(0,0,0,.28);z-index:19; }
+.panel-backdrop.active { display:block; }
+.sidebar { position:fixed;z-index:20;top:70px;right:10px;bottom:10px;width:min(395px,calc(100vw - 20px));box-shadow:-12px 0 35px rgba(0,0,0,.28);transform:translateX(calc(100% + 30px));visibility:hidden;transition:transform .22s ease,visibility .22s; }
+.sidebar.open { transform:translateX(0);visibility:visible; }
+.panel-close { background:transparent;color:#fff;font-size:17px;padding:7px;border:1px solid #555; }
+#map { min-height:120px; }
+.footer { flex-shrink:0; }
+@media (max-width:800px) {
+  html,body { height:100%;overflow:hidden; }
+  main { height:calc(100dvh - 60px);display:block; }
+  .scene { height:100%;min-height:0; }
+  .sidebar { top:60px;right:0;bottom:0;width:min(430px,100vw);border-radius:0;min-height:0; }
+  .panel-backdrop { inset:60px 0 0; }
+  #map { min-height:100px; }
+}
+@media (prefers-reduced-motion:reduce) { .sidebar { transition:none; } }
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap">
 <link rel="stylesheet" href="/assets/clocked-brand.css">
@@ -398,7 +421,7 @@ input[type="range"] {
 <header class="geo-header">
   <nav class="geo-header__tabs" aria-label="Social Studies tools">
     <a class="geo-header__tab" href="/map.html">MAP QUIZ</a>
-    <a class="geo-header__tab" href="/eras.html" aria-current="page">WHEN / WHERE</a>
+    <a class="geo-header__tab" href="/eras.html" aria-current="page">THEN</a>
   </nav>
   <div class="geo-header__actions">
     <button class="geo-header__reset" type="button" onclick="resetGame()">Reset</button>
@@ -412,25 +435,23 @@ input[type="range"] {
     <div id="panorama"></div>
 
     <div class="scene-info">
-      <strong>SCENE 01</strong>
+      <strong>THEN. <span style="font-weight:400;color:#ccc;font-size:11px;margin-left:7px">01 / EXPLORE</span></strong>
       <p>
-        Drag to look around. Study the surroundings
-        and look for clues about where and when
-        you are.
+        Look around. Follow the clues. Decide where and when you've landed.
       </p>
     </div>
+    <button type="button" class="open-guess" id="openGuess" onclick="toggleGuess(true)">MAKE A GUESS <span aria-hidden="true">→</span></button>
   </section>
-
-  <aside class="sidebar">
+  <div id="panelBackdrop" class="panel-backdrop" onclick="toggleGuess(false)"></div>
+  <aside class="sidebar" id="guessPanel" aria-label="Guess location and time" aria-hidden="true">
 
     <div class="panel-top">
       <h2 id="panelTitle">Make your guess</h2>
-      <small>ROUND 01</small>
+      <button type="button" class="panel-close" onclick="toggleGuess(false)" aria-label="Close guessing panel">✕</button>
     </div>
 
     <p class="instructions" id="instructions">
-      Explore the scene, then choose a location
-      on the map and a year on the timeline.
+      Place your guess on the map and choose a year.
     </p>
 
     <div class="label" id="mapHeading">
@@ -852,6 +873,21 @@ function resetGame() {
 
   setTimeout(() => map.invalidateSize(), 50);
 }
+
+/* Open the map and timeline only when the player is ready. */
+function toggleGuess(open) {
+  const panel = document.getElementById("guessPanel");
+  const backdrop = document.getElementById("panelBackdrop");
+  panel.classList.toggle("open", open);
+  backdrop.classList.toggle("active", open);
+  panel.setAttribute("aria-hidden", String(!open));
+  document.getElementById("openGuess").classList.toggle("hidden", open);
+  if (open) setTimeout(() => map.invalidateSize(), 260);
+  else viewer?.resize();
+}
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") toggleGuess(false);
+});
 
 /* ==================================
    10. RESIZE

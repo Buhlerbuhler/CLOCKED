@@ -30,13 +30,16 @@
     dialog{border:3px solid var(--black);border-radius:14px;background:var(--paper);padding:0;max-width:480px;width:calc(100% - 30px);box-shadow:10px 10px 0 var(--black)}dialog::backdrop{background:rgba(0,0,0,.55)}.modal{padding:22px}.modal h2{font-size:28px;letter-spacing:-.04em;margin-bottom:10px}.modal p,.modal li{font-size:14px;line-height:1.5}.modal ul{padding-left:20px}.modal .secondary{width:100%;margin-top:12px}
     @media(max-width:760px){.app{padding:12px}.brand-main{font-size:35px}.by{display:none}.setup{grid-template-columns:1fr}.editor{border-right:0;border-bottom:3px solid var(--black)}.preview{min-height:210px}.row{flex-wrap:wrap}.field{min-width:130px}.primary{flex:1}.boardbar{align-items:flex-start;flex-direction:column}.bracket-scroll{padding:14px}.bracket{grid-template-columns:max-content 215px max-content;gap:28px;min-width:max-content}.bracket-side{gap:28px}.round{width:190px}.bracket-side.left .match:after{width:31px;right:-31px}.bracket-side.right .match:before{width:31px;left:-31px}footer{gap:12px;align-items:flex-end}.status{text-align:right}}
     @media print{body{background:white}.app{padding:0}.setup,header,.boardbar,footer,.fit-btn{display:none!important}.board{display:block!important;border:0}.bracket-scroll{overflow:visible;padding:0}.bracket{transform-origin:top left;gap:16px;min-width:100%;grid-template-columns:1fr 150px 1fr;min-height:500px}.bracket-side{gap:16px}.round{width:130px}.bracket-side.left .match:after{width:19px;right:-19px}.bracket-side.right .match:before{width:19px;left:-19px}.team{font-size:9px;min-height:29px;padding:5px}.round h3{font-size:8px}.champion{padding:9px}.champion .name{font-size:20px}}
-  </style>
+
+header .header-actions { display: flex; align-items: center; gap: 8px; }
+</style>
+<script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
 <main class="app">
   <header>
     <div class="brand"><div class="brand-main">BRACKETED</div><div class="by">BY CLOCKED</div></div>
-    <div class="header-actions"><button class="icon-btn" id="helpBtn" aria-label="Help">?</button></div>
+    <div class="header-actions"><button class="icon-btn" id="helpBtn" aria-label="Help">?</button><clocked-menu></clocked-menu></div>
   </header>
 
   <section class="setup" id="setup">

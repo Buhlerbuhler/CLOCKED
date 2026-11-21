@@ -579,7 +579,7 @@
 
     @media (max-width: 700px) {
       body { overflow: hidden; }
-      .tool-nav { top:.6rem; left:.6rem; right:.6rem; justify-content:flex-start; gap:.2rem; flex-wrap:wrap; max-width:calc(100% - 6.8rem); }
+      .tool-nav { top:.6rem; left:.6rem; right:.6rem; justify-content:flex-start; gap:.2rem; flex-wrap:wrap; max-width:calc(100% - 8.5rem); }
       .utility-nav { top:.6rem; right:.6rem; gap:.15rem; }
       .tool-tab,.utility-button { font-size:.68rem; padding:.18rem .32rem; }
       #help-button { font-size:.84rem; }
@@ -605,7 +605,7 @@
     }
 
     @media (max-width: 420px) {
-      .tool-nav { max-width:calc(100% - 5.6rem); }
+      .tool-nav { max-width:calc(100% - 8.5rem); }
       .tool-tab { font-size:.64rem; padding:.16rem .27rem; }
       .utility-button { font-size:.64rem; padding:.16rem .27rem; }
     }
@@ -622,7 +622,11 @@
       #theme-reset { min-height:42px; display:inline-flex; align-items:center; justify-content:center; }
       #theme-color { min-height:42px; }
     }
-  </style>
+
+.utility-nav ~ .theme-panel { top: calc(1rem + 50px); }
+@media (max-width:700px) { .utility-nav ~ .theme-panel { top: calc(.6rem + 50px); } }
+</style>
+<script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
   <div class="brand-mark">
@@ -638,7 +642,8 @@
 
   <div class="utility-nav">
     <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
-    <button id="theme-button" class="utility-button">THEME</button>
+    <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
+    <clocked-menu></clocked-menu>
   </div>
 
   <div id="theme-panel" class="theme-panel hidden">

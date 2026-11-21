@@ -619,7 +619,7 @@
         justify-content: flex-start;
         gap: .2rem;
         flex-wrap: wrap;
-        max-width: calc(100% - 6.8rem);
+        max-width: calc(100% - 8.5rem);
       }
 
       .utility-nav {
@@ -822,7 +822,7 @@
 
     @media (max-width: 420px) {
       .tool-nav {
-        max-width: calc(100% - 5.6rem);
+        max-width: calc(100% - 8.5rem);
       }
 
       .tool-tab {
@@ -848,7 +848,11 @@
       }
     }
 
-  </style>
+
+.utility-nav ~ .theme-panel { top: calc(1rem + 50px); }
+@media (max-width:700px) { .utility-nav ~ .theme-panel { top: calc(.6rem + 50px); } }
+</style>
+<script defer src="/assets/clocked-menu.js"></script>
 </head>
 
 <body>
@@ -867,7 +871,8 @@
   <div class="utility-nav">
     <span id="name-skip-indicator" aria-hidden="true">🦅</span>
     <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
-    <button id="theme-button" class="utility-button">THEME</button>
+    <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
+    <clocked-menu></clocked-menu>
   </div>
 
   <div id="theme-panel" class="theme-panel hidden">

@@ -15,12 +15,17 @@
     .map-shell{min-height:0;position:relative;border:3px solid var(--ink);border-radius:14px;background:rgba(255,255,255,.22);overflow:hidden;touch-action:none}.map-shell svg{display:block;width:100%;height:100%;cursor:grab}.map-shell.dragging svg{cursor:grabbing}.country-shape{fill:#f8f5e9;stroke:var(--ink);stroke-width:.75;vector-effect:non-scaling-stroke;transition:fill .12s}.country-shape:hover,.country-shape.hovered{fill:var(--ink)}.country-shape.territory{fill:rgba(248,245,233,.45);stroke-dasharray:5 3;pointer-events:none}.country-shape.correct{fill:var(--good)!important}.country-shape.wrong{fill:var(--bad)!important}.country-shape.reveal{fill:#fff!important;stroke-width:2.5}.hit-target{fill:transparent;stroke:none;cursor:pointer}.ocean-label{position:absolute;left:16px;bottom:13px;font-size:.66rem;letter-spacing:.12em;pointer-events:none}.zoom{position:absolute;right:12px;bottom:12px;display:grid;gap:5px}.zoom button{width:42px;height:38px;padding:0;font-size:1.15rem}.message{position:absolute;inset:auto 50% 18px auto;transform:translateX(50%);background:var(--ink);color:white;border-radius:8px;padding:.65rem .9rem;font-size:.83rem;opacity:0;pointer-events:none;transition:.18s}.message.show{opacity:1}.message.good{background:var(--good);color:var(--ink)}.message.bad{background:var(--bad);color:var(--ink)}
     dialog{width:min(560px,calc(100% - 28px));border:3px solid var(--ink);border-radius:14px;background:var(--bg);padding:22px;color:var(--ink)}dialog::backdrop{background:rgba(0,0,0,.62)}dialog h2{margin:0 0 14px;font-size:1.6rem}dialog p,dialog li{text-transform:none;font-weight:600;line-height:1.45}dialog button{float:right}
     @media(max-width:700px){.app{padding:3rem .6rem 2.3rem;gap:8px}.tool-nav{top:.6rem;left:.6rem;right:.6rem;justify-content:flex-start;gap:.2rem;flex-wrap:wrap;max-width:calc(100% - 6.8rem)}.utility-nav{top:.6rem;right:.6rem;gap:.15rem}.tool-tab,.utility-button{font-size:.68rem;padding:.18rem .32rem}#help-button{font-size:.84rem}.theme-panel{top:2.35rem;right:.6rem;max-width:calc(100vw - 1.2rem)}.brand-mark{left:.6rem;bottom:.5rem}.brand-name{font-size:.64rem}.brand-url{font-size:.44rem}.quizbar{grid-template-columns:1fr auto}.prompt{grid-column:1/-1;grid-row:1}.controls{grid-row:2}.stats{grid-row:2;justify-self:end}.country{font-size:clamp(2.1rem,10vw,3.4rem)}.map-shell{border-radius:10px}.controls select{max-width:130px}.controls button{padding:.55rem}.stats{gap:7px}.stats span:first-child{display:none}}
-  </style>
+
+.utility-nav ~ .theme-panel { top: calc(1rem + 50px); }
+@media (max-width:700px) { .utility-nav ~ .theme-panel { top: calc(.6rem + 50px); } }
+</style>
+<script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
   <div class="brand-mark"><div class="brand-name">CLOCKED</div><div class="brand-url">CLASSTOOLS</div></div>
   <nav class="tool-nav"><button class="tool-tab active">MAP QUIZ</button></nav>
-  <div class="utility-nav"><button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button><button id="theme-button" class="utility-button">THEME</button></div>
+  <div class="utility-nav"><button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button><button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
+    <clocked-menu></clocked-menu></div>
   <div id="theme-panel" class="theme-panel hidden"><label for="theme-color">BACKGROUND</label><input id="theme-color" type="color" value="#7ae0ff"><button id="theme-reset">DEFAULT</button></div>
   <main class="app">
     <section class="quizbar" aria-label="Quiz controls">

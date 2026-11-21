@@ -29,6 +29,10 @@
 
     body {
       background: var(--bg);
+      --math-header-bg: var(--bg);
+      --math-header-text: var(--text);
+      display: flex;
+      flex-direction: column;
       color: var(--text);
       font-family: "Inter", Arial, Helvetica, sans-serif;
       overflow: hidden;
@@ -52,18 +56,7 @@
 
     .hidden { display: none !important; }
 
-    /* EXACT CLOCKED SHELL */
-    .tool-nav {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 5000;
-      display: flex;
-      align-items: center;
-      gap: .3rem;
-    }
-
-    .tool-tab,
+    /* HEADER CONTROLS */
     .utility-button {
       border: 0;
       background: transparent;
@@ -73,21 +66,6 @@
       letter-spacing: .03em;
       padding: .2rem .38rem;
       border-radius: 4px;
-    }
-
-    .tool-tab.active {
-      background: var(--text);
-      color: var(--bg);
-    }
-
-    .utility-nav {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 5000;
-      display: flex;
-      align-items: center;
-      gap: .25rem;
     }
 
     #help-button {
@@ -200,15 +178,15 @@
       text-transform: none;
     }
 
-    .dialog-open .tool-nav,
-    .dialog-open .utility-nav,
+    .dialog-open .math-header,
     .dialog-open .theme-panel,
     .dialog-open .tool-view { pointer-events: none; }
 
     /* MATH TOOL */
     .tool-view {
       width: 100%;
-      height: 100%;
+      flex: 1;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -221,7 +199,7 @@
       gap: .4rem;
       flex-wrap: wrap;
       min-height: 2.25rem;
-      padding: 1.5rem 1rem 0;
+      padding: 0 1rem;
     }
 
     .balanced-top button {
@@ -558,12 +536,11 @@
 
     @media (max-width: 700px) {
       body { overflow: hidden; }
-      .tool-nav { top:.6rem; left:.6rem; right:.6rem; justify-content:flex-start; gap:.2rem; flex-wrap:wrap; max-width:calc(100% - 8.5rem); }
-      .utility-nav { top:.6rem; right:.6rem; gap:.15rem; }
-      .tool-tab,.utility-button { font-size:.68rem; padding:.18rem .32rem; }
+
+      .utility-button { font-size:.68rem; padding:.18rem .32rem; }
       #help-button { font-size:.84rem; }
       .theme-panel { top:2.35rem; right:.6rem; max-width:calc(100vw - 1.2rem); }
-      .balanced-top { min-height:2rem; padding:2.7rem .65rem 0; gap:.28rem; }
+      .balanced-top { min-height:2rem; padding:0 .65rem; gap:.28rem; }
       .balanced-top button { font-size:.66rem; padding:.18rem .32rem; }
       .equation-builder { margin:.85rem auto .8rem; width:min(470px,94%); }
       .equation-builder input { font-size:16px; min-height:44px; }
@@ -581,13 +558,11 @@
     }
 
     @media (max-width: 420px) {
-      .tool-nav { max-width:calc(100% - 8.5rem); }
-      .tool-tab { font-size:.64rem; padding:.16rem .27rem; }
+
       .utility-button { font-size:.64rem; padding:.16rem .27rem; }
     }
 
     @media (pointer: coarse), (max-width: 700px) {
-      .tool-tab,
       .utility-button,
       .balanced-top button,
       .balanced-top input,
@@ -599,26 +574,28 @@
       #theme-color { min-height:42px; }
     }
 
-.utility-nav ~ .theme-panel { top: calc(1rem + 50px); }
-@media (max-width:700px) { .utility-nav ~ .theme-panel { top: calc(.6rem + 50px); } }
+.math-header ~ .theme-panel { top: calc(1rem + 50px); }
+@media (max-width:700px) { .math-header ~ .theme-panel { top: calc(.6rem + 50px); } }
 </style>
 <link rel="stylesheet" href="/assets/clocked-brand.css">
+<link rel="stylesheet" href="/assets/clocked-math-header.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
   <div class="clocked-brand clocked-brand--fixed"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div>
 
-  <nav class="tool-nav">
-    <button class="tool-tab active">BALANCED</button>
-    <button class="tool-tab" type="button" title="Coming soon">INTEGERS</button>
-    <button class="tool-tab" type="button" title="Coming soon">FRACTIONS</button>
+<header class="math-header">
+  <nav class="math-header__tabs" aria-label="Math tools">
+      <a class="math-header__tab" href="/math.html" aria-current="page">Balanced</a>
+      <a class="math-header__tab" href="/integer.html">Number Line</a>
+      <a class="math-header__tab" href="/fractions.html">Fractions</a>
   </nav>
-
-  <div class="utility-nav">
+  <div class="math-header__actions">
     <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
     <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme">◐</button>
     <clocked-menu></clocked-menu>
   </div>
+</header>
 
   <div id="theme-panel" class="theme-panel hidden">
     <label for="theme-color">BACKGROUND</label>

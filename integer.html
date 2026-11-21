@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CLOCKED | NUMBER LINE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap" rel="stylesheet">
 <style>
 :root{
  --math:#7AE0FF;
@@ -15,13 +16,6 @@
 }
 *{box-sizing:border-box}
 body{margin:0}
-header{
- background:var(--math);
- padding:18px 25px;
- display:flex;justify-content:space-between;align-items:center
-}
-header strong{font-size:22px;letter-spacing:-1px}
-header a{color:inherit;text-decoration:none;font-weight:800}
 main{max-width:1400px;margin:auto;padding:22px}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
 .field{
@@ -77,18 +71,24 @@ footer{
  .panel{padding:12px}
  .canvas{height:260px}
  .stat{width:100%}
- header{padding:14px}
  #numberPanel:fullscreen{padding:10px}
  #numberPanel:fullscreen .fs-toolbar button{padding:8px}
 }
 </style>
 <link rel="stylesheet" href="/assets/clocked-brand.css">
+<link rel="stylesheet" href="/assets/clocked-math-header.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 <body>
-<header>
-<strong>CLOCKED <span style="font-weight:400">/ NUMBER LINE</span></strong>
-<clocked-menu></clocked-menu>
+<header class="math-header">
+  <nav class="math-header__tabs" aria-label="Math tools">
+      <a class="math-header__tab" href="/math.html">Balanced</a>
+      <a class="math-header__tab" href="/integer.html" aria-current="page">Number Line</a>
+      <a class="math-header__tab" href="/fractions.html">Fractions</a>
+  </nav>
+  <div class="math-header__actions">
+    <clocked-menu></clocked-menu>
+  </div>
 </header>
 <main>
 <div class="panel">

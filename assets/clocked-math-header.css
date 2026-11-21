@@ -1,0 +1,79 @@
+.math-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .25rem;
+  padding: 1rem 1rem 0;
+  background: var(--math-header-bg, #7ae0ff);
+  color: var(--math-header-text, #111);
+  font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+.math-header__tabs,
+.math-header__actions {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+.math-header__actions {
+  flex: none;
+  gap: .25rem;
+}
+
+.math-header .math-header__tab {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .38rem;
+  border-radius: 4px;
+  color: inherit;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  line-height: 1.2;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.math-header .math-header__tab[aria-current="page"] {
+  background: var(--math-header-text, #111);
+  color: var(--math-header-bg, #7ae0ff);
+}
+
+.math-header .math-header__tab:hover {
+  text-decoration: underline;
+}
+
+.math-header__tab:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .math-header {
+    padding: .6rem .6rem 0;
+  }
+
+  .math-header__tabs,
+  .math-header__actions {
+    gap: .15rem;
+  }
+
+  .math-header .math-header__tab {
+    font-size: .64rem;
+    padding-inline: .27rem;
+  }
+}
+
+@media (pointer: coarse), (max-width: 700px) {
+  .math-header .math-header__tab {
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 340px) {
+  .math-header__tabs {
+    flex-wrap: wrap;
+  }
+}

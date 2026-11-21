@@ -96,11 +96,6 @@
       gap: .25rem;
     }
 
-    #help-button {
-      font-size: .9rem;
-      line-height: 1;
-    }
-
     /* THEME */
 
     .theme-panel {
@@ -693,10 +688,6 @@
         padding: .18rem .32rem;
       }
 
-      #help-button {
-        font-size: .84rem;
-      }
-
       #name-skip-indicator {
         font-size: .88rem;
       }
@@ -949,6 +940,7 @@
 @media (max-width:700px) { .utility-nav ~ .theme-panel { top: calc(.6rem + 50px); } }
 </style>
 <link rel="stylesheet" href="/assets/clocked-brand.css">
+<link rel="stylesheet" href="/assets/clocked-help.css">
 <script defer src="/assets/clocked-menu.js"></script>
 </head>
 
@@ -964,7 +956,6 @@
 
   <div class="utility-nav">
     <span id="name-skip-indicator" aria-hidden="true">🦅</span>
-    <button id="help-button" class="utility-button" aria-label="Help" title="Help">ⓘ</button>
     <button id="theme-button" class="utility-button" aria-label="Theme" title="Theme" aria-expanded="false" aria-controls="theme-panel">◐</button>
     <clocked-menu></clocked-menu>
   </div>
@@ -1193,6 +1184,8 @@
     </footer>
 
   </section>
+
+  <button id="help-button" class="clocked-help" type="button" aria-haspopup="dialog" aria-controls="help-overlay">HELP</button>
 
   <script>
     /* STORAGE */

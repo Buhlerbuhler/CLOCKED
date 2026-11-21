@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morphemes by CLOCKED</title>
+<style>
+:root{--yellow:#fed500;--paper:#f6f4eb;--ink:#161616;--line:#c9c6ba}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 system-ui,sans-serif}header{background:var(--ink);color:white}header>div,main,footer{width:min(1100px,calc(100% - 32px));margin:auto}header>div{display:flex;justify-content:space-between;align-items:center;min-height:62px}header a{color:var(--yellow);font-weight:950;text-decoration:none;letter-spacing:.08em}header span,.label,.tag,footer{font:700 .75rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}main{padding:38px 0 24px}.intro{border-bottom:2px solid;padding-bottom:20px;margin-bottom:20px}h1{font-size:clamp(1.625rem,8.5vw,6rem);line-height:1;letter-spacing:-.04em;margin:8px 0 10px}.intro p{margin:0;max-width:65ch}.toolbar,.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.toolbar{justify-content:space-between;margin-bottom:14px}.toolbar label{font-weight:800}button,select{font:inherit;font-weight:750;color:inherit;background:white;border:1px solid var(--ink);border-radius:5px;padding:7px 11px;min-height:42px}button{cursor:pointer}button:disabled{cursor:default;opacity:.55}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #3154cc;outline-offset:3px}.primary,.part[aria-pressed=true]{background:var(--yellow);color:var(--ink)}.primary{border-width:2px}.board{border:1px solid var(--ink);background:white;border-radius:8px;overflow:hidden;padding:0 5px}.pyramid{position:relative;height:var(--height);max-width:900px;margin:auto}.links{position:absolute;width:100%;height:100%;inset:0;pointer-events:none}.links line{stroke:#b1afa4;stroke-width:2;vector-effect:non-scaling-stroke}.links .good{stroke:#197044;stroke-width:4}.links .bad{stroke:#ad2921;stroke-dasharray:4 4;stroke-width:3}.tile{position:absolute;z-index:1;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:min(var(--tile-width),108px);min-width:0;min-height:46px;padding:4px 0;background:var(--ink);color:white;font-size:clamp(.7rem,3vw,1.35rem);letter-spacing:-.025em;touch-action:manipulation}.tile[aria-pressed=true]{background:var(--yellow);color:var(--ink);outline:2px solid var(--ink);outline-offset:2px}.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:6px;padding:0;margin:0;list-style:none}.words li{border-bottom:1px solid var(--line);padding:4px}.words:empty{display:none}.actions{margin-top:15px}#status{min-height:1.5em;font-weight:750;margin:10px 0}details{margin-top:14px;border-top:1px solid var(--line);padding:12px 0}summary{cursor:pointer;font-weight:750}details p{margin:8px 0}footer{border-top:1px solid;padding:14px 0 24px}
+.stats{display:flex;gap:16px;margin:0;font-weight:750;font-variant-numeric:tabular-nums}.stats div{display:flex;gap:6px;align-items:center}.stats dd{margin:0;background:var(--yellow);padding:3px 7px;border-radius:4px}.tile:disabled{opacity:1}
+[hidden]{display:none!important}.toolbar a{color:inherit;font-weight:750}#share-box{margin-bottom:14px}#share-url{width:100%;font:inherit;padding:6px;margin-top:4px}
+</style>
+<header><div><a href="https://clock-ed.ca/">CLOCKED</a><span>ELA</span></div></header>
+<main>
+<section class="intro"><h1>MORPHEMES</h1><p>Select any two tiles to swap them. On each line, read the upper tile first and the lower tile second to make a word. Solve every link.</p></section>
+<div class="toolbar">
+  <div><label for="round">Puzzle</label> <select id="round"></select></div>
+  <a id="library-link">Puzzle library</a>
+  <dl class="stats">
+    <div><dt>Time</dt><dd id="elapsed" role="timer">0:00</dd></div>
+    <div><dt>Checks</dt><dd id="checks">0</dd></div>
+  </dl>
+</div>
+<p id="release-note"></p>
+<div id="share-box" hidden>
+  <label for="share-url">Link for this puzzle</label>
+  <input id="share-url" type="text" readonly>
+</div>
+<div class="board">
+  <div class="pyramid" id="pyramid" aria-label="Word pyramid">
+    <svg class="links" id="links" aria-hidden="true" preserveAspectRatio="none"></svg>
+    <div id="tiles"></div>
+  </div>
+</div>
+<div class="actions">
+<button class="primary" id="check">Check links</button>
+<button id="hint">Hint</button><button id="restart">Reset</button><button id="next">Next puzzle</button>
+</div>
+<p id="status" role="status"></p>
+<ul class="words" id="words" aria-label="Words found"></ul>
+<details><summary>What is a morpheme?</summary><p>A morpheme is the smallest part of a word that carries meaning or does a job. A prefix goes before a base and a suffix goes after it. Two bases can also join to make a compound word. For example, <strong>sun + light</strong> makes <strong>sunlight</strong>, and <strong>light + house</strong> makes <strong>lighthouse</strong>.</p></details>
+</main>
+<footer>CLOCKED | classtools</footer>
+<script>
+"use strict";
+// In each answer, row 1 comes first, then row 2, and so on.
+const catalog = [
+  { id: "book-words", name: "Book words", level: "Easy",
+    answer: ["book", "case", "mark", "load", "work", "er", "ing"] },
+  { id: "play-and-read", name: "Play and read", level: "Easy",
+    answer: ["re", "play", "read", "ground", "ful", "er", "ing"] },
+  { id: "pack-and-lock", name: "Pack and lock", level: "Easy",
+    answer: ["un", "pack", "lock", "er", "ed", "s", "ing"] },
+  { id: "sunshine", name: "Sunshine", level: "Medium",
+    answer: ["sun", "light", "flower", "house", "bulb", "pot", "bed",
+      "boat", "hold", "ous", "s", "holder", "luck", "room", "time"] },
+  { id: "snow-day", name: "Snow day", level: "Medium",
+    answer: ["snow", "ball", "man", "room", "park", "kind", "hood",
+      "mate", "ful", "ing", "land", "ness", "ly", "ed", "s"] },
+  { id: "up-and-over", name: "Up and over", level: "Challenging",
+    answer: ["over", "head", "time", "light", "line", "out", "table",
+      "house", "ing", "up", "backer", "side", "let", "top", "cloth"] },
+  { id: "below-the-surface", name: "Below the surface", level: "Challenging",
+    answer: ["under", "ground", "water", "work", "cover", "fall", "proof",
+      "load", "shop", "age", "ing", "out", "en", "read", "s"] },
+  { id: "connect-and-agree", name: "Connect and agree", level: "Easy",
+    answer: ["dis", "connect", "agree", "ion", "ed", "ment", "s"] },
+  { id: "supermarket", name: "Supermarket", level: "Medium",
+    answer: ["super", "market", "man", "place", "share", "kind", "hood",
+      "mat", "holder", "s", "d", "ness", "ly", "ie", "ed"] },
+  { id: "forecast", name: "Forecast", level: "Challenging",
+    answer: ["fore", "cast", "ground", "off", "iron", "work", "hog",
+      "side", "set", "clad", "ware", "shop", "place", "wash", "s"] }
+];
+// Add Monday packs in release order with the Winnipeg offset for each date.
+// Puzzle IDs keep assignment links stable.
+const weeklyPacks = [
+  { opens: "2026-11-16T00:00:00-06:00", ids: ["book-words", "play-and-read", "sunshine", "snow-day", "up-and-over"] },
+  { opens: "2026-11-23T00:00:00-06:00", ids: ["pack-and-lock", "connect-and-agree", "supermarket", "below-the-surface", "forecast"] }
+];
+const page = new URL(window.location.href);
+const now = Date.now();
+const released = weeklyPacks.filter(pack => Date.parse(pack.opens) <= now);
+const latest = released.at(-1);
+const nextPack = weeklyPacks.find(pack => Date.parse(pack.opens) > now);
+const openIds = released.flatMap(pack => pack.ids);
+const assignment = catalog.find(puzzle => openIds.includes(puzzle.id) &&
+  puzzle.id === page.searchParams.get("puzzle"));
+const libraryMode = !assignment && page.searchParams.get("library") === "1";
+const visibleIds = libraryMode ? openIds : latest?.ids ?? [];
+const puzzles = assignment ? [assignment] : visibleIds.map(id => catalog.find(puzzle => puzzle.id === id));
+const releaseNote = document.querySelector("#release-note");
+const dateLabel = date => new Intl.DateTimeFormat("en-CA", {
+  timeZone: "UTC", month: "long", day: "numeric"
+}).format(new Date(date + "T00:00:00Z"));
+if (!assignment) {
+  const note = libraryMode ? "Released puzzles" : latest ? "Week of " + dateLabel(latest.opens.slice(0, 10)) : "";
+  const nextNote = nextPack ? "Next pack opens " + dateLabel(nextPack.opens.slice(0, 10)) + "." : "";
+  releaseNote.textContent = [note, nextNote].filter(Boolean).join(" · ");
+}
+const libraryLink = document.querySelector("#library-link");
+const shareBox = document.querySelector("#share-box");
+const shareUrl = document.querySelector("#share-url");
+const round = document.querySelector("#round");
+const pyramid = document.querySelector("#pyramid");
+const tiles = document.querySelector("#tiles");
+const links = document.querySelector("#links");
+const words = document.querySelector("#words");
+const status = document.querySelector("#status");
+const elapsed = document.querySelector("#elapsed");
+const checks = document.querySelector("#checks");
+const check = document.querySelector("#check");
+const hint = document.querySelector("#hint");
+let startedAt, finishedAt, checkCount;
+let order, initial, pairs, valid, positions, selected, dragged, checked;
+
+function parent(index) { return Math.floor((index - 1) / 2); }
+function pairKey(first, second) { return first + "|" + second; }
+
+function load() {
+  const puzzle = puzzles[round.selectedIndex];
+  if (libraryMode) {
+    const link = new URL(page);
+    link.searchParams.delete("library");
+    link.searchParams.set("puzzle", puzzle.id);
+    shareUrl.value = link.href;
+  }
+  const answer = puzzle.answer;
+  pairs = answer.slice(1).map((_, offset) => [parent(offset + 1), offset + 1]);
+  valid = new Set(pairs.map(([top, bottom]) => pairKey(answer[top], answer[bottom])));
+  initial = [...answer];
+  do {
+    for (let index = initial.length - 1; index > 0; index--) {
+      const swap = Math.floor(Math.random() * (index + 1));
+      [initial[index], initial[swap]] = [initial[swap], initial[index]];
+    }
+  } while (pairs.every(([top, bottom]) => valid.has(pairKey(initial[top], initial[bottom]))));
+
+  const levels = Math.log2(answer.length + 1);
+  const pitch = answer.length === 15 ? 80 : 90;
+  const height = levels * pitch;
+  positions = answer.map((_, index) => {
+    const row = Math.floor(Math.log2(index + 1));
+    const count = 2 ** row;
+    return {x: 100 * (index + 1 - count + 0.5) / count, y: (row + 0.5) * pitch};
+  });
+  pyramid.style.setProperty("--height", height + "px");
+  pyramid.style.setProperty("--tile-width", (answer.length === 15 ? 11.8 : 23) + "%");
+  links.setAttribute("viewBox", "0 0 100 " + height);
+  reset();
+}
+function updateTimer() {
+  const seconds = Math.floor(((finishedAt ?? performance.now()) - startedAt) / 1000);
+  elapsed.textContent = Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0");
+}
+function reset() {
+  startedAt = performance.now();
+  finishedAt = null;
+  checkCount = 0;
+  checks.textContent = checkCount;
+  updateTimer();
+  order = [...initial];
+  selected = null;
+  dragged = null;
+  checked = false;
+  status.textContent = "";
+  draw();
+}
+function draw() {
+  const solved = finishedAt !== null;
+  check.disabled = solved;
+  hint.disabled = solved;
+  links.innerHTML = pairs.map(([top, bottom]) => {
+    const good = valid.has(pairKey(order[top], order[bottom]));
+    return '<line x1="' + positions[top].x + '" y1="' + positions[top].y +
+      '" x2="' + positions[bottom].x + '" y2="' + positions[bottom].y +
+      '" class="' + (checked ? (good ? "good" : "bad") : "") + '"/>';
+  }).join("");
+  tiles.innerHTML = order.map((part, index) => {
+    const {x, y} = positions[index];
+    return '<button class="tile" type="button" draggable="' + !solved + '"' + (solved ? " disabled" : "") + ' data-index="' + index +
+      '" aria-pressed="' + (selected === index) + '" style="--x:' + x + '%;--y:' + y + 'px">' +
+      part + '</button>';
+  }).join("");
+  const matches = checked ? pairs.filter(([top, bottom]) => valid.has(pairKey(order[top], order[bottom]))) : [];
+  words.innerHTML = matches.map(([top, bottom]) => '<li><strong>' + order[top] + order[bottom] +
+    '</strong><br>' + order[top] + ' + ' + order[bottom] + '</li>').join("");
+}
+function swapTiles(from, to) {
+  [order[from], order[to]] = [order[to], order[from]];
+  checked = false;
+  selected = null;
+  status.textContent = "Tiles swapped.";
+  draw();
+  tiles.querySelector('[data-index="' + to + '"]').focus();
+}
+tiles.addEventListener("click", event => {
+  const button = event.target.closest(".tile");
+  if (!button) return;
+  const index = Number(button.dataset.index);
+  if (selected !== null && selected !== index) {
+    swapTiles(selected, index);
+    return;
+  }
+  selected = selected === index ? null : index;
+  status.textContent = selected === null ? "Selection cleared." : "Select another tile to swap.";
+  draw();
+  tiles.querySelector('[data-index="' + index + '"]').focus();
+});
+tiles.addEventListener("dragstart", event => {
+  const button = event.target.closest(".tile");
+  if (!button) return;
+  dragged = Number(button.dataset.index);
+  event.dataTransfer.setData("text/plain", String(dragged));
+  event.dataTransfer.effectAllowed = "move";
+});
+tiles.addEventListener("dragover", event => {
+  if (dragged !== null && event.target.closest(".tile")) event.preventDefault();
+});
+tiles.addEventListener("drop", event => {
+  const button = event.target.closest(".tile");
+  if (dragged === null || !button) return;
+  event.preventDefault();
+  const to = Number(button.dataset.index);
+  const from = dragged;
+  dragged = null;
+  if (from !== to) swapTiles(from, to);
+});
+tiles.addEventListener("dragend", () => { dragged = null; });
+check.addEventListener("click", () => {
+  if (finishedAt !== null) return;
+  checkCount += 1;
+  checks.textContent = checkCount;
+  checked = true;
+  selected = null;
+  const count = pairs.filter(([top, bottom]) => valid.has(pairKey(order[top], order[bottom]))).length;
+  if (count === pairs.length) {
+    finishedAt = performance.now();
+    updateTimer();
+  }
+  status.textContent = finishedAt !== null ? "Puzzle solved in " + elapsed.textContent + " with " + checkCount + (checkCount === 1 ? " check." : " checks.") :
+    count + " of " + pairs.length + " links work. Solid lines match. Dashed lines need another try.";
+  draw();
+});
+hint.addEventListener("click", () => {
+  const root = puzzles[round.selectedIndex].answer[0];
+  status.textContent = 'Try “' + root + '” at the top of the pyramid.';
+});
+document.querySelector("#restart").addEventListener("click", reset);
+document.querySelector("#next").addEventListener("click", () => {
+  round.selectedIndex = (round.selectedIndex + 1) % puzzles.length;
+  load();
+});
+round.replaceChildren(...puzzles.map(({name, level, answer}) =>
+  new Option(level + " · " + name + " (" + answer.length + " tiles)")));
+round.disabled = puzzles.length < 2;
+document.querySelector("#next").hidden = puzzles.length < 2;
+libraryLink.hidden = Boolean(assignment);
+const libraryUrl = new URL(page);
+libraryUrl.searchParams.delete("puzzle");
+if (libraryMode) {
+  libraryUrl.searchParams.delete("library");
+  libraryLink.textContent = "Back to weekly puzzles";
+  shareBox.hidden = false;
+  shareUrl.addEventListener("focus", () => shareUrl.select());
+} else {
+  libraryUrl.searchParams.set("library", "1");
+}
+libraryLink.href = libraryUrl.href;
+round.addEventListener("change", load);
+if (puzzles.length) {
+  load();
+  setInterval(updateTimer, 250);
+} else {
+  document.querySelector(".toolbar").hidden = true;
+  document.querySelector(".board").hidden = true;
+  document.querySelector(".actions").hidden = true;
+}
+</script>
+</html>

@@ -16,7 +16,6 @@
 }
 *{box-sizing:border-box}
 body{margin:0}
-main{max-width:1400px;margin:auto;padding:22px}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
 .field{
  display:flex;flex-direction:column;gap:5px;
@@ -24,15 +23,15 @@ main{max-width:1400px;margin:auto;padding:22px}
 }
 input,select,button{
  font:inherit;border:2px solid var(--ink);
- border-radius:5px;padding:10px;background:white
+ border-radius:6px;padding:10px;background:white
 }
 input{width:95px}
 button{font-weight:800;cursor:pointer}
 button:hover{background:#edfaff}
 .primary{background:var(--math)}
 .panel{
- background:white;border:2px solid var(--ink);
- border-radius:9px;padding:20px;margin:16px 0
+ background:white;border:1px solid #d5dfe5;
+ border-radius:8px;padding:20px;margin:0 0 12px
 }
 .line-head{display:flex;align-items:center;justify-content:space-between}
 .line-head strong{font-size:15px}
@@ -67,7 +66,6 @@ footer{
  font-weight:900;font-size:12px;letter-spacing:2px
 }
 @media(max-width:700px){
- main{padding:10px}
  .panel{padding:12px}
  .canvas{height:260px}
  .stat{width:100%}
@@ -90,7 +88,9 @@ footer{
     <clocked-menu></clocked-menu>
   </div>
 </header>
-<main>
+<main class="math-panel">
+  <div class="math-panel__heading"><h1 class="math-panel__title">Number Line</h1></div>
+
 <div class="panel">
 <div class="controls">
 <label class="field">Mode
@@ -131,7 +131,7 @@ footer{
 
 <div class="panel" id="numberPanel">
 <div class="line-head">
-<strong>NUMBER LINE</strong>
+<strong>GRAPH</strong>
 <button id="fullscreenBtn" class="icon-btn" aria-label="Enter fullscreen" title="Fullscreen">
 <svg id="expandIcon" viewBox="0 0 24 24" fill="none"
  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -180,7 +180,7 @@ Click the number line to set a starting point. Fractions display as mixed number
 </div>
 </div>
 </main>
-<footer><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div></footer>
+<footer class="math-footer"><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div></footer>
 
 <script>
 const $=id=>document.getElementById(id);

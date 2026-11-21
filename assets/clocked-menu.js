@@ -1,6 +1,6 @@
 (() => {
   const sections = [
-    ['Class tools', [['Timer, Names & Groups', '/'], ['Locked', '/locked.html'], ['Bracketed', '/bracketed.html'], ['Voice', '/mixer.html']]],
+    ['Class tools', [['Timer, Names & Groups', '/'], ['Locked', '/locked.html'], ['Bracketed', '/bracketed.html']]],
     ['Math', [['Balanced', '/math.html'], ['Number Line', '/integer.html'], ['Fraction Helper', '/fractions.html']]],
     ['Geography', [['Map Quiz', '/map.html'], ['When / Where', '/eras.html']]],
     ['ELA', [['World Builder', '/worldbuilder.html'], ['Morphemes', '/morph.html']]],

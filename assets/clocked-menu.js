@@ -17,8 +17,8 @@
           @media print { :host { display: none; } }
           button {
             display: grid; place-content: center; width: 44px; height: 44px;
-            padding: 0; background: #fed500; color: #171717;
-            border: 1px solid #171717; border-radius: 5px; cursor: pointer;
+            padding: 0; background: transparent; color: inherit;
+            border: 0; border-radius: 5px; cursor: pointer;
           }
           button span {
             display: block; width: 19px; height: 2px; background: currentColor;

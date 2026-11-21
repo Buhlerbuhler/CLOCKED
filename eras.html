@@ -580,25 +580,33 @@ const SCENE = {
    2. 360 VIEWER
 ================================== */
 
-const viewer = pannellum.viewer("panorama", {
-  type: "equirectangular",
-  panorama: SCENE.panorama,
-  autoLoad: true,
+// Use the upgraded JPG when it exists on GitHub.
+// Until then, keep the previous PNG working.
+let viewer;
 
-  yaw: 0,
-  pitch: 0,
+function startPanorama(imageUrl) {
+  viewer = pannellum.viewer("panorama", {
+    type: "equirectangular",
+    panorama: imageUrl,
+    autoLoad: true,
+    yaw: 0,
+    pitch: 0,
+    hfov: 95,
+    minHfov: 40,
+    maxHfov: 120,
+    showZoomCtrl: true,
+    showFullscreenCtrl: true,
+    mouseZoom: true,
+    draggable: true,
+    compass: false,
+    autoRotate: 0
+  });
+}
 
-  hfov: 95,
-  minHfov: 40,
-  maxHfov: 120,
-
-  showZoomCtrl: true,
-  showFullscreenCtrl: true,
-  mouseZoom: true,
-  draggable: true,
-  compass: false,
-  autoRotate: 0
-});
+const updatedImage = new Image();
+updatedImage.onload = () => startPanorama("acropolis_photoreal_4k.jpg?v=1");
+updatedImage.onerror = () => startPanorama(SCENE.panorama);
+updatedImage.src = "acropolis_photoreal_4k.jpg?v=1";
 
 /* ==================================
    3. GAME VARIABLES
@@ -838,9 +846,9 @@ function resetGame() {
 
   map.setView([20, 15], 2);
 
-  viewer.setYaw(0);
-  viewer.setPitch(0);
-  viewer.setHfov(95);
+  viewer?.setYaw(0);
+  viewer?.setPitch(0);
+  viewer?.setHfov(95);
 
   setTimeout(() => map.invalidateSize(), 50);
 }
@@ -851,7 +859,7 @@ function resetGame() {
 
 window.addEventListener("resize", () => {
   map.invalidateSize();
-  viewer.resize();
+  viewer?.resize();
 });
 </script>
 </body>

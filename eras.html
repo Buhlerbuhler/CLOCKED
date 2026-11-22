@@ -410,6 +410,19 @@ main { position:relative;display:block;padding:10px; }
   #map { min-height:100px; }
 }
 @media (prefers-reduced-motion:reduce) { .sidebar { transition:none; } }
+
+/* Multi-round results and compact lesson information */
+.explanation { font-size:13px;line-height:1.5;overflow-y:auto;flex:1; }
+.explanation p { margin:8px 0; }
+.explanation h3 { margin:0 0 7px;font-size:19px; }
+.explanation h4 { font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--geo-green);margin:14px 0 5px; }
+.lesson-note { color:#aaa;font-size:11px;line-height:1.4; }
+.running-total { font-size:12px;color:#ddd; }
+.finished-row { padding:9px 0;border-bottom:1px solid #414141;line-height:1.45; }
+.finished-row strong { color:white; }
+#resultStep { color:var(--geo-green); }
+#nextButton { flex-shrink:0; }
+@media(max-height:750px) { .score-box{padding:8px}.total-score{font-size:28px}.sidebar{gap:7px;padding:12px} }
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@800&display=swap">
 <link rel="stylesheet" href="/assets/clocked-brand.css">
@@ -435,7 +448,7 @@ main { position:relative;display:block;padding:10px; }
     <div id="panorama"></div>
 
     <div class="scene-info">
-      <strong>THEN. <span style="font-weight:400;color:#ccc;font-size:11px;margin-left:7px">01 / EXPLORE</span></strong>
+      <strong>THEN. <span style="font-weight:400;color:#ccc;font-size:11px;margin-left:7px"><span id="roundCount">01 / 02</span> · EXPLORE</span></strong>
       <p>
         Look around. Follow the clues. Decide where and when you've landed.
       </p>
@@ -514,65 +527,24 @@ main { position:relative;display:block;padding:10px; }
     </button>
 
     <div id="results" class="results hidden">
-
-      <div>
-        <div class="label">TOTAL SCORE</div>
-        <div class="total-score" id="totalScore">
-          0 / 10,000
-        </div>
-      </div>
-
+      <div class="label" id="resultStep">ROUND RESULT</div>
+      <div class="total-score" id="totalScore">0 / 10,000</div>
       <div class="score-grid">
-        <div class="score-box">
-          <small>Location</small>
-          <strong id="locationScore">--</strong>
-        </div>
-
-        <div class="score-box">
-          <small>Time</small>
-          <strong id="timeScore">--</strong>
-        </div>
-
-        <div class="score-box">
-          <small>Distance away</small>
-          <strong id="distanceResult">--</strong>
-        </div>
-
-        <div class="score-box">
-          <small>Years away</small>
-          <strong id="yearResult">--</strong>
-        </div>
+        <div class="score-box"><small>Location points</small><strong id="locationScore">--</strong></div>
+        <div class="score-box"><small>Time points</small><strong id="timeScore">--</strong></div>
+        <div class="score-box"><small>Distance away</small><strong id="distanceResult">--</strong></div>
+        <div class="score-box"><small>Years away</small><strong id="yearResult">--</strong></div>
       </div>
-
-      <div class="explanation">
-        <h3>The Acropolis of Athens</h3>
-
-        <p>
-          <strong>Location:</strong> Athens, Greece<br>
-          <strong>Time:</strong> Approximately 430 BCE
-        </p>
-
-        <p>
-          The Acropolis was the religious and symbolic
-          high point of ancient Athens. It included famous
-          structures such as the Parthenon, built during
-          the Classical period.
-        </p>
-
-        <p>
-          This period is often associated with Athenian
-          democracy, philosophy, theatre, and artistic
-          achievement.
-        </p>
-
-        <p>
-          This AI-generated scene is a historical
-          interpretation rather than an exact reconstruction.
-        </p>
-      </div>
-
-      <button onclick="resetGame()">TRY AGAIN</button>
-
+      <div class="explanation" id="sceneExplanation" aria-live="polite"></div>
+      <div class="running-total" id="runningTotal"></div>
+      <button class="submit-button" type="button" id="nextButton" onclick="nextRound()">NEXT SCENE →</button>
+    </div>
+    <div id="finished" class="results hidden">
+      <div class="label">EXPLORATION COMPLETE</div>
+      <div class="total-score" id="finalScore">0</div>
+      <p class="instructions" id="finalSummary"></p>
+      <div class="explanation" id="roundRecap"></div>
+      <button class="submit-button" type="button" onclick="resetGame()">PLAY AGAIN</button>
     </div>
 
     <footer class="footer"><div class="clocked-brand"><span class="clocked-brand__name">CLOCKED</span><span class="clocked-brand__label">CLASSTOOLS</span></div></footer>
@@ -581,322 +553,188 @@ main { position:relative;display:block;padding:10px; }
 </main>
 
 <script>
-/* ==================================
-   1. SCENE SETTINGS
-================================== */
 
-const SCENE = {
-  name: "Acropolis of Athens",
-
-  latitude: 37.9715,
-  longitude: 23.7267,
-
-  // -429 = 430 BCE
-  year: -429,
-
-  panorama: "acropolis1.png"
-};
-
-/* ==================================
-   2. 360 VIEWER
-================================== */
-
-// Use the upgraded JPG when it exists on GitHub.
-// Until then, keep the previous PNG working.
-let viewer;
-
-function startPanorama(imageUrl) {
-  viewer = pannellum.viewer("panorama", {
-    type: "equirectangular",
-    panorama: imageUrl,
-    autoLoad: true,
-    yaw: 0,
-    pitch: 0,
-    hfov: 95,
-    minHfov: 40,
-    maxHfov: 120,
-    showZoomCtrl: true,
-    showFullscreenCtrl: true,
-    mouseZoom: true,
-    draggable: true,
-    compass: false,
-    autoRotate: 0
-  });
-}
-
-const updatedImage = new Image();
-updatedImage.onload = () => startPanorama("acropolis_360-4k1.png?v=1");
-updatedImage.onerror = () => startPanorama(SCENE.panorama);
-updatedImage.src = "acropolis_360-4k1.png?v=1";
-
-/* ==================================
-   3. GAME VARIABLES
-================================== */
-
-let locationGuess = null;
-let guessMarker = null;
-let answerMarker = null;
-let answerLine = null;
-let submitted = false;
-
-const slider = document.getElementById("yearSlider");
-const yearDisplay = document.getElementById("yearDisplay");
-
-/* ==================================
-   4. MAP
-================================== */
-
-const map = L.map("map", {
-  minZoom: 2,
-  maxZoom: 12,
-  worldCopyJump: true,
-  zoomControl: true
-}).setView([20, 15], 2);
-
-L.tileLayer(
-  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+/* ==================================================
+   THEN — classroom scene library
+   Add another scene object here when a new panorama
+   has been uploaded to the CLOCKED repository.
+================================================== */
+const SCENES = [
   {
-    attribution: "&copy; OpenStreetMap contributors",
-    maxZoom: 19
+    name: "Acropolis of Athens",
+    place: "Athens, Greece",
+    latitude: 37.9715, longitude: 23.7267,
+    year: -429,
+    panorama: "acropolis_360-4k1.png",
+    backup: "acropolis1.png",
+    intro: "The Acropolis was the sacred high ground above Athens. The Parthenon was a temple dedicated to Athena and was completed in the fifth century BCE.",
+    daily: "Athenians lived in a city of households, workshops, temples, public spaces and busy trade. People worked as craftspeople, merchants, farmers, labourers and sailors. Civic life was important, though political rights were limited mainly to adult male citizens.",
+    observe: "Architecture, clothing and the landscape are useful clues. Some details in the AI reconstruction, including the appearance of certain buildings, are imagined or from slightly different periods."
+  },
+  {
+    name: "Pyramids of Giza",
+    place: "Giza Plateau, Egypt",
+    latitude: 29.9792, longitude: 31.1342,
+    year: -2549,
+    panorama: "giza1.jpg",
+    backup: "giza.jpg",
+    intro: "The Great Pyramid was built for Pharaoh Khufu in Egypt's Old Kingdom, around 2550 BCE. The complex was part of a larger royal burial landscape.",
+    daily: "Ancient Egyptian life centred on the Nile, which supported agriculture and travel. Farmers, stoneworkers, bakers, boat crews and administrators all helped sustain society. Building royal monuments required extensive organization and skilled labour.",
+    observe: "Look for stone construction, the desert plateau and the surrounding landscape. The panorama is an AI interpretation, not a photograph of the ancient past."
   }
-).addTo(map);
+];
+const $ = id => document.getElementById(id);
+let round = 0, totalScore = 0, submitted = false;
+let locationGuess = null, guessMarker = null, answerMarker = null, answerLine = null;
+let viewer = null, resultsLog = [], loadToken = 0;
+const slider = $("yearSlider");
+const yearDisplay = $("yearDisplay");
+const map = L.map("map", { minZoom:2, maxZoom:12,worldCopyJump:true,zoomControl:true }).setView([20,15],2);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution:"&copy; OpenStreetMap contributors", maxZoom:19
+}).addTo(map);
 
-map.on("click", event => {
-  if (submitted) return;
-
-  locationGuess = event.latlng;
-
-  if (guessMarker) {
-    guessMarker.setLatLng(locationGuess);
-  } else {
-    guessMarker = L.circleMarker(locationGuess, {
-      radius: 7,
-      color: "#111",
-      fillColor: "#FED500",
-      fillOpacity: 1,
-      weight: 2
-    }).addTo(map);
+/* Image loading: if a scene file is missing, try its backup. */
+function loadPanorama(scene) {
+  const token = ++loadToken;
+  if (viewer) { viewer.destroy(); viewer = null; }
+  function useImage(url) {
+    if (token !== loadToken) return;
+    viewer = pannellum.viewer("panorama",{
+      type:"equirectangular", panorama:url,autoLoad:true,
+      yaw:0,pitch:0,hfov:95,minHfov:40,maxHfov:120,
+      showZoomCtrl:true,showFullscreenCtrl:true,mouseZoom:true,
+      draggable:true,compass:false,autoRotate:0
+    });
   }
-
-  document.getElementById("locationStatus").textContent =
-    "Location selected. Click elsewhere to change it.";
-
-  document.getElementById("submitButton").disabled = false;
-});
-
-/* ==================================
-   5. TIMELINE
-================================== */
-
-function formatYear(year) {
-  if (year <= 0) {
-    return `${1 - year} BCE`;
-  }
-  return `${year} CE`;
+  const img = new Image();
+  img.onload = () => useImage(scene.panorama);
+  img.onerror = () => {
+    const fallback = new Image();
+    fallback.onload = () => useImage(scene.backup);
+    fallback.onerror = () => { $("panorama").textContent = "This panorama could not be loaded."; };
+    fallback.src = scene.backup;
+  };
+  img.src = scene.panorama;
 }
-
-function updateYear() {
-  yearDisplay.textContent = formatYear(Number(slider.value));
-}
-
+function formatYear(y) { return y <= 0 ? (1-y)+" BCE" : y+" CE"; }
+function updateYear() { yearDisplay.textContent = formatYear(Number(slider.value)); }
 function changeYear(amount) {
-  const next = Number(slider.value) + amount;
-
-  slider.value = Math.max(
-    Number(slider.min),
-    Math.min(Number(slider.max), next)
-  );
-
+  slider.value = Math.max(Number(slider.min),Math.min(Number(slider.max),Number(slider.value)+amount));
   updateYear();
 }
-
-slider.addEventListener("input", updateYear);
-updateYear();
-
-/* ==================================
-   6. DISTANCE
-================================== */
-
-function distanceKm(lat1, lng1, lat2, lng2) {
-  const rad = Math.PI / 180;
-  const R = 6371;
-
-  const dLat = (lat2 - lat1) * rad;
-  const dLng = (lng2 - lng1) * rad;
-
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * rad) *
-    Math.cos(lat2 * rad) *
-    Math.sin(dLng / 2) ** 2;
-
-  return 2 * R * Math.asin(Math.sqrt(Math.min(1, a)));
+slider.addEventListener("input",updateYear);
+function distanceKm(lat1,lng1,lat2,lng2) {
+  const rad=Math.PI/180, dlat=(lat2-lat1)*rad,dlng=(lng2-lng1)*rad;
+  const a=Math.sin(dlat/2)**2+Math.cos(lat1*rad)*Math.cos(lat2*rad)*Math.sin(dlng/2)**2;
+  return 12742*Math.asin(Math.sqrt(Math.min(1,a)));
 }
-
-/* ==================================
-   7. SCORING
-================================== */
-
-function locationPoints(km) {
-  return Math.round(5000 * Math.exp(-km / 2000));
-}
-
-function timePoints(years) {
-  return Math.round(5000 * Math.exp(-years / 500));
-}
-
-/* ==================================
-   8. SUBMIT
-================================== */
-
-function submitGuess() {
-  if (!locationGuess || submitted) return;
-
-  submitted = true;
-
-  const guessedYear = Number(slider.value);
-
-  const km = distanceKm(
-    locationGuess.lat,
-    locationGuess.lng,
-    SCENE.latitude,
-    SCENE.longitude
-  );
-
-  const yearDifference = Math.abs(guessedYear - SCENE.year);
-
-  const placeScore = locationPoints(km);
-  const timeScore = timePoints(yearDifference);
-  const total = placeScore + timeScore;
-
-  document.getElementById("totalScore").textContent =
-    `${total.toLocaleString()} / 10,000`;
-
-  document.getElementById("locationScore").textContent =
-    `${placeScore.toLocaleString()} / 5,000`;
-
-  document.getElementById("timeScore").textContent =
-    `${timeScore.toLocaleString()} / 5,000`;
-
-  document.getElementById("distanceResult").textContent =
-    `${Math.round(km).toLocaleString()} km`;
-
-  document.getElementById("yearResult").textContent =
-    `${yearDifference.toLocaleString()} years`;
-
-  answerMarker = L.circleMarker(
-    [SCENE.latitude, SCENE.longitude],
-    {
-      radius: 8,
-      color: "#fff",
-      fillColor: "#22aa66",
-      fillOpacity: 1,
-      weight: 2
-    }
-  ).addTo(map);
-
-  answerLine = L.polyline(
-    [
-      locationGuess,
-      [SCENE.latitude, SCENE.longitude]
-    ],
-    {
-      color: "#FED500",
-      weight: 3,
-      dashArray: "6 7"
-    }
-  ).addTo(map);
-
-  const bounds = L.latLngBounds([
-    locationGuess,
-    [SCENE.latitude, SCENE.longitude]
-  ]);
-
-  map.fitBounds(bounds.pad(0.4), {
-    maxZoom: 7
-  });
-
-  document.getElementById("instructions").classList.add("hidden");
-  document.getElementById("timeline").classList.add("hidden");
-  document.getElementById("submitButton").classList.add("hidden");
-  document.getElementById("results").classList.remove("hidden");
-
-  document.getElementById("mapHeading").textContent =
-    "YOUR GUESS VS. ACTUAL LOCATION";
-
-  document.getElementById("locationStatus").textContent =
-    "Yellow = your guess. Green = actual location.";
-
-  document.getElementById("panelTitle").textContent =
-    "Your results";
-
-  setTimeout(() => map.invalidateSize(), 50);
-}
-
-/* ==================================
-   9. RESET
-================================== */
-
-function resetGame() {
-  submitted = false;
-  locationGuess = null;
-
-  if (guessMarker) map.removeLayer(guessMarker);
-  if (answerMarker) map.removeLayer(answerMarker);
-  if (answerLine) map.removeLayer(answerLine);
-
-  guessMarker = null;
-  answerMarker = null;
-  answerLine = null;
-
-  slider.value = -499;
-  updateYear();
-
-  document.getElementById("locationStatus").textContent =
-    "Click the map to place your guess.";
-
-  document.getElementById("submitButton").disabled = true;
-
-  document.getElementById("instructions").classList.remove("hidden");
-  document.getElementById("timeline").classList.remove("hidden");
-  document.getElementById("submitButton").classList.remove("hidden");
-  document.getElementById("results").classList.add("hidden");
-
-  document.getElementById("mapHeading").textContent = "01 / WHERE?";
-  document.getElementById("panelTitle").textContent = "Make your guess";
-
-  map.setView([20, 15], 2);
-
-  viewer?.setYaw(0);
-  viewer?.setPitch(0);
-  viewer?.setHfov(95);
-
-  setTimeout(() => map.invalidateSize(), 50);
-}
-
-/* Open the map and timeline only when the player is ready. */
+function locationPoints(km){return Math.round(5000*Math.exp(-km/2000));}
+function timePoints(years){return Math.round(5000*Math.exp(-years/500));}
 function toggleGuess(open) {
-  const panel = document.getElementById("guessPanel");
-  const backdrop = document.getElementById("panelBackdrop");
-  panel.classList.toggle("open", open);
-  backdrop.classList.toggle("active", open);
-  panel.setAttribute("aria-hidden", String(!open));
-  document.getElementById("openGuess").classList.toggle("hidden", open);
-  if (open) setTimeout(() => map.invalidateSize(), 260);
+  $("guessPanel").classList.toggle("open",open);
+  $("panelBackdrop").classList.toggle("active",open);
+  $("guessPanel").setAttribute("aria-hidden",String(!open));
+  $("openGuess").classList.toggle("hidden",open);
+  if (open) setTimeout(()=>map.invalidateSize(),250);
   else viewer?.resize();
 }
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") toggleGuess(false);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")toggleGuess(false);});
+map.on("click", e=>{
+  if(submitted)return;
+  locationGuess=e.latlng;
+  if(guessMarker)guessMarker.setLatLng(locationGuess);
+  else guessMarker=L.circleMarker(locationGuess,{
+    radius:7,color:"#111",fillColor:"#A6CE39",fillOpacity:1,weight:2
+  }).addTo(map);
+  $("locationStatus").textContent="Location selected. Click again to change it.";
+  $("submitButton").disabled=false;
 });
+function clearMapMarks(){
+  for(const layer of [guessMarker,answerMarker,answerLine]) if(layer) map.removeLayer(layer);
+  guessMarker=answerMarker=answerLine=null;
+}
+function prepareRound() {
+  submitted=false;locationGuess=null;clearMapMarks();
+  slider.value = -999; updateYear();
+  $("roundCount").textContent=String(round+1).padStart(2,"0")+" / "+String(SCENES.length).padStart(2,"0");
+  $("instructions").classList.remove("hidden");
+  $("timeline").classList.remove("hidden");
+  $("submitButton").classList.remove("hidden");
+  $("submitButton").disabled=true;
+  $("results").classList.add("hidden");
+  $("finished").classList.add("hidden");
+  $("mapHeading").textContent="01 / WHERE?";
+  $("locationStatus").textContent="Click the map to place your guess.";
+  $("panelTitle").textContent="Make your guess";
+  $("openGuess").innerHTML="MAKE A GUESS <span aria-hidden='true'>→</span>";
+  map.setView([20,15],2);
+  toggleGuess(false);
+  loadPanorama(SCENES[round]);
+}
+function submitGuess(){
+  if(submitted||!locationGuess)return;
+  submitted=true;
+  const scene=SCENES[round], guessedYear=Number(slider.value);
+  const km=distanceKm(locationGuess.lat,locationGuess.lng,scene.latitude,scene.longitude);
+  const diff=Math.abs(guessedYear-scene.year);
+  const lp=locationPoints(km),tp=timePoints(diff),score=lp+tp;
+  totalScore+=score;
+  resultsLog.push({name:scene.name,place:scene.place,score:score});
+  $("totalScore").textContent=score.toLocaleString()+" / 10,000";
+  $("locationScore").textContent=lp.toLocaleString()+" / 5,000";
+  $("timeScore").textContent=tp.toLocaleString()+" / 5,000";
+  $("distanceResult").textContent=Math.round(km).toLocaleString()+" km";
+  $("yearResult").textContent=diff.toLocaleString()+" years";
+  $("runningTotal").textContent="Running total: "+totalScore.toLocaleString()+" / "+((round+1)*10000).toLocaleString();
+  $("sceneExplanation").innerHTML=
+    "<h3>"+scene.name+"</h3>"+
+    "<p><strong>"+scene.place+"</strong> · Approximately "+formatYear(scene.year)+"</p>"+
+    "<p>"+scene.intro+"</p>"+
+    "<h4>Life in this era</h4><p>"+scene.daily+"</p>"+
+    "<h4>What could you notice?</h4><p>"+scene.observe+"</p>"+
+    "<p class='lesson-note'>AI-generated reconstruction. Some details are speculative.</p>";
+  answerMarker=L.circleMarker([scene.latitude,scene.longitude],{
+    radius:8,color:"#fff",fillColor:"#22aa66",fillOpacity:1,weight:2
+  }).addTo(map);
+  answerLine=L.polyline([locationGuess,[scene.latitude,scene.longitude]],{
+    color:"#A6CE39",weight:3,dashArray:"6 7"
+  }).addTo(map);
+  map.fitBounds(L.latLngBounds([locationGuess,[scene.latitude,scene.longitude]]).pad(.4),{maxZoom:7});
+  $("instructions").classList.add("hidden");
+  $("timeline").classList.add("hidden");
+  $("submitButton").classList.add("hidden");
+  $("results").classList.remove("hidden");
+  $("mapHeading").textContent="YOUR GUESS / ACTUAL LOCATION";
+  $("locationStatus").textContent="Green outline = your guess. Solid green = actual location.";
+  $("panelTitle").textContent="Round "+(round+1)+" results";
+  $("resultStep").textContent="ROUND "+(round+1)+" / "+SCENES.length;
+  $("nextButton").textContent=round===SCENES.length-1?"SEE FINAL SCORE →":"NEXT SCENE →";
+  setTimeout(()=>map.invalidateSize(),50);
+}
+function nextRound(){
+  if(!submitted)return;
+  if(round+1<SCENES.length){round++;prepareRound();}
+  else {
+    $("results").classList.add("hidden");
+    $("mapHeading").textContent="YOUR JOURNEY";
+    $("finished").classList.remove("hidden");
+    $("panelTitle").textContent="Game complete";
+    $("finalScore").textContent=totalScore.toLocaleString()+" / "+(SCENES.length*10000).toLocaleString();
+    $("finalSummary").textContent="You explored "+SCENES.length+" historical moments. Explore again to improve your score.";
+    $("roundRecap").innerHTML=resultsLog.map((a,i)=>"<div class='finished-row'><strong>"+(i+1)+". "+a.name+"</strong><br>"+a.place+" · "+a.score.toLocaleString()+" points</div>").join("");
+    $("openGuess").innerHTML="VIEW YOUR SCORE <span aria-hidden='true'>→</span>";
+    toggleGuess(true);
+    setTimeout(()=>map.invalidateSize(),50);
+  }
+}
+function resetGame(){
+  round=0;totalScore=0;resultsLog=[];
+  prepareRound();
+}
+window.addEventListener("resize",()=>{map.invalidateSize();viewer?.resize();});
+prepareRound();
 
-/* ==================================
-   10. RESIZE
-================================== */
-
-window.addEventListener("resize", () => {
-  map.invalidateSize();
-  viewer?.resize();
-});
 </script>
 </body>
 </html>

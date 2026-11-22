@@ -448,7 +448,7 @@ main { position:relative;display:block;padding:10px; }
     <div id="panorama"></div>
 
     <div class="scene-info">
-      <strong>THEN. <span style="font-weight:400;color:#ccc;font-size:11px;margin-left:7px"><span id="roundCount">01 / 02</span> · EXPLORE</span></strong>
+      <strong>THEN. <span style="font-weight:400;color:#ccc;font-size:11px;margin-left:7px"><span id="roundCount">01 / 05</span> · EXPLORE</span></strong>
       <p>
         Look around. Follow the clues. Decide where and when you've landed.
       </p>
@@ -638,6 +638,17 @@ const SCENES = [
     observe: "The massive standing stones, ropes, wooden supports and simple clothing point to prehistoric monument building. This AI scene is a reconstruction, and the exact construction methods remain debated by archaeologists."
   }
 ];
+/* Randomly select up to five unique scenes for each new game. */
+let activeScenes = [];
+function drawScenes() {
+  const pool = SCENES.slice();
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, Math.min(5, pool.length));
+}
+
 const $ = id => document.getElementById(id);
 let round = 0, totalScore = 0, submitted = false;
 let locationGuess = null, guessMarker = null, answerMarker = null, answerLine = null;
@@ -712,7 +723,7 @@ function clearMapMarks(){
 function prepareRound() {
   submitted=false;locationGuess=null;clearMapMarks();
   slider.value = -999; updateYear();
-  $("roundCount").textContent=String(round+1).padStart(2,"0")+" / "+String(SCENES.length).padStart(2,"0");
+  $("roundCount").textContent=String(round+1).padStart(2,"0")+" / "+String(activeScenes.length).padStart(2,"0");
   $("instructions").classList.remove("hidden");
   $("timeline").classList.remove("hidden");
   $("submitButton").classList.remove("hidden");
@@ -725,12 +736,12 @@ function prepareRound() {
   $("openGuess").innerHTML="MAKE A GUESS <span aria-hidden='true'>→</span>";
   map.setView([20,15],2);
   toggleGuess(false);
-  loadPanorama(SCENES[round]);
+  loadPanorama(activeScenes[round]);
 }
 function submitGuess(){
   if(submitted||!locationGuess)return;
   submitted=true;
-  const scene=SCENES[round], guessedYear=Number(slider.value);
+  const scene=activeScenes[round], guessedYear=Number(slider.value);
   const km=distanceKm(locationGuess.lat,locationGuess.lng,scene.latitude,scene.longitude);
   const diff=Math.abs(guessedYear-scene.year);
   const lp=locationPoints(km),tp=timePoints(diff),score=lp+tp;
@@ -763,20 +774,20 @@ function submitGuess(){
   $("mapHeading").textContent="YOUR GUESS / ACTUAL LOCATION";
   $("locationStatus").textContent="Green outline = your guess. Solid green = actual location.";
   $("panelTitle").textContent="Round "+(round+1)+" results";
-  $("resultStep").textContent="ROUND "+(round+1)+" / "+SCENES.length;
-  $("nextButton").textContent=round===SCENES.length-1?"SEE FINAL SCORE →":"NEXT SCENE →";
+  $("resultStep").textContent="ROUND "+(round+1)+" / "+activeScenes.length;
+  $("nextButton").textContent=round===activeScenes.length-1?"SEE FINAL SCORE →":"NEXT SCENE →";
   setTimeout(()=>map.invalidateSize(),50);
 }
 function nextRound(){
   if(!submitted)return;
-  if(round+1<SCENES.length){round++;prepareRound();}
+  if(round+1<activeScenes.length){round++;prepareRound();}
   else {
     $("results").classList.add("hidden");
     $("mapHeading").textContent="YOUR JOURNEY";
     $("finished").classList.remove("hidden");
     $("panelTitle").textContent="Game complete";
-    $("finalScore").textContent=totalScore.toLocaleString()+" / "+(SCENES.length*10000).toLocaleString();
-    $("finalSummary").textContent="You explored "+SCENES.length+" historical moments. Explore again to improve your score.";
+    $("finalScore").textContent=totalScore.toLocaleString()+" / "+(activeScenes.length*10000).toLocaleString();
+    $("finalSummary").textContent="You explored "+activeScenes.length+" historical moments. Explore again to improve your score.";
     $("roundRecap").innerHTML=resultsLog.map((a,i)=>"<div class='finished-row'><strong>"+(i+1)+". "+a.name+"</strong><br>"+a.place+" · "+a.score.toLocaleString()+" points</div>").join("");
     $("openGuess").innerHTML="VIEW YOUR SCORE <span aria-hidden='true'>→</span>";
     toggleGuess(true);
@@ -784,12 +795,12 @@ function nextRound(){
   }
 }
 function resetGame(){
+  activeScenes=drawScenes();
   round=0;totalScore=0;resultsLog=[];
   prepareRound();
 }
 window.addEventListener("resize",()=>{map.invalidateSize();viewer?.resize();});
-prepareRound();
-
+resetGame();
 </script>
 </body>
 </html>

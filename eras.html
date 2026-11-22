@@ -701,7 +701,7 @@ function loadPanorama(scene) {
     if (token !== loadToken) return;
     viewer = pannellum.viewer("panorama",{
       type:"equirectangular", panorama:url,autoLoad:true,
-      yaw:0,pitch:0,hfov:95,minHfov:40,maxHfov:120,
+      yaw:0,pitch:0,hfov:120,minHfov:40,maxHfov:120,
       showZoomCtrl:true,showFullscreenCtrl:true,mouseZoom:true,
       draggable:true,compass:false,autoRotate:0
     });
